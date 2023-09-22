@@ -1,8 +1,8 @@
 import { initTRPC } from '@trpc/server';
-import { env } from '~/env';
 import superjson from 'superjson';
 import type { OpenApiMeta } from 'trpc-openapi';
-import type {Context} from './context';
+import { env } from '../env';
+import type { Context } from './context';
 
 const t = initTRPC
   .meta<OpenApiMeta>()

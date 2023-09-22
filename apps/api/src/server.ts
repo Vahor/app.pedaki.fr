@@ -60,7 +60,7 @@ export function createServer() {
       await serverFactory.init();
       await setupSwagger();
       server.swagger();
-      await server.listen({ port });
+      await server.listen({ port, host: '0.0.0.0' });
       console.log(`Server listening on http://localhost:${port}`);
     } catch (err) {
       server.log.error(err);
