@@ -1,71 +1,51 @@
 FROM node:18-slim AS base
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y openssl curl
 
+
+FROM base  AS builder
+WORKDIR /app
+
+# Install corepack pnpm
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN corepack enable pnpm
 
-COPY . .
-RUN pnpm install
+COPY turbo.json ./
+COPY .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN pnpm build --filter db
-##RUN pnpm build --filter api
+COPY apps/api/package.json ./apps/api/
+COPY packages/db/package.json ./packages/db/
+COPY packages/auth/package.json ./packages/auth/
 
-#FROM base  AS downloader
-#WORKDIR /app
-#
-## Install python as node-gyp requires it
-#RUN apt-get update || : && apt-get install -y python3 build-essential
-#
-#COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-#COPY apps/api/package.json ./apps/api/
-#COPY turbo.json ./
-#COPY .npmrc ./
-#
-#COPY packages/db/package.json ./packages/db/
-#COPY packages/auth/package.json ./packages/auth/
-#
-#RUN pnpm install --child-concurrency 3 --frozen-lockfile --prefer-offline
-#
-#FROM base  AS builder
-#WORKDIR /app
-#
-#ARG APP
-#
-#COPY --from=downloader /app/node_modules ./node_modules
-#
-#COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-#COPY turbo.json ./
-#COPY .npmrc ./
-#
+RUN pnpm install --frozen-lockfile
+
+COPY apps/api ./apps/api
+COPY packages ./packages
+
+RUN pnpm build --filter api
+
+FROM base  AS runner
+WORKDIR /app
+
+RUN curl -fsSL https://get.pulumi.com | sh
+ENV PATH="/root/.pulumi/bin:$PATH"
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/packages/auth/dist ./node_modules/auth
+
 ## Load public env vars
-#ARG PULUMI_ACCESS_TOKEN
-#
-## Generate prisma client
-#COPY packages/db ./packages/db
-#RUN pnpm build --filter db
-#
-#COPY apps/api ./apps/api
-#COPY packages ./packages
-#
-#ARG PORT=8000
-#
-#ENV PORT=$PORT
-#ENV NODE_ENV=production
-#ENV SKIP_SERVER_ENV_CHECK=true
-#
-#RUN pnpm build --filter api
+ARG PULUMI_ACCESS_TOKEN
+ARG PORT=8080
 
-CMD ["sleep", "infinity"]
+ENV PORT=$PORT
+ENV PULUMI_ACCESS_TOKEN=$PULUMI_ACCESS_TOKEN
 
+ENV NODE_ENV=production
+ENV SKIP_SERVER_ENV_CHECK=true
 
-#FROM base  AS runner
-#WORKDIR /app
-#
-#
-#COPY --from=builder /app/node_modules ./node_modules
-#COPY --from=builder /app/apps/api/dist ./
-#
-## Run server.js
-#CMD ["node", "./src/index.js"]
+EXPOSE $PORT
+
+CMD ["node", "dist/index.js"]

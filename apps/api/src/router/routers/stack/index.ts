@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
-import { serverFactory } from '~/services/architecture/factory';
 import { z } from 'zod';
+import { serverFactory } from '../../../services/architecture/factory';
 import { publicProcedure, router } from '../../trpc';
 
 const StackParametersSchema = z.object({
