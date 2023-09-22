@@ -1,0 +1,21 @@
+{
+  "name": "db",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "build": "prisma generate",
+    "lint": "eslint .",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "typecheck": "tsc --noEmit"
+  },
+  "prettier": "@pedaki/prettier-config",
+  "dependencies": {
+    "@prisma/client": "^5.3.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.3.1"
+  }
+}

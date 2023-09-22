@@ -1,0 +1,44 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index",
+    "build": "tsx build src/index",
+    "start": "node dist/index.js",
+
+    "lint": "eslint .",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "Nathan David <me@vahor.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/cors": "^8.4.0",
+    "@fastify/swagger": "^8.10.1",
+    "@fastify/swagger-ui": "^1.9.3",
+    "@pulumi/aws": "^6.2.0",
+    "@pulumi/random": "^4.14.0",
+    "@pulumi/pulumi": "^3.84.0",
+    "@t3-oss/env-core": "^0.6.1",
+    "@trpc/server": "^10.38.4",
+    "fastify": "^4.23.2",
+    "next-auth": "^4.23.1",
+    "superjson": "^1.13.1",
+    "trpc-openapi": "^1.2.0",
+    "zod": "^3.22.2",
+    "auth": "workspace:^"
+  },
+  "devDependencies": {
+    "@pedaki/eslint-config": "^0.0.6",
+    "@pedaki/prettier-config": "^0.0.5",
+    "@pedaki/common": "^0.0.3",
+    "@total-typescript/ts-reset": "^0.5.1",
+    "@types/node": "^18.17.0",
+    "tsx": "^3.12.10"
+  },
+  "prettier": "@pedaki/prettier-config"
+}
