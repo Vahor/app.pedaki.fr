@@ -1,5 +1,5 @@
-import type {CreateFastifyContextOptions} from '@trpc/server/adapters/fastify';
-import { authFromRequest } from 'auth';
+import { authFromRequest } from '@pedaki/auth';
+import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 export interface Context {

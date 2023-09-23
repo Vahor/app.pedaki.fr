@@ -1,3 +1,4 @@
+import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
@@ -13,14 +14,11 @@ import { serverFactory } from './services/architecture/factory';
 export function createServer() {
   const dev = env.DEV;
   const port = env.PORT;
-  const prefix = env.PREFIX;
+  const prefix = env.TRPC_PREFIX;
 
   const server = fastify({ logger: dev });
 
   const setupSwagger = async () => {
-    // Serve the OpenAPI document
-    server.get('/openapi.json', () => openApiDocument);
-
     // Server Swagger UI
     await server.register(fastifySwagger, {
       mode: 'static',
@@ -39,11 +37,14 @@ export function createServer() {
       createContext,
     });
 
-    console.log(`Swagger UI available on http://localhost:${port}/docs`);
+    console.log(`Swagger UI available on http://0.0.0.0:${port}/docs`);
   };
 
   const init = async () => {
     await server.register(cors);
+    await server.register(cookie, {
+      parseOptions: {},
+    });
     await server.register(fastifyTRPCPlugin, {
       prefix,
       useWSS: false,
@@ -61,7 +62,7 @@ export function createServer() {
       await setupSwagger();
       server.swagger();
       await server.listen({ port, host: '0.0.0.0' });
-      console.log(`Server listening on http://localhost:${port}`);
+      console.log(`Server listening on http://0.0.0.0:${port}`);
     } catch (err) {
       server.log.error(err);
       process.exit(1);

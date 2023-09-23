@@ -1,6 +1,6 @@
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
-import { getToken   } from 'next-auth/jwt';
-import type {GetTokenParams, JWT} from 'next-auth/jwt';
+import { getToken } from 'next-auth/jwt';
+import type { GetTokenParams, JWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
@@ -14,7 +14,8 @@ declare module 'next-auth' {
 
 const useSecureCookies = process.env.NODE_ENV === 'production';
 
-export const baseAuthOption = {
+export const baseAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV !== 'production',
   useSecureCookies: useSecureCookies,
   cookies: {
@@ -31,6 +32,8 @@ export const baseAuthOption = {
   },
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
   },
   providers: [],
 } satisfies NextAuthOptions;
@@ -42,7 +45,7 @@ export const authFromRequest = async (
     // @ts-expect-error I know what I'm doing
     req: req,
     secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: baseAuthOption.useSecureCookies,
-    cookieName: baseAuthOption.cookies.sessionToken.name,
+    secureCookie: baseAuthOptions.useSecureCookies,
+    cookieName: baseAuthOptions.cookies.sessionToken.name,
   });
 };
