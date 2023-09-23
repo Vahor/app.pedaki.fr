@@ -20,7 +20,8 @@ const openApiDocument = generateOpenApiDocument(appRouter, {
 
 Object.values(openApiDocument.paths as Record<string, Record<string, any>>).forEach(path => {
   Object.values(path).forEach(operation => {
-    operation['security'] = [{ bearerAuth: [] }];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    operation.security = [{ bearerAuth: [] }];
   });
 });
 

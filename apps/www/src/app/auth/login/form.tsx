@@ -8,7 +8,7 @@ import React, { useTransition } from 'react';
 const LoginForm = () => {
   const [pending, startTransition] = useTransition();
 
-  async function providerLogin(provider: string) {
+  function providerLogin(provider: string) {
     return startTransition(() => void signIn(provider, { callbackUrl: '/' }));
   }
 
