@@ -116,7 +116,7 @@ model WorkspaceSubscription {
 
   @@index([workspaceId])
   @@index([receiptId])
-  @@map("subscriptions")
+  @@map("workspace_subscriptions")
 }
 
 model WorkspaceSubscriptionReceipt {

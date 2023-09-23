@@ -1,6 +1,6 @@
 FROM node:18-slim AS base
 
-RUN apt-get update -y && apt-get install -y openssl curl
+RUN apt-get update -y && apt-get install -y openssl curl ca-certificates
 
 
 FROM base  AS builder
