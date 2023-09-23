@@ -11,7 +11,8 @@
       "outputs": [
         ".next/**",
         "dist/**",
-        "!.next/cache/**"
+        "!.next/cache/**",
+        "node_modules/.prisma/**"
       ]
     },
     "start": {

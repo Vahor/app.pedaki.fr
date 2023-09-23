@@ -23,6 +23,7 @@
     "@fastify/swagger-ui": "^1.9.3",
     "@pedaki/auth": "workspace:*",
     "@pedaki/db": "workspace:*",
+    "@pedaki/settings": "workspace:*",
     "@pulumi/aws": "^6.2.1",
     "@pulumi/pulumi": "^3.85.0",
     "@pulumi/random": "^4.14.0",
