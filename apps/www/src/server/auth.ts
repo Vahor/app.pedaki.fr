@@ -22,6 +22,7 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       profile(profile: GoogleProfile) {
+        console.log('google profile', profile);
         return {
           id: profile.sub,
           name: profile.name,
@@ -58,26 +59,11 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // If it's his first login he doesn't have an image
-        // So we generate one and update his profile
-        let image = user.image;
-        if (!image) {
-          image = generateDataURL(user.name, 128);
-          await prisma.user.update({
-            where: {
-              id: user.id,
-            },
-            data: {
-              image,
-            },
-          });
-        }
-
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-          image: image,
+          image: user.image,
           emailVerified: user.emailVerified,
         };
       },

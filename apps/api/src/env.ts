@@ -7,12 +7,14 @@ export const env = createEnv({
     DEV: z.coerce.boolean().default(false),
     PORT: z.coerce.number().default(8080),
 
-    TRPC_PREFIX: z.string().default('/trpc'),
-
     PULUMI_ACCESS_TOKEN: z.string(),
     PUBLIC_KEY: z.string().optional(),
 
+    PASSWORD_SALT: z.string().min(1),
+
     NEXTAUTH_SECRET: z.string().min(1).default('secret'),
+
+    DATABASE_URL: z.string().url(),
   },
   runtimeEnv: process.env,
 });
