@@ -1,5 +1,5 @@
 {
-  "name": "@pedaki/auth",
+  "name": "@pedaki/settings",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",

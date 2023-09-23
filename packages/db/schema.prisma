@@ -39,30 +39,189 @@ model User {
   email         String    @unique
   emailVerified DateTime? @map("email_verified")
   password      String?
-  image         String    @db.VarChar(1000) @default("")
-  accounts      Account[]
 
-  tokens Token[]
+  image String @default("") @db.VarChar(1000)
+
+  accounts   Account[]
+  tokens     Token[]
+  membership WorkspaceMember[]
 
   @@index([id])
   @@map("users")
 }
 
 model Token {
+  id String @id @default(cuid()) @db.VarChar(25)
+
   createdAt   DateTime  @default(now()) @map("created_at")
   type        TokenType
   hashedToken String    @map("hashed_token")
   expiresAt   DateTime  @map("expires_at")
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @map("user_id") @db.VarChar(25)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id") @db.VarChar(25)
+
+  invitations WorkspaceInvitation[]
 
   @@unique([type, hashedToken], name: "unique_token")
-  @@map("tokens")
-
   @@index([userId])
+  @@map("tokens")
 }
 
 enum TokenType {
   CONFIRM_EMAIL
+  WORKSPACE_INVITATION
+}
+
+model Workspace {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  name      String
+  slug      String? @unique
+  subdomain String? @unique
+
+  members     WorkspaceMember[]
+  invitations WorkspaceInvitation[]
+  settings    WorkspaceSetting[]
+
+  subscriptions WorkspaceSubscription[]
+
+  @@index([id])
+  @@map("workspaces")
+}
+
+// To get the current subscription, we can just get the one with the latest paidUntil date
+model WorkspaceSubscription {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  // Type can be "extra_support", "scaler" etc.
+  // This type should map to a product on our code
+  // and in our code we map it to a stripe product
+  type String
+
+  paidUntil DateTime            @map("paid_until")
+  resources WorkspaceResource[]
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String    @db.VarChar(25)
+
+  receipt   WorkspaceSubscriptionReceipt @relation(fields: [receiptId], references: [id])
+  receiptId String                       @unique @map("receipt_id") @db.VarChar(25)
+
+  @@index([workspaceId])
+  @@index([receiptId])
+  @@map("subscriptions")
+}
+
+model WorkspaceSubscriptionReceipt {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  // If the payment failed, we'll still have a receipt, but no subscription
+  subscription WorkspaceSubscription?
+
+  // TODO: improve the schema to add the price, status etc
+  //    I can't to it now as I don't know the structure of the data
+  data Json
+
+  @@map("workspace_subscription_receipts")
+}
+
+// The invitation is expired if the token is expired
+// After a long time, the token is automatically deleted, and the invitation is deleted with it
+// When the invitation is accepted we can delete the token only, this will delete the invitation as well
+model WorkspaceInvitation {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  email       String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String    @map("workspace_id") @db.VarChar(25)
+
+  token   Token  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  tokenId String @map("token_id") @db.VarChar(25)
+
+  @@index([workspaceId])
+  @@index([tokenId])
+  @@map("workspace_invitations")
+}
+
+model WorkspaceMember {
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  roles  WorkspaceMemberRole[]
+  user   User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String                @map("user_id") @db.VarChar(25)
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String    @map("workspace_id") @db.VarChar(25)
+
+  @@id([userId, workspaceId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@map("workspace_members")
+}
+
+model WorkspaceMemberRole {
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  role        WorkspaceRole   @id
+  member      WorkspaceMember @relation(fields: [memberId, workspaceId], references: [userId, workspaceId], onDelete: Cascade)
+  memberId    String          @map("member_id") @db.VarChar(25)
+  workspaceId String          @map("workspace_id") @db.VarChar(25)
+
+  @@unique([role, memberId])
+  @@index([memberId, workspaceId])
+  @@map("workspace_member_to_workspace_roles")
+}
+
+enum WorkspaceRole {
+  OWNER
+}
+
+// AKA Server / Database etc
+model WorkspaceResource {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  region   String
+  provider String
+  type     String
+
+  identifier String // aws arm etc
+
+  data Json // As we can't know the structure of the data, we'll just store it as a json blob. We'll have to parse it knowing the type,region,provider etc
+
+  subscription   WorkspaceSubscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String?                @db.VarChar(25)
+
+  @@index([subscriptionId])
+  @@map("workspace_resources")
+}
+
+// ex: auto_renew, default_region
+model WorkspaceSetting {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  key   String
+  value String
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String    @map("workspace_id") @db.VarChar(25)
+
+  @@unique([key, workspaceId])
+  @@index([workspaceId])
+  @@map("workspace_settings")
 }

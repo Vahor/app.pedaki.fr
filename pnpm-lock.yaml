@@ -71,6 +71,9 @@ importers:
       '@pedaki/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@pedaki/settings':
+        specifier: workspace:*
+        version: link:../../packages/settings
       '@pulumi/aws':
         specifier: ^6.2.1
         version: 6.2.1
@@ -209,7 +212,11 @@ importers:
         specifier: ^8.4.30
         version: 8.4.30
 
-  packages/auth: {}
+  packages/auth:
+    devDependencies:
+      '@pedaki/db':
+        specifier: workspace:*
+        version: link:../db
 
   packages/db:
     dependencies:
@@ -220,6 +227,12 @@ importers:
       prisma:
         specifier: ^5.3.1
         version: 5.3.1
+
+  packages/settings:
+    devDependencies:
+      '@pedaki/db':
+        specifier: workspace:*
+        version: link:../db
 
 packages:
 
