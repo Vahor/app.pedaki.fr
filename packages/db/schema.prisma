@@ -139,7 +139,6 @@ model WorkspaceSubscriptionReceipt {
 // When the invitation is accepted we can delete the token only, this will delete the invitation as well
 model WorkspaceInvitation {
   id String @id @default(cuid()) @db.VarChar(25)
-
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -168,16 +167,19 @@ model WorkspaceRole {
 
   @@unique([name, workspaceId])
   @@index([workspaceId])
+  @@map("workspace_roles")
 }
 
 // The permissions are common across all workspaces
 model WorkspacePermission {
   id String @id @default(cuid()) @db.VarChar(25)
 
-  name        String
-  description String?
+  identifier String
 
   roles WorkspaceRole[]
+
+  @@unique([identifier])
+  @@map("workspace_permissions")
 }
 
 model WorkspaceMember {
