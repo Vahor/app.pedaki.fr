@@ -32,6 +32,9 @@ jobs:
       - name: Install deps
         run: pnpm install --child-concurrency 3 --frozen-lockfile --prefer-offline
 
+      - name: Generate db types
+        run: pnpm build --filter db
+
       - name: Run eslint
         run: pnpm lint
 
