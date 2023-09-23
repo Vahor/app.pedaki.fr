@@ -3,8 +3,7 @@ import { env } from './env';
 import { appRouter } from './router';
 
 export const openApiDocument = generateOpenApiDocument(appRouter, {
-  title: 'Example CRUD API',
-  description: 'OpenAPI compliant REST API built using tRPC with Fastify',
+  title: 'Pedaki Internal API',
   version: '1.0.0',
-  baseUrl: `http://localhost:${env.PORT}/api`,
+  baseUrl: env.NODE_ENV === 'production' ? 'https://api.pedaki.fr/api' :   `http://localhost:${env.PORT}/api`,
 });

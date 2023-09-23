@@ -39,7 +39,7 @@ model User {
   email         String    @unique
   emailVerified DateTime? @map("email_verified")
   password      String?
-  image         String    @db.VarChar(1000)
+  image         String    @db.VarChar(1000) @default("")
   accounts      Account[]
 
   tokens Token[]
