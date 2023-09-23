@@ -1,6 +1,6 @@
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
-import { getToken   } from 'next-auth/jwt';
-import type {GetTokenParams, JWT} from 'next-auth/jwt';
+import { getToken } from 'next-auth/jwt';
+import type { GetTokenParams, JWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {

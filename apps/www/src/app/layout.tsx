@@ -1,8 +1,8 @@
 import React from 'react';
 import '@pedaki/design/tailwind/index.css';
 import { cn } from '@pedaki/design/utils';
-import { fontClassName } from '~/config/font';
 import { Providers } from '~/app/providers';
+import { fontClassName } from '~/config/font';
 import type { Metadata } from 'next';
 
 export default function RootLayout({ children }: { children: React.ReactElement }) {

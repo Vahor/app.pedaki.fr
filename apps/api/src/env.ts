@@ -7,7 +7,7 @@ export const env = createEnv({
     DEV: z.coerce.boolean().default(false),
     PORT: z.coerce.number().default(8080),
 
-    PREFIX: z.string().default('/trpc'),
+    TRPC_PREFIX: z.string().default('/trpc'),
 
     PULUMI_ACCESS_TOKEN: z.string(),
     PUBLIC_KEY: z.string().optional(),

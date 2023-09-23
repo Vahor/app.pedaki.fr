@@ -1,8 +1,8 @@
+import { Separator } from '@pedaki/design/ui/separator';
 import { User } from '~/app/user';
 import { env } from '~/env.mjs';
 import { auth } from '~/server/auth';
 import { LoginButton, LogoutButton } from './auth';
-import { Separator } from '@pedaki/design/ui/separator';
 
 export default async function Home() {
   const session = await auth();

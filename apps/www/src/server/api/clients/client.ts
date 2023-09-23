@@ -1,16 +1,14 @@
 'use client';
 
 import type { AppRouter } from '@pedaki/api/src/router';
-import { loggerLink, TRPCClientError } from '@trpc/client';
-import { experimental_createTRPCNextAppDirClient } from '@trpc/next/app-dir/client';
-import { experimental_nextHttpLink } from '@trpc/next/app-dir/links/nextHttp';
+import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client';
+import { createTRPCNext } from '@trpc/next';
+import { getUrl } from '~/server/api/clients/shared';
 import superjson from 'superjson';
-import {getUrl} from "~/server/api/clients/shared";
 
-export const api = experimental_createTRPCNextAppDirClient<AppRouter>({
+export const api = createTRPCNext<AppRouter>({
   config() {
     return {
-      transformer: superjson,
       queryClientConfig: {
         defaultOptions: {
           queries: {
@@ -19,7 +17,7 @@ export const api = experimental_createTRPCNextAppDirClient<AppRouter>({
             refetchOnMount: false,
             refetchOnWindowFocus: false,
             refetchOnReconnect: true,
-            retry: (failureCount: number, error: Error) => {
+            retry: (failureCount: number, error) => {
               if (failureCount > 2) return false;
 
               if (error instanceof TRPCClientError) {
@@ -43,23 +41,19 @@ export const api = experimental_createTRPCNextAppDirClient<AppRouter>({
           },
         },
       },
+      transformer: superjson,
+
       links: [
         loggerLink({
           enabled: opts =>
             process.env.NODE_ENV === 'development' ||
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
-        experimental_nextHttpLink({
-          batch: true,
+        httpBatchLink({
           url: getUrl(),
-          headers() {
-            return {
-              'x-trpc-source': 'client',
-            };
-          },
         }),
       ],
     };
   },
+  ssr: true,
 });
-

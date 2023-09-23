@@ -34,9 +34,6 @@
       {
         "name": "next"
       }
-    ],
-    "types": [
-      "@trpc/server",
     ]
   },
   "include": [
@@ -49,5 +46,5 @@
     ".next/types/**/*.ts",
     "src/reset.d.ts"
   ],
-  "exclude": ["../../node_modules", "node_modules", ".next", "out", "dist"]
+  "exclude": ["node_modules", ".next", "out", "dist"]
 }
