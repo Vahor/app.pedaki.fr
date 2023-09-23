@@ -72,11 +72,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/db
       '@pulumi/aws':
-        specifier: ^6.2.0
-        version: 6.2.0
+        specifier: ^6.2.1
+        version: 6.2.1
       '@pulumi/pulumi':
-        specifier: ^3.84.0
-        version: 3.84.0
+        specifier: ^3.85.0
+        version: 3.85.0
       '@pulumi/random':
         specifier: ^4.14.0
         version: 4.14.0
@@ -84,8 +84,8 @@ importers:
         specifier: ^0.6.1
         version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
       '@trpc/server':
-        specifier: 10.37.1
-        version: 10.37.1
+        specifier: 10.38.4
+        version: 10.38.4
       fastify:
         specifier: ^4.23.2
         version: 4.23.2
@@ -97,7 +97,7 @@ importers:
         version: 1.13.1
       trpc-openapi:
         specifier: ^1.2.0
-        version: 1.2.0(@trpc/server@10.37.1)(zod@3.22.2)
+        version: 1.2.0(@trpc/server@10.38.4)(zod@3.22.2)
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -127,7 +127,7 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(@prisma/client@5.3.1)
       '@hookform/resolvers':
-        specifier: ^3.1.1
+        specifier: ^3.3.1
         version: 3.3.1(react-hook-form@7.46.2)
       '@pedaki/api':
         specifier: workspace:*
@@ -148,20 +148,20 @@ importers:
         specifier: ^0.6.1
         version: 0.6.1(typescript@5.2.2)(zod@3.22.2)
       '@tanstack/react-query':
-        specifier: ^4.32.6
+        specifier: ^4.35.3
         version: 4.35.3(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client':
-        specifier: 10.37.1
-        version: 10.37.1(@trpc/server@10.37.1)
+        specifier: 10.38.4
+        version: 10.38.4(@trpc/server@10.38.4)
       '@trpc/next':
-        specifier: 10.37.1
-        version: 10.37.1(@tanstack/react-query@4.35.3)(@trpc/client@10.37.1)(@trpc/react-query@10.37.1)(@trpc/server@10.37.1)(next@13.5.2)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 10.38.4
+        version: 10.38.4(@tanstack/react-query@4.35.3)(@trpc/client@10.38.4)(@trpc/react-query@10.38.4)(@trpc/server@10.38.4)(next@13.5.2)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
-        specifier: 10.37.1
-        version: 10.37.1(@tanstack/react-query@4.35.3)(@trpc/client@10.37.1)(@trpc/server@10.37.1)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 10.38.4
+        version: 10.38.4(@tanstack/react-query@4.35.3)(@trpc/client@10.38.4)(@trpc/server@10.38.4)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server':
-        specifier: 10.37.1
-        version: 10.37.1
+        specifier: 10.38.4
+        version: 10.38.4
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
@@ -203,7 +203,7 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
       autoprefixer:
-        specifier: ^10.4.15
+        specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.30)
       postcss:
         specifier: ^8.4.30
@@ -1398,10 +1398,10 @@ packages:
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
     dev: false
 
-  /@pulumi/aws@6.2.0:
-    resolution: {integrity: sha512-8AnslzYTSLJr5JJpjOM4hG7XWZi25XvpV+YUHrjGcwuL+KlYDBmnZIbQmVANdX3DiCcY+PsQa5uIkwW82YQ+vA==}
+  /@pulumi/aws@6.2.1:
+    resolution: {integrity: sha512-i6DcHpi9BkIX1Tx5Z2L+O3HlL3uxF5o1YqI3Ol5U7zPiROgUkZ9O7+xPqJEeL6zLZw/HyV3FFZRGco2oX+Mk+g==}
     dependencies:
-      '@pulumi/pulumi': 3.84.0
+      '@pulumi/pulumi': 3.85.0
       builtin-modules: 3.0.0
       mime: 2.6.0
       read-package-tree: 5.3.1
@@ -1410,8 +1410,8 @@ packages:
       - supports-color
     dev: false
 
-  /@pulumi/pulumi@3.84.0:
-    resolution: {integrity: sha512-IfY3mUVsR/6ufibrnA2rVp03E145tKA3W5VdOisyvR4Rnd9L+nCMecD+C+Pl/rFJeW710o4orB2E+QoT+35Ssg==}
+  /@pulumi/pulumi@3.85.0:
+    resolution: {integrity: sha512-eoSTEOpNk8oF2fGcYV6PL3SrbDc3iNQA402Pxq9iuWbyU4J2klzze/qgtLSPLbI24iS6eKWNcHketUQt9bWgXg==}
     engines: {node: '>=8.13.0 || >=10.10.0'}
     dependencies:
       '@grpc/grpc-js': 1.9.3
@@ -1450,7 +1450,7 @@ packages:
   /@pulumi/random@4.14.0:
     resolution: {integrity: sha512-R9GgDbX/PR53C3a9V55FrOHwS3k7YEUr6bDnPcXI3M9PEELFIprYQRnO0oafpE4je5NRxY5a0qQ+TJQLpkhSkA==}
     dependencies:
-      '@pulumi/pulumi': 3.84.0
+      '@pulumi/pulumi': 3.85.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2305,53 +2305,53 @@ packages:
     resolution: {integrity: sha512-AqlrT8YA1o7Ff5wPfMOL0pvL+1X+sw60NN6CcOCqs658emD6RfiXhF7Gu9QcfKBH7ELY2nInLhKSCWVoNL70MQ==}
     dev: true
 
-  /@trpc/client@10.37.1(@trpc/server@10.37.1):
-    resolution: {integrity: sha512-OSblNfeI0Z9ERn3usgLV2x63CwwPoNOHf1FQK85cOT7F8MNaWyEHoEv7tHUwNGJwyzKXmpU+ockZ0movzX3D0g==}
+  /@trpc/client@10.38.4(@trpc/server@10.38.4):
+    resolution: {integrity: sha512-svpZ9Iq9cnn+XfXQZF8PMt1YxAtNYeGiKZ/pGpcume7RqJrra/kWwU41gbax8d/cAg3YKUgNft9dZFKMYtXuYw==}
     peerDependencies:
-      '@trpc/server': 10.37.1
+      '@trpc/server': 10.38.4
     dependencies:
-      '@trpc/server': 10.37.1
+      '@trpc/server': 10.38.4
     dev: false
 
-  /@trpc/next@10.37.1(@tanstack/react-query@4.35.3)(@trpc/client@10.37.1)(@trpc/react-query@10.37.1)(@trpc/server@10.37.1)(next@13.5.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-0KEgr09mBfao56lkj7ZBfVOY86d3+bDH1o0zJkDHSH60Dp/hIJ7wLCnZJIhePlZxEwknCQjVeLsTy4Pqlu8NyQ==}
+  /@trpc/next@10.38.4(@tanstack/react-query@4.35.3)(@trpc/client@10.38.4)(@trpc/react-query@10.38.4)(@trpc/server@10.38.4)(next@13.5.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-PBpzJtHv6ycNOinydO546eIIgqqZ5SaI4gIO7CZGVD039lEWsQadHoTAEo3n3KLvwjo4kxtzGCl6WHUs6EOtTA==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
-      '@trpc/client': 10.37.1
-      '@trpc/react-query': 10.37.1
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.38.4
+      '@trpc/react-query': 10.38.4
+      '@trpc/server': 10.38.4
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 4.35.3(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client': 10.37.1(@trpc/server@10.37.1)
-      '@trpc/react-query': 10.37.1(@tanstack/react-query@4.35.3)(@trpc/client@10.37.1)(@trpc/server@10.37.1)(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.38.4(@trpc/server@10.38.4)
+      '@trpc/react-query': 10.38.4(@tanstack/react-query@4.35.3)(@trpc/client@10.38.4)(@trpc/server@10.38.4)(react-dom@18.2.0)(react@18.2.0)
+      '@trpc/server': 10.38.4
       next: 13.5.2(@babel/core@7.22.20)(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-ssr-prepass: 1.5.0(react@18.2.0)
     dev: false
 
-  /@trpc/react-query@10.37.1(@tanstack/react-query@4.35.3)(@trpc/client@10.37.1)(@trpc/server@10.37.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-TbOOPp0fZVaKfaeEyDoV8QeTHW1vgPTbfOs0uSQ4AzBXqXPu+9v1B44z8GGRJSdUxuOX9pG/6Ap5Kx8PQ3eF+Q==}
+  /@trpc/react-query@10.38.4(@tanstack/react-query@4.35.3)(@trpc/client@10.38.4)(@trpc/server@10.38.4)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-wEreUn9E+ZMKn/oRWlhHzmSgG5SG9WpmE1F27PPjn3I0S92aYRQvVsmV43v2OAL1VUYP2aHLk7gXx2luKLLRyw==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
-      '@trpc/client': 10.37.1
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.38.4
+      '@trpc/server': 10.38.4
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 4.35.3(react-dom@18.2.0)(react@18.2.0)
-      '@trpc/client': 10.37.1(@trpc/server@10.37.1)
-      '@trpc/server': 10.37.1
+      '@trpc/client': 10.38.4(@trpc/server@10.38.4)
+      '@trpc/server': 10.38.4
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@trpc/server@10.37.1:
-    resolution: {integrity: sha512-r3VeA319/braYMBIzj+XLgLKQ9lJSVglvPvP9HUv4kr5w6Y5grQMxMcExhTiZWltE9bnSJHKtBBzHafOo7KC8A==}
+  /@trpc/server@10.38.4:
+    resolution: {integrity: sha512-xSMTwnKA/Unxu5fbAkQ7cApHeWj1rTEA3XgrGDcPHn03fmeIidIKxronM46N46ZF4CCexey4JWzu89XxA16uIA==}
     dev: false
 
   /@types/chai-subset@1.3.3:
@@ -6755,13 +6755,13 @@ packages:
     hasBin: true
     dev: true
 
-  /trpc-openapi@1.2.0(@trpc/server@10.37.1)(zod@3.22.2):
+  /trpc-openapi@1.2.0(@trpc/server@10.38.4)(zod@3.22.2):
     resolution: {integrity: sha512-pfYoCd/3KYXWXvUPZBKJw455OOwngKN/6SIcj7Yit19OMLJ+8yVZkEvGEeg5wUSwfsiTdRsKuvqkRPXVSwV7ew==}
     peerDependencies:
       '@trpc/server': ^10.0.0
       zod: ^3.14.4
     dependencies:
-      '@trpc/server': 10.37.1
+      '@trpc/server': 10.38.4
       co-body: 6.1.0
       h3: 1.8.1
       lodash.clonedeep: 4.5.0
