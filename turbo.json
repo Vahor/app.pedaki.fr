@@ -8,6 +8,11 @@
     "DATABASE_URL",
     "NEXT_PUBLIC_MAIN_URL"
   ],
+  "globalEnv": [
+    "NODE_ENV",
+    "DTS_ONLY",
+    "API_DTS_ONLY"
+  ],
   "remoteCache": {
     "signature": true
   },
