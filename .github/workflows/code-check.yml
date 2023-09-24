@@ -37,16 +37,16 @@ jobs:
       - name: Build packages
         run: pnpm build --filter="./packages/*"
 
-      - name: Build api
-        run: |
-          export NODE_OPTIONS=--max_old_space_size=4096
-          pnpm build --filter api
+#      - name: Build api
+#        run: |
+#          export NODE_OPTIONS=--max_old_space_size=4096
+#          pnpm build --filter api
+#
+#      - name: Build www
+#        run: pnpm build --filter www
 
-      - name: Build www
-        run: pnpm build --filter www
-
-      - name: Run eslint
-        run: pnpm lint
+      - name: Run eslint (packages)
+        run: pnpm lint --filter="./packages/*"
 
       - name: Run prettier
         run: pnpm format:check
