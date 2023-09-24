@@ -6,7 +6,7 @@ export default defineConfig((options: Options) => ({
   splitting: true,
   entry: ['src/**/*.(tsx|ts|cjs)'],
   format: ['cjs'],
-  dts: true,
+  dts: process.env.NODE_ENV !== 'production',
   sourcemap: true,
   minify: false,
   minifyWhitespace: true,
