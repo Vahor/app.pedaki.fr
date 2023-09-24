@@ -19,9 +19,9 @@
   "packageManager": "pnpm@8.7.6",
   "scripts": {
     "build": "next build",
-    "dev": "dotenv -- next dev -p 3000",
+    "dev": "dotenv -- next dev -p 4000",
     "lint": "dotenv -- next lint",
-    "start": "next start",
+    "start": "next start -p 4000",
     "clean": "rimraf .next",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",

@@ -2,7 +2,7 @@ import { Separator } from '@pedaki/design/ui/separator';
 import { User } from '~/app/user';
 import { env } from '~/env.mjs';
 import { auth } from '~/server/auth';
-import {DeleteAccountButton, LoginButton, LogoutButton, SendMailButton} from './auth';
+import { DeleteAccountButton, LoginButton, LogoutButton, SendMailButton } from './auth';
 
 export default async function Home() {
   const session = await auth();

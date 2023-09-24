@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "noEmit": true,
-    "incremental": true,
+    "incremental": false,
     "noUncheckedIndexedAccess": true,
     "composite": false,
     "declaration": false,

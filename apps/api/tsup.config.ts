@@ -8,7 +8,7 @@ export default defineConfig((options: Options) => ({
   splitting: true,
   entry: ['src/**/*.(tsx|ts|cjs)', '!src/**/*.(config|test).(tsx|ts|cjs)'],
   format: ['cjs'],
-  dts: false,
+  dts: true,
   sourcemap: true,
   minify: false,
   minifyWhitespace: true,

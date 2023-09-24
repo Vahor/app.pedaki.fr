@@ -1,9 +1,8 @@
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
-import { getToken  } from 'next-auth/jwt';
+import { getToken } from 'next-auth/jwt';
 import type { GetTokenParams, JWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
-
   interface Session extends Omit<DefaultSession, 'user'> {
     user: {
       image: string;
@@ -23,8 +22,7 @@ declare module 'next-auth' {
   }
 }
 
-
-declare module "next-auth/jwt" {
+declare module 'next-auth/jwt' {
   // Globally the same thing, this is the output type of the `jwt` callback
   // One main difference is the picture field which corresponds to the user's image field
   interface JWT {

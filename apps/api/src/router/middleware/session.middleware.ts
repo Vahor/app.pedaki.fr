@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
-import type {Context} from "~/router/context";
-import {t} from "~/router/init";
+import type { Context } from '~/router/context';
+import { t } from '~/router/init';
 
 // infers the `session` as non-nullable
 const ctxWithUser = (ctx: Context) => {

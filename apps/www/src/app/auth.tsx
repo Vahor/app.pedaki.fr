@@ -1,9 +1,9 @@
 'use client';
 
+import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
+import { api } from '~/server/api/clients/client';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import {api} from "~/server/api/clients/client";
-import {wrapWithLoading} from "@pedaki/common/utils/wrap-with-loading";
 
 export const LoginButton = () => {
   return <Button onClick={() => void signIn()}>Sign in</Button>;
@@ -13,38 +13,46 @@ export const LogoutButton = () => {
   return <Button onClick={() => void signOut()}>Sign Out</Button>;
 };
 
-
 export const DeleteAccountButton = () => {
   const deleteAccountMutation = api.auth.debug_delete_account.useMutation();
   const { data: session } = useSession();
 
-
   const handleDeleteAccount = async () => {
-    return wrapWithLoading(() => deleteAccountMutation.mutateAsync({
-      id: session!.user.id,
-    }), {
-      successProps: () => ({
-        title: 'Account deleted',
-      }),
-    }).then(() => {
-        signOut();
+    return wrapWithLoading(
+      () =>
+        deleteAccountMutation.mutateAsync({
+          id: session!.user.id,
+        }),
+      {
+        successProps: () => ({
+          title: 'Account deleted',
+        }),
+      },
+    ).then(() => {
+      void signOut();
     });
-  }
+  };
 
   return <Button onClick={handleDeleteAccount}>Delete Account</Button>;
-}
+};
 
 export const SendMailButton = () => {
   const sendMailMutation = api.auth.debug_send_validation_email.useMutation();
 
-    const handleSendMail = async () => {
-        return wrapWithLoading(() => sendMailMutation.mutateAsync({
-        }), {
-            successProps: () => ({
-                title: 'Email sent',
-            }),
-        });
-    }
+  const handleSendMail = async () => {
+    return wrapWithLoading(() => sendMailMutation.mutateAsync(), {
+      successProps: () => ({
+        title: 'Email sent',
+      }),
+      errorProps: error => {
+        return {
+          title: 'Email not sent',
+          description: error.message ?? 'Unknown error',
+        };
+      },
+      throwOnError: false,
+    });
+  };
 
-    return <Button onClick={handleSendMail}>Send Mail</Button>;
-}
+  return <Button onClick={handleSendMail}>Send Mail</Button>;
+};

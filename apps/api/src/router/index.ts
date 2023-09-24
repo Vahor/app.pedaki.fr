@@ -7,4 +7,6 @@ export const appRouter = router({
   auth: authRouter,
 });
 
+appRouter.createCaller;
+
 export type AppRouter = typeof appRouter;

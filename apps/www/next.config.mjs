@@ -12,12 +12,9 @@ const config = {
         esmExternals: true,
     },
 
-    transpilePackages: ["@pedaki/common"],
-
     images: {
         domains: ["pedaki.fr"],
     },
-
 
     redirects: async () => [
     ],

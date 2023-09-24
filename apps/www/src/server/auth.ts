@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
       };
     },
     signIn: ({ user, account }) => {
-      console.log("Sign In Callback", { user, account });
+      console.log('Sign In Callback', { user, account });
 
       // TODO check spam email
 
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
           name: profile.name,
           email: profile.email,
           image: generateDataURL(profile.name, 128),
-          emailVerified: profile.email_verified ? new Date() : false,
+          emailVerified: profile.email_verified ? new Date() : null,
         };
       },
     }),
@@ -105,7 +105,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
-          emailVerified: user.emailVerified ?? false,
+          emailVerified: user.emailVerified,
         };
       },
     }),

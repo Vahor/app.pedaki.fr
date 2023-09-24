@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserModelSchema } from '@pedaki/api/src/models/user.model';
+import { UserModelSchema } from '@pedaki/api/models/user.model';
 import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
 import {

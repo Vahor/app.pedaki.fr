@@ -4,7 +4,6 @@ import { z } from 'zod';
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    DEV: z.coerce.boolean().default(false),
     PORT: z.coerce.number().default(8080),
 
     PULUMI_ACCESS_TOKEN: z.string(),
@@ -20,8 +19,7 @@ export const env = createEnv({
 
     DATABASE_URL: z.string().url(),
 
-    APP_URL: z.string().url().default("https://app.pedaki.fr"),
-
+    APP_URL: z.string().url().default('https://app.pedaki.fr'),
   },
   runtimeEnv: process.env,
 });
