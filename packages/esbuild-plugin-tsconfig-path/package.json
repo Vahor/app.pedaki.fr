@@ -1,22 +1,21 @@
 {
-  "name": "@pedaki/settings",
+  "name": "@pedaki/esbuild-plugin-tsconfig-paths",
   "version": "0.0.0",
   "private": true,
-  "main": "index.js",
   "publishConfig": {
     "directory": "dist"
   },
+  "contributors": [
+    {
+      "name": "wujf1@foxmail.com"
+    }
+  ],
   "scripts": {
+    "build": "tsup",
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "typecheck": "tsc --noEmit",
-
-    "build": "tsup && copyfiles \"./package.json\" \"dist\""
-  },
-  "devDependencies": {
-    "@pedaki/db": "workspace:*",
-    "@pedaki/esbuild-plugin-tsconfig-paths": "workspace:*"
+    "typecheck": "tsc --noEmit"
   },
   "prettier": "@pedaki/prettier-config"
 }

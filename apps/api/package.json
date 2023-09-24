@@ -28,6 +28,7 @@
     "@pedaki/db": "workspace:*",
     "@pedaki/mailer": "^0.0.2",
     "@pedaki/settings": "workspace:*",
+    "@pedaki/esbuild-plugin-tsconfig-paths": "workspace:*",
     "@pulumi/aws": "^6.2.1",
     "@pulumi/pulumi": "^3.85.0",
     "@pulumi/random": "^4.14.0",
@@ -45,7 +46,6 @@
     "@pedaki/prettier-config": "^0.0.5",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/node": "^18.17.0",
-    "esbuild-plugin-alias-path": "^2.0.2",
     "esbuild-plugin-tsconfig-paths": "^1.0.1",
     "preview-email": "^3.0.19",
     "tsx": "^3.13.0"
