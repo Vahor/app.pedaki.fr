@@ -35,8 +35,14 @@ jobs:
       - name: Install deps
         run: pnpm install --child-concurrency 3 --frozen-lockfile --prefer-offline
 
-      - name: Build
-        run: pnpm build
+      - name: Build packages
+        run: pnpm build --filter="./packages/*"
+
+      - name: Build api
+        run: pnpm build --filter api
+
+      - name: Build www
+        run: pnpm build --filter www
 
       - name: Run eslint
         run: pnpm lint
