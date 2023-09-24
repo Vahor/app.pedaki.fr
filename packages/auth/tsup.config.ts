@@ -1,10 +1,12 @@
-import { tsconfigPathsPlugin } from '@pedaki/esbuild-plugin-tsconfig-paths';
+import cpy from 'cpy';
+import execa from 'execa';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 
 export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
+  outDir: 'dist',
   entry: ['src/**/*.(tsx|ts|cjs)'],
   format: process.env.DTS_ONLY ? [] : ['cjs'],
   dts: process.env.NODE_ENV !== 'production',
@@ -14,13 +16,13 @@ export default defineConfig((options: Options) => ({
   keepNames: true,
   clean: true,
   bundle: false,
-  esbuildPlugins: [
-    // This plugin is required because there is an issue with tsup when bundle is set to false
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    tsconfigPathsPlugin({
-      tsconfig: 'tsconfig.json',
-      filter: /src*/,
-    }),
-  ],
+  onSuccess: async () => {
+    await cpy('package.json', 'dist');
+    await execa.command('pwd', { stdout: process.stdout, stderr: process.stderr });
+    await execa.command('pnpm exec tsconfig-replace-paths', {
+      stdout: process.stdout,
+      stderr: process.stderr,
+    });
+  },
   ...options,
 }));

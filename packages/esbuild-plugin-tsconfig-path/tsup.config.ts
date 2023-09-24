@@ -1,3 +1,4 @@
+import cpy from 'cpy';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 
@@ -14,5 +15,8 @@ export default defineConfig((options: Options) => ({
   clean: true,
   bundle: false,
   tsconfig: 'tsconfig.json',
+  onSuccess: async () => {
+    await cpy('package.json', 'dist');
+  },
   ...options,
 }));

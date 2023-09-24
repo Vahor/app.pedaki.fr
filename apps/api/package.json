@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index",
-    "build": "tsup && tsup --config models.tsup.config.ts && copyfiles \"./package.json\" \"dist\"",
+    "build": "tsup",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
