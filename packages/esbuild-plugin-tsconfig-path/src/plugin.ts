@@ -1,5 +1,5 @@
-import { createMatchPath } from 'tsconfig-paths/lib/index';
 import type { Plugin } from 'esbuild';
+import { createMatchPath } from 'tsconfig-paths/lib/index';
 import type ts from 'typescript';
 import { DEFAULT_CONFIG_NAME, DEFAULT_FILTER, PLUGIN_NAME } from './constants';
 import { getTransformer } from './transformer';
@@ -32,9 +32,9 @@ export function tsconfigPathsPlugin(options?: TsconfigPathsPluginOptions): Plugi
   const pathMatcher = createMatchPath(baseUrl!, paths, ['main']);
 
   const pathsPattern = Object.keys(paths)
-      .map(path => path.replace('/', '\\/'))
-      .map(path => `(:?${path})`)
-      .join('|');
+    .map(path => path.replace('/', '\\/'))
+    .map(path => `(:?${path})`)
+    .join('|');
   const filterRegex = new RegExp(`(${pathsPattern})`);
 
   return {
@@ -46,14 +46,13 @@ export function tsconfigPathsPlugin(options?: TsconfigPathsPluginOptions): Plugi
         // grep the file to check that it contains a path that needs to be resolved
         const fileContents = tsLib.sys.readFile(fromPath);
         if (!fileContents) {
-            return;
+          return;
         }
         const hasPath = filterRegex.test(fileContents);
         if (!hasPath) {
-            return;
+          return;
         }
         console.log(`[${PLUGIN_NAME}] Fixing path alias in ${fromPath}`);
-
 
         const program = tsLib.createProgram([fromPath], {});
         const sourceFile = program.getSourceFile(fromPath);
@@ -69,6 +68,6 @@ export function tsconfigPathsPlugin(options?: TsconfigPathsPluginOptions): Plugi
           loader: 'ts',
         };
       });
-    }
+    },
   };
 }

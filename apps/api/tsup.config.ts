@@ -5,8 +5,13 @@ import { defineConfig } from 'tsup';
 export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
-  entry: ['src/**/*.(tsx|ts|cjs)', '!src/**/*.(config|test).(tsx|ts|cjs)'],
-  format: (process.env.API_DTS_ONLY !== undefined || process.env.DTS_ONLY !== undefined) ? [] : ['cjs'],
+  entry: [
+    'src/**/*.(tsx|ts|cjs)',
+    '!src/**/*.(config|test).(tsx|ts|cjs)',
+    '!src/**/*.(schema|model).ts',
+  ],
+  format:
+    process.env.API_DTS_ONLY !== undefined || process.env.DTS_ONLY !== undefined ? [] : ['cjs'],
   dts: process.env.NODE_ENV !== 'production',
   sourcemap: true,
   minify: false,
