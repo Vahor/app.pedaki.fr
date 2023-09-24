@@ -15,7 +15,9 @@ export function createServer() {
   const dev = env.DEV;
   const port = env.PORT;
 
-  const server = fastify({ logger: dev });
+  const server = fastify({
+    logger: false
+  });
 
   const setupSwagger = async () => {
     // Server Swagger UI

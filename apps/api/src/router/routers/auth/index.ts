@@ -37,10 +37,10 @@ export const authRouter = router({
         .output(z.any())
         .mutation(async ({input}) => {
             try {
-                await prisma.user.delete({
+                 await prisma.user.delete({
                     where: {
                         id: input.id,
-                    },
+                    }
                 });
             } catch (e) {
                 // If the user doesn't exist, we don't care

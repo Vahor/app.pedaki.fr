@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: ({ session, token }) => {
-      console.log("Session Callback", { session, token });
+      // console.log("Session Callback", { session, token });
       return {
         ...session,
         user: {
@@ -62,13 +62,14 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       profile(profile: GoogleProfile) {
-        console.log('google profile', profile);
+        // Called only for the first login
+        // The output data is then inserted in the database
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: generateDataURL(profile.name, 128),
-          emailVerified: false,
+          emailVerified: profile.email_verified ? new Date() : false,
         };
       },
     }),
@@ -104,7 +105,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
-          emailVerified: user.emailVerified,
+          emailVerified: user.emailVerified ?? false,
         };
       },
     }),
