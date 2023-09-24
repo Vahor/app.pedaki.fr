@@ -1,5 +1,5 @@
-import tsPaths from 'tsconfig-paths';
-import ts from 'typescript';
+import type tsPaths from 'tsconfig-paths';
+import type ts from 'typescript';
 import { getNoAliasPath } from './utils';
 
 interface GetTransformerOptions {

@@ -1,6 +1,6 @@
 import { createMatchPath } from 'tsconfig-paths/lib/index';
 import type { Plugin } from 'esbuild';
-import ts from 'typescript';
+import type ts from 'typescript';
 import { DEFAULT_CONFIG_NAME, DEFAULT_FILTER, PLUGIN_NAME } from './constants';
 import { getTransformer } from './transformer';
 import { TsLibFactory } from './TsLibFactory';

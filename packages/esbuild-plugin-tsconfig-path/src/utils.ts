@@ -1,6 +1,6 @@
 import os from 'os';
 import path from 'path';
-import tsPaths from 'tsconfig-paths';
+import type tsPaths from 'tsconfig-paths';
 
 export function getNoAliasPath(sourcePath: string, importPath: string, matcher: tsPaths.MatchPath) {
   let formatSourcePath = sourcePath;
