@@ -3,6 +3,9 @@
   "globalDependencies": [
     "**/.env.*local"
   ],
+  "remoteCache": {
+    "signature": true
+  },
   "pipeline": {
     "build": {
       "dependsOn": [
