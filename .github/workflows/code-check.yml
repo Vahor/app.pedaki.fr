@@ -52,4 +52,4 @@ jobs:
         run: pnpm format:check
 
       - name: Run typecheck (packages)
-        run: pnpm typecheck
+        run: pnpm typecheck  --filter="./packages/*"
