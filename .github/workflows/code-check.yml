@@ -13,6 +13,7 @@ jobs:
     name: Code check
     env:
       SKIP_ENV_VALIDATION: true
+      NEXT_TELEMETRY_DISABLED: 1
 
     runs-on: ubuntu-latest
     steps:
@@ -32,8 +33,8 @@ jobs:
       - name: Install deps
         run: pnpm install --child-concurrency 3 --frozen-lockfile --prefer-offline
 
-      - name: Generate db types
-        run: pnpm build --filter='./packages/*'
+      - name: Build
+        run: pnpm build
 
       - name: Run eslint
         run: pnpm lint

@@ -19,6 +19,7 @@ export default async function ConfirmEmailPage({
   });
 
   if (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return <pre>{error.message}</pre>;
   }
 
