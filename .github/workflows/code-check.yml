@@ -14,8 +14,7 @@ jobs:
     env:
       SKIP_ENV_VALIDATION: true
       NEXT_TELEMETRY_DISABLED: 1
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: nathan
+      DTS_ONLY: true
 
     runs-on: ubuntu-latest
     steps:

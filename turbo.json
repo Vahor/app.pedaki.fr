@@ -3,6 +3,11 @@
   "globalDependencies": [
     "**/.env.*local"
   ],
+  "globalPassThroughEnv": [
+    "RESEND_API_KEY",
+    "DATABASE_URL",
+    "NEXT_PUBLIC_MAIN_URL"
+  ],
   "remoteCache": {
     "signature": true
   },

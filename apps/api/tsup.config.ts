@@ -6,7 +6,7 @@ export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
   entry: ['src/**/*.(tsx|ts|cjs)', '!src/**/*.(config|test).(tsx|ts|cjs)'],
-  format: ['cjs'],
+  format: process.env.DTS_ONLY ? [] : ['cjs'],
   dts: true,
   sourcemap: true,
   minify: false,
