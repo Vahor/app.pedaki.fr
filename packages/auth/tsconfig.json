@@ -27,6 +27,9 @@
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": [
     ".eslintrc.cjs",

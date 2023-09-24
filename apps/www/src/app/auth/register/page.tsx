@@ -7,7 +7,7 @@ export default function RegisterPage() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">Inscription</h1>
-            <p className="text-secondary text-sm">
+            <p className="text-sm text-secondary">
               Créez votre compte pour accéder à l&apos;application.
             </p>
           </div>

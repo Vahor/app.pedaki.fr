@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { LocalWorkspace } from '@pulumi/pulumi/automation';
 import type { PulumiFn } from '@pulumi/pulumi/automation';
+import { env } from '~/env';
 import * as z from 'zod';
-import { env } from '../../../env';
 
 export const projectName = 'user-app';
 export const organisation = 'pedaki';

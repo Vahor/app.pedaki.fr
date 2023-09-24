@@ -45,7 +45,7 @@ export function createServer() {
       parseOptions: {},
     });
     await server.register(fastifyTRPCPlugin, {
-      prefix: "/t/api",
+      prefix: '/t/api',
       useWSS: false,
       trpcOptions: { router: appRouter, createContext },
     });

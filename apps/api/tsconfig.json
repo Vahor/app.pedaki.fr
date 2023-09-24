@@ -26,7 +26,10 @@
     "preserveWatchOutput": true,
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": [
     ".eslintrc.cjs",

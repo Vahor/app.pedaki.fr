@@ -1,11 +1,12 @@
 'use client';
 
+import { Button } from '@pedaki/design/ui/button';
 import { signIn, signOut } from 'next-auth/react';
 
 export const LoginButton = () => {
-  return <button onClick={() => void signIn()}>Sign in</button>;
+  return <Button onClick={() => void signIn()}>Sign in</Button>;
 };
 
 export const LogoutButton = () => {
-  return <button onClick={() => void signOut()}>Sign Out</button>;
+  return <Button onClick={() => void signOut()}>Sign Out</Button>;
 };

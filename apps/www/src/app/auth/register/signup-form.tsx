@@ -198,7 +198,7 @@ export function SignupForm() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-primary text-secondary px-2">OU</span>
+            <span className="bg-primary px-2 text-secondary">OU</span>
           </div>
         </div>
         <div className="flex flex-row space-x-2">
