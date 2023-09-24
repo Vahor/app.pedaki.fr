@@ -21,7 +21,7 @@ importers:
         specifier: ^0.34.5
         version: 0.34.5(vitest@0.34.5)
       copyfiles:
-        specifier: latest
+        specifier: ^2.4.1
         version: 2.4.1
       cross-env:
         specifier: ^7.0.3
@@ -67,13 +67,13 @@ importers:
         version: 1.9.3
       '@pedaki/auth':
         specifier: workspace:*
-        version: link:../../packages/auth
+        version: link:../../packages/auth/dist
       '@pedaki/db':
         specifier: workspace:*
         version: link:../../packages/db
       '@pedaki/settings':
         specifier: workspace:*
-        version: link:../../packages/settings
+        version: link:../../packages/settings/dist
       '@pulumi/aws':
         specifier: ^6.2.1
         version: 6.2.1
@@ -143,7 +143,7 @@ importers:
         version: link:../api
       '@pedaki/auth':
         specifier: workspace:*
-        version: link:../../packages/auth
+        version: link:../../packages/auth/dist
       '@pedaki/common':
         specifier: file:.yalc/@pedaki/common
         version: file:apps/www/.yalc/@pedaki/common(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
@@ -223,6 +223,7 @@ importers:
       '@pedaki/db':
         specifier: workspace:*
         version: link:../db
+    publishDirectory: dist
 
   packages/db:
     dependencies:
@@ -239,6 +240,7 @@ importers:
       '@pedaki/db':
         specifier: workspace:*
         version: link:../db
+    publishDirectory: dist
 
 packages:
 

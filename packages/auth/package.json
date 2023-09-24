@@ -2,14 +2,17 @@
   "name": "@pedaki/auth",
   "version": "0.0.0",
   "private": true,
-  "main": "./dist/index.js",
+  "main": "index.js",
+  "publishConfig": {
+    "directory": "dist"
+  },
   "scripts": {
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "typecheck": "tsc --noEmit",
 
-    "build": "tsup"
+    "build": "tsup && copyfiles \"./package.json\" \"dist\""
   },
   "devDependencies": {
     "@pedaki/db": "workspace:*"

@@ -16,7 +16,47 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/login',
     error: '/auth/login', // Error code passed in query string as ?error=
   },
+  // @ts-expect-error - The type from next-auth and @auth/prisma-adapter are incompatible
   adapter: PrismaAdapter(prisma),
+  callbacks: {
+    jwt: ({ token, user, trigger, session }) => {
+      if (user) {
+        token.id = user.id;
+        token.emailVerified = user.emailVerified ?? false;
+      }
+
+      if (trigger === 'update') {
+        // TODO: Check type of session
+        // We are only expecting the user.emailVerified property to be updated (confirm-email)
+        const checkedSession = session as {
+          user: { emailVerified: boolean };
+        };
+        if (checkedSession.user.emailVerified) {
+          token.emailVerified = checkedSession.user.emailVerified;
+        }
+      }
+
+      return token;
+    },
+    session: ({ session, token }) => {
+      console.log("Session Callback", { session, token });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          emailVerified: token.emailVerified,
+        },
+      };
+    },
+    signIn: ({ user, account }) => {
+      console.log("Sign In Callback", { user, account });
+
+      // TODO check spam email
+
+      return true;
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

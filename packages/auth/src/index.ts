@@ -1,5 +1,6 @@
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
-import { getToken } from 'next-auth/jwt';
+import { getToken  } from 'next-auth/jwt';
+import type {DefaultJWT} from 'next-auth/jwt';
 import type { GetTokenParams, JWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
@@ -8,7 +9,22 @@ declare module 'next-auth' {
       image: string;
       name: string;
       email: string;
+      emailVerified: boolean;
     };
+  }
+
+  // Database results
+  interface User {
+    id: string;
+    image: string;
+    email: string;
+    name: string;
+    emailVerified: Date | false;
+  }
+
+  interface JWT extends DefaultJWT {
+    id: string;
+    emailVerified: boolean;
   }
 }
 
