@@ -15,7 +15,6 @@ jobs:
       SKIP_ENV_VALIDATION: true
       NEXT_TELEMETRY_DISABLED: 1
       DTS_ONLY: true
-      NODE_OPTIONS: --max-old-space-size=4096
 
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +38,9 @@ jobs:
         run: pnpm build --filter="./packages/*"
 
       - name: Build api
-        run: pnpm build --filter api
+        run: |
+          export NODE_OPTIONS=--max_old_space_size=4096
+          pnpm build --filter api
 
       - name: Build www
         run: pnpm build --filter www

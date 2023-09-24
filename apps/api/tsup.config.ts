@@ -12,7 +12,7 @@ export default defineConfig((options: Options) => ({
   format:
     process.env.API_DTS_ONLY !== undefined || process.env.DTS_ONLY !== undefined ? [] : ['cjs'],
   dts: process.env.NODE_ENV !== 'production',
-  sourcemap: true,
+  sourcemap: process.env.DTS_ONLY !== undefined,
   minify: false,
   minifyWhitespace: true,
   keepNames: true,

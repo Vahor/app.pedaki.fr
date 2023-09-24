@@ -9,7 +9,7 @@ export default defineConfig((options: Options) => ({
   entry: ['src/**/*.(tsx|ts|cjs)'],
   format: process.env.DTS_ONLY ? [] : ['cjs'],
   dts: process.env.NODE_ENV !== 'production',
-  sourcemap: true,
+  sourcemap: process.env.DTS_ONLY !== undefined,
   minify: false,
   minifyWhitespace: true,
   keepNames: true,
