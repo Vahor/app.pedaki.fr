@@ -32,7 +32,7 @@
     "@hookform/resolvers": "^3.3.1",
     "@pedaki/api": "workspace:*",
     "@pedaki/auth": "workspace:*",
-    "@pedaki/common": "file:.yalc/@pedaki/common",
+    "@pedaki/common": "^0.0.4",
     "@pedaki/db": "workspace:*",
     "@pedaki/design": "^0.0.3",
     "@t3-oss/env-nextjs": "^0.6.1",

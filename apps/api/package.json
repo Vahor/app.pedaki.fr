@@ -26,7 +26,7 @@
     "@fastify/swagger-ui": "^1.9.3",
     "@pedaki/auth": "workspace:*",
     "@pedaki/db": "workspace:*",
-    "@pedaki/mailer": "file:.yalc/@pedaki/mailer",
+    "@pedaki/mailer": "^0.0.2",
     "@pedaki/settings": "workspace:*",
     "@pulumi/aws": "^6.2.1",
     "@pulumi/pulumi": "^3.85.0",
@@ -40,7 +40,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@pedaki/common": "^0.0.3",
+    "@pedaki/common": "^0.0.4",
     "@pedaki/eslint-config": "^0.0.6",
     "@pedaki/prettier-config": "^0.0.5",
     "@total-typescript/ts-reset": "^0.5.1",
