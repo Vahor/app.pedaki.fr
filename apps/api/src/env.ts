@@ -4,15 +4,22 @@ import { z } from 'zod';
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    DEV: z.coerce.boolean().default(false),
     PORT: z.coerce.number().default(8080),
-
-    TRPC_PREFIX: z.string().default('/trpc'),
 
     PULUMI_ACCESS_TOKEN: z.string(),
     PUBLIC_KEY: z.string().optional(),
 
+    PASSWORD_SALT: z.string().min(1),
+
+    // optional for development
+    RESEND_API_KEY: z.string().min(1),
+    MAILER_PREVIEW: z.coerce.boolean().default(false),
+
     NEXTAUTH_SECRET: z.string().min(1).default('secret'),
+
+    DATABASE_URL: z.string().url(),
+
+    APP_URL: z.string().url().default('https://app.pedaki.fr'),
   },
   runtimeEnv: process.env,
 });

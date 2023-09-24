@@ -16,18 +16,60 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/login',
     error: '/auth/login', // Error code passed in query string as ?error=
   },
+  // @ts-expect-error - The type from next-auth and @auth/prisma-adapter are incompatible
   adapter: PrismaAdapter(prisma),
+  callbacks: {
+    jwt: ({ token, user, trigger, session }) => {
+      if (user) {
+        token.id = user.id;
+        token.emailVerified = user.emailVerified !== null;
+      }
+
+      if (trigger === 'update') {
+        // TODO: Check type of session
+        // We are only expecting the user.emailVerified property to be updated (confirm-email)
+        const checkedSession = session as {
+          user: { emailVerified: boolean };
+        };
+        if (checkedSession.user.emailVerified) {
+          token.emailVerified = checkedSession.user.emailVerified;
+        }
+      }
+
+      return token;
+    },
+    session: ({ session, token }) => {
+      // console.log("Session Callback", { session, token });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          emailVerified: token.emailVerified,
+        },
+      };
+    },
+    signIn: ({ user, account }) => {
+      console.log('Sign In Callback', { user, account });
+
+      // TODO check spam email
+
+      return true;
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       profile(profile: GoogleProfile) {
+        // Called only for the first login
+        // The output data is then inserted in the database
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: generateDataURL(profile.name, 128),
-          emailVerified: false,
+          emailVerified: profile.email_verified ? new Date() : null,
         };
       },
     }),
@@ -58,26 +100,11 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // If it's his first login he doesn't have an image
-        // So we generate one and update his profile
-        let image = user.image;
-        if (!image) {
-          image = generateDataURL(user.name, 128);
-          await prisma.user.update({
-            where: {
-              id: user.id,
-            },
-            data: {
-              image,
-            },
-          });
-        }
-
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-          image: image,
+          image: user.image,
           emailVerified: user.emailVerified,
         };
       },

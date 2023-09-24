@@ -79,10 +79,10 @@ model Workspace {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  name String
+  name String @db.VarChar(100)
 
   // Used as slug, then as subdomain when the workspace is created
-  identifier String? @unique
+  identifier String? @unique @db.VarChar(60)
 
   members     WorkspaceMember[]
   invitations WorkspaceInvitation[]
@@ -157,7 +157,7 @@ model WorkspaceInvitation {
 model WorkspaceRole {
   id String @id @default(cuid()) @db.VarChar(25)
 
-  name        String
+  name        String @db.VarChar(100)
   description String?
 
   workspaceId String @map("workspace_id") @db.VarChar(25)
@@ -222,9 +222,9 @@ model WorkspaceResource {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  region   String
-  provider String
-  type     String
+  region   String @db.VarChar(25)
+  provider String @db.VarChar(25)
+  type     String @db.VarChar(25)
 
   identifier String // aws arm etc
 

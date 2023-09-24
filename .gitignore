@@ -34,3 +34,5 @@ yarn-error.log*
 dist
 .envrc
 /db
+.yalc
+yalc.lock

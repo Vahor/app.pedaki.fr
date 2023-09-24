@@ -4,14 +4,20 @@ import { defineConfig } from 'tsup';
 export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
-  entry: ['src/**/*.(tsx|ts|cjs)', '!src/**/*.(config|test).(tsx|ts|cjs)'],
-  format: ['cjs'],
-  dts: false,
-  sourcemap: true,
+  entry: [
+    'src/**/*.(tsx|ts|cjs)',
+    '!src/**/*.(config|test).(tsx|ts|cjs)',
+    '!src/**/*.(schema|model).ts',
+  ],
+  format:
+    process.env.API_DTS_ONLY !== undefined || process.env.DTS_ONLY !== undefined ? [] : ['cjs'],
+  dts: process.env.NODE_ENV !== 'production',
+  sourcemap: process.env.DTS_ONLY !== undefined,
   minify: false,
   minifyWhitespace: true,
   keepNames: true,
   clean: true,
   bundle: false,
+  tsconfig: 'tsconfig.json',
   ...options,
 }));

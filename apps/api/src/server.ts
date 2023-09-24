@@ -12,11 +12,11 @@ import { createContext } from './router/context';
 import { serverFactory } from './services/architecture/factory';
 
 export function createServer() {
-  const dev = env.DEV;
   const port = env.PORT;
-  const prefix = env.TRPC_PREFIX;
 
-  const server = fastify({ logger: dev });
+  const server = fastify({
+    logger: true,
+  });
 
   const setupSwagger = async () => {
     // Server Swagger UI
@@ -41,12 +41,20 @@ export function createServer() {
   };
 
   const init = async () => {
-    await server.register(cors);
+    const allowedOrigins = ['https://app.pedaki.fr', 'https://www.pedaki.fr'];
+    if (env.NODE_ENV === 'development') {
+      allowedOrigins.push('http://localhost:4000');
+    }
+    await server.register(cors, {
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      origin: allowedOrigins,
+      credentials: true,
+    });
     await server.register(cookie, {
       parseOptions: {},
     });
     await server.register(fastifyTRPCPlugin, {
-      prefix,
+      prefix: '/t/api',
       useWSS: false,
       trpcOptions: { router: appRouter, createContext },
     });

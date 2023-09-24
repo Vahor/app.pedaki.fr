@@ -1,6 +1,6 @@
 'use client';
 
-import type { AppRouter } from '@pedaki/api/src/router';
+import type { AppRouter } from '@pedaki/api/router';
 import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 import { getUrl } from '~/server/api/clients/shared';
@@ -51,6 +51,13 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: getUrl(),
+          fetch(url, options) {
+            return fetch(url, {
+              ...options,
+              signal: options?.signal,
+              credentials: 'include',
+            });
+          },
         }),
       ],
     };

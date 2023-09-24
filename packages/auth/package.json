@@ -2,7 +2,10 @@
   "name": "@pedaki/auth",
   "version": "0.0.0",
   "private": true,
-  "main": "./dist/index.js",
+  "main": "index.js",
+  "publishConfig": {
+    "directory": "dist"
+  },
   "scripts": {
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
@@ -12,7 +15,8 @@
     "build": "tsup"
   },
   "devDependencies": {
-    "@pedaki/db": "workspace:*"
+    "@pedaki/db": "workspace:*",
+    "@pedaki/esbuild-plugin-tsconfig-paths": "workspace:*"
   },
   "prettier": "@pedaki/prettier-config"
 }

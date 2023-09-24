@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index",
-    "build": "tsup",
+    "build": "tsup && tsup --config models.tsup.config.ts",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "directory": "dist"
   },
   "keywords": [],
   "author": "Nathan David <me@vahor.fr>",
@@ -23,7 +26,9 @@
     "@fastify/swagger-ui": "^1.9.3",
     "@pedaki/auth": "workspace:*",
     "@pedaki/db": "workspace:*",
+    "@pedaki/mailer": "^0.0.2",
     "@pedaki/settings": "workspace:*",
+    "@pedaki/esbuild-plugin-tsconfig-paths": "workspace:*",
     "@pulumi/aws": "^6.2.1",
     "@pulumi/pulumi": "^3.85.0",
     "@pulumi/random": "^4.14.0",
@@ -36,12 +41,14 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@pedaki/common": "^0.0.3",
+    "@pedaki/common": "^0.0.4",
     "@pedaki/eslint-config": "^0.0.6",
     "@pedaki/prettier-config": "^0.0.5",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/node": "^18.17.0",
-    "tsx": "^3.12.10"
+    "esbuild-plugin-tsconfig-paths": "^1.0.1",
+    "preview-email": "^3.0.19",
+    "tsx": "^3.13.0"
   },
   "prettier": "@pedaki/prettier-config"
 }

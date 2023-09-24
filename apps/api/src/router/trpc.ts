@@ -1,24 +1,6 @@
-import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-import type { OpenApiMeta } from 'trpc-openapi';
-import { env } from '../env';
-import type { Context } from './context';
-
-const t = initTRPC
-  .meta<OpenApiMeta>()
-  .context<Context>()
-  .create({
-    transformer: superjson,
-    errorFormatter({ error, shape }) {
-      if (error.code === 'INTERNAL_SERVER_ERROR' && env.NODE_ENV === 'production') {
-        return { ...shape, message: 'Internal server error' };
-      }
-      console.log(error);
-      // TODO: add logging here
-      // And prevent sending error to client in production
-      return shape;
-    },
-  });
+import { t } from '~/router/init';
+import { isLogged } from '~/router/middleware/session.middleware';
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
+export const privateProcedure = t.procedure.use(isLogged);

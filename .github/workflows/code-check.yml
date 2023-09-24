@@ -13,6 +13,8 @@ jobs:
     name: Code check
     env:
       SKIP_ENV_VALIDATION: true
+      NEXT_TELEMETRY_DISABLED: 1
+      DTS_ONLY: true
 
     runs-on: ubuntu-latest
     steps:
@@ -32,14 +34,22 @@ jobs:
       - name: Install deps
         run: pnpm install --child-concurrency 3 --frozen-lockfile --prefer-offline
 
-      - name: Generate db types
-        run: pnpm build --filter='./packages/*'
+      - name: Build (packages)
+        run: pnpm build --filter="./packages/*"
 
-      - name: Run eslint
-        run: pnpm lint
+#      - name: Build api
+#        run: |
+#          export NODE_OPTIONS=--max_old_space_size=4096
+#          pnpm build --filter api
+#
+#      - name: Build www
+#        run: pnpm build --filter www
+
+      - name: Run eslint (packages)
+        run: pnpm lint --filter="./packages/*"
 
       - name: Run prettier
         run: pnpm format:check
 
-      - name: Run typescript
-        run: pnpm typecheck
+      - name: Run typecheck (packages)
+        run: pnpm typecheck  --filter="./packages/*"

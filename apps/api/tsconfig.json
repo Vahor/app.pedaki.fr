@@ -1,6 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "outDir": "dist",
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -15,7 +18,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "noEmit": true,
-    "incremental": true,
+    "incremental": false,
     "noUncheckedIndexedAccess": true,
     "composite": false,
     "declaration": false,
@@ -26,7 +29,9 @@
     "preserveWatchOutput": true,
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
-    "baseUrl": "."
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": [
     ".eslintrc.cjs",
@@ -34,6 +39,7 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
+    "node_modules/@pedaki/auth/dist/index.d.ts",
     "src/reset.d.ts"
   ],
   "exclude": ["../node_modules", "node_modules", ".next", "out", "dist"]
