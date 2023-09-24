@@ -5,7 +5,6 @@ import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env';
 import { UserModelSchema } from '~/models/user.model';
-import { t } from '~/router/init';
 import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
 import { getTokenOrThrow } from '~/services/tokens';
 import { z } from 'zod';
