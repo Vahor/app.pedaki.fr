@@ -1,11 +1,13 @@
 import { generateDataURL } from '@pedaki/common/utils/circle-gradient';
-import { hash256, hashPassword } from '@pedaki/common/utils/hash';
+import { hashPassword } from '@pedaki/common/utils/hash';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env';
 import { UserModelSchema } from '~/models/user.model';
-import { confirmEmailFlow } from '~/router/routers/auth/confirmEmailFlow';
+import { t } from '~/router/init';
+import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
+import { getTokenOrThrow } from '~/services/tokens';
 import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../../trpc';
 
@@ -65,41 +67,14 @@ export const authRouter = router({
     .mutation(async ({ input }) => {
       const { token } = input;
 
-      const hashedToken = hash256(token);
+      const tokenRecord = await getTokenOrThrow(prisma, token, true);
 
-      // Look for the token
-      const tokenRecord = await prisma.token.findFirst({
-        where: {
-          type: 'CONFIRM_EMAIL',
-          hashedToken: hashedToken,
-        },
-      });
-
-      // If the token is not found, throw an error
-      if (!tokenRecord) {
+      if (tokenRecord.userId === null) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'INVALID_TOKEN',
         });
       }
-
-      // If the token is expired, throw an error
-      if (tokenRecord.expiresAt < new Date() || tokenRecord.userId === null) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'EXPIRED_TOKEN',
-        });
-      }
-
-      // Delete the token
-      await prisma.token.delete({
-        where: {
-          unique_token: {
-            type: 'CONFIRM_EMAIL',
-            hashedToken: hashedToken,
-          },
-        },
-      });
 
       // If everything is ok, update the user
       await prisma.user.update({
