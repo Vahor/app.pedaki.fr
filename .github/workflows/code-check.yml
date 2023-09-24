@@ -34,7 +34,7 @@ jobs:
       - name: Install deps
         run: pnpm install --child-concurrency 3 --frozen-lockfile --prefer-offline
 
-      - name: Build packages
+      - name: Build (packages)
         run: pnpm build --filter="./packages/*"
 
 #      - name: Build api
@@ -51,5 +51,5 @@ jobs:
       - name: Run prettier
         run: pnpm format:check
 
-      - name: Run typescript
+      - name: Run typecheck (packages)
         run: pnpm typecheck
