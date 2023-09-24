@@ -12,9 +12,16 @@ export const env = createEnv({
 
     PASSWORD_SALT: z.string().min(1),
 
+    // optional for development
+    RESEND_API_KEY: z.string().min(1),
+    MAILER_PREVIEW: z.coerce.boolean().default(false),
+
     NEXTAUTH_SECRET: z.string().min(1).default('secret'),
 
     DATABASE_URL: z.string().url(),
+
+    APP_URL: z.string().url().default("https://app.pedaki.fr"),
+
   },
   runtimeEnv: process.env,
 });

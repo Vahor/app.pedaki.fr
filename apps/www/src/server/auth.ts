@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
     jwt: ({ token, user, trigger, session }) => {
       if (user) {
         token.id = user.id;
-        token.emailVerified = user.emailVerified ?? false;
+        token.emailVerified = user.emailVerified !== null;
       }
 
       if (trigger === 'update') {

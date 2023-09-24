@@ -37,6 +37,7 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
+    "node_modules/@pedaki/auth/dist/index.d.ts",
     "src/reset.d.ts"
   ],
   "exclude": ["../node_modules", "node_modules", ".next", "out", "dist"]

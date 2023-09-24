@@ -1,10 +1,10 @@
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
 import { getToken  } from 'next-auth/jwt';
-import type {DefaultJWT} from 'next-auth/jwt';
 import type { GetTokenParams, JWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
-  interface Session extends DefaultSession {
+
+  interface Session extends Omit<DefaultSession, 'user'> {
     user: {
       image: string;
       name: string;
@@ -13,19 +13,26 @@ declare module 'next-auth' {
       emailVerified: boolean;
     };
   }
-
   // Database results (also the output type of the `authorize`, `profile` callback)
   interface User {
     id: string;
     image: string;
     email: string;
     name: string;
-    emailVerified: Date | false;
+    emailVerified: Date | null;
   }
+}
 
-  interface JWT extends DefaultJWT {
+
+declare module "next-auth/jwt" {
+  // Globally the same thing, this is the output type of the `jwt` callback
+  // One main difference is the picture field which corresponds to the user's image field
+  interface JWT {
+    name: string;
+    email: string;
     id: string;
     emailVerified: boolean;
+    picture: string;
   }
 }
 

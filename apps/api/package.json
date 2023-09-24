@@ -23,6 +23,7 @@
     "@fastify/swagger-ui": "^1.9.3",
     "@pedaki/auth": "workspace:*",
     "@pedaki/db": "workspace:*",
+    "@pedaki/mailer": "file:.yalc/@pedaki/mailer",
     "@pedaki/settings": "workspace:*",
     "@pulumi/aws": "^6.2.1",
     "@pulumi/pulumi": "^3.85.0",
@@ -43,6 +44,7 @@
     "@types/node": "^18.17.0",
     "esbuild-plugin-alias-path": "^2.0.2",
     "esbuild-plugin-tsconfig-paths": "^1.0.1",
+    "preview-email": "^3.0.19",
     "tsx": "^3.12.10"
   },
   "prettier": "@pedaki/prettier-config"

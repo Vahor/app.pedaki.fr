@@ -5,8 +5,9 @@ import type {Prisma} from '@prisma/client';
 import {TRPCError} from '@trpc/server';
 import {env} from '~/env';
 import {UserModelSchema} from '~/models/user.model';
-import {publicProcedure, router} from '../../trpc';
+import {privateProcedure, publicProcedure, router} from '../../trpc';
 import {z} from 'zod';
+import {confirmEmailFlow} from "~/router/routers/auth/confirmEmailFlow";
 
 export const authRouter = router({
     signup: publicProcedure.input(UserModelSchema.omit({id: true})).mutation(async ({input}) => {
@@ -45,6 +46,15 @@ export const authRouter = router({
             } catch (e) {
                 // If the user doesn't exist, we don't care
             }
+        }),
+
+    debug_send_validation_email: privateProcedure
+        .mutation(({ ctx }) => {
+            return confirmEmailFlow(prisma, {
+                id: ctx.session.id,
+                name: ctx.session.name,
+                email: "nathan.d0601@gmail.com" //ctx.session.email
+            });
         }),
 
   profile: publicProcedure

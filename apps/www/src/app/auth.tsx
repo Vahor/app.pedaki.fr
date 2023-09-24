@@ -33,3 +33,18 @@ export const DeleteAccountButton = () => {
 
   return <Button onClick={handleDeleteAccount}>Delete Account</Button>;
 }
+
+export const SendMailButton = () => {
+  const sendMailMutation = api.auth.debug_send_validation_email.useMutation();
+
+    const handleSendMail = async () => {
+        return wrapWithLoading(() => sendMailMutation.mutateAsync({
+        }), {
+            successProps: () => ({
+                title: 'Email sent',
+            }),
+        });
+    }
+
+    return <Button onClick={handleSendMail}>Send Mail</Button>;
+}

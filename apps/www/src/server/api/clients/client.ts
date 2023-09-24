@@ -51,6 +51,13 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: getUrl(),
+          fetch(url, options) {
+            return fetch(url, {
+              ...options,
+              signal: options?.signal,
+              credentials: "include",
+            });
+          },
         }),
       ],
     };
