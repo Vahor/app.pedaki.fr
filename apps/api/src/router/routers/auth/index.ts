@@ -34,7 +34,7 @@ export const authRouter = router({
   }),
 
   debug_delete_account: publicProcedure
-    .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account', tags: ["Auth"] } })
+    .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account', tags: ['Auth'] } })
     .input(UserModel.pick({ id: true }))
     .output(z.any())
     .mutation(async ({ input }) => {
@@ -87,7 +87,7 @@ export const authRouter = router({
     }),
 
   profile: privateProcedure
-    .meta({ openapi: { method: 'GET', path: '/auth/profile', tags: ["Auth"], protect: true } })
+    .meta({ openapi: { method: 'GET', path: '/auth/profile', tags: ['Auth'], protect: true } })
     .input(z.undefined())
     .output(z.any())
     .query(({ ctx }) => {

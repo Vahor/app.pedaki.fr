@@ -1,8 +1,8 @@
 import cpy from 'cpy';
+import { esbuildPluginFilePathExtensions } from 'esbuild-plugin-file-path-extensions';
 import execa from 'execa';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
-import {esbuildPluginFilePathExtensions} from "esbuild-plugin-file-path-extensions";
 
 export default defineConfig((options: Options) => ({
   treeshake: true,
@@ -17,9 +17,7 @@ export default defineConfig((options: Options) => ({
   clean: false,
   bundle: false,
   tsconfig: 'tsconfig.json',
-  plugins: [
-    esbuildPluginFilePathExtensions({esmExtension: 'js' })
-  ],
+  plugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],
   onSuccess: async () => {
     await cpy('package.json', 'dist');
     await execa.command('pnpm exec tsconfig-replace-paths', {

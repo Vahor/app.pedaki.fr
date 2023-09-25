@@ -1,4 +1,4 @@
-import type { Permission } from './ressources';
+import type { Permission } from './ressources.ts';
 
 export const DefaultRoles: Record<string, readonly Permission[]> = {
   OWNER: ['manage:billing:*', 'manage:member:*', 'manage:workspace:*'],

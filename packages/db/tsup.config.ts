@@ -15,10 +15,7 @@ export default defineConfig((options: Options) => ({
   platform: 'node',
   clean: true,
   bundle: true,
-  external: [
-      "@prisma/client",
-      ".prisma/client",
-      ],
+  external: ['@prisma/client', '.prisma/client'],
   onSuccess: async () => {
     await cpy('package.json', 'dist');
   },

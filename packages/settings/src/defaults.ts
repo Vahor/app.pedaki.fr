@@ -1,4 +1,4 @@
-import type { SettingsValueMap } from './index';
+import type { SettingsValueMap } from './index.ts';
 
 export const SettingsDefaults: SettingsValueMap = {
   default_region: 'eu-west-3',

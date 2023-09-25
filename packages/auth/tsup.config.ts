@@ -7,7 +7,7 @@ export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
   outDir: 'dist',
-  entry: ['src/**/*.(tsx|ts|cjs)', "!src/reset.d.ts"],
+  entry: ['src/**/*.(tsx|ts|cjs)', '!src/reset.d.ts'],
   format: process.env.DTS_ONLY ? [] : ['esm'],
   dts: process.env.NODE_ENV !== 'production',
   sourcemap: process.env.DTS_ONLY !== undefined,
@@ -17,9 +17,7 @@ export default defineConfig((options: Options) => ({
   platform: 'node',
   clean: true,
   bundle: true,
-  external: [
-      "next-auth"
-  ],
+  external: ['next-auth'],
   onSuccess: async () => {
     await cpy('package.json', 'dist');
     await execa.command('pwd', { stdout: process.stdout, stderr: process.stderr });
