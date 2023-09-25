@@ -10,3 +10,5 @@ export const UserModel = z.object({
     .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
   name: z.string({ required_error: 'Le nom est requis' }),
 });
+
+export const PublicUserModel = UserModel.omit({ password: true });

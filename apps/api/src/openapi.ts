@@ -6,7 +6,9 @@ const openApiDocument = generateOpenApiDocument(appRouter, {
   title: 'Pedaki Internal API',
   version: '1.0.0',
   baseUrl:
-    env.NODE_ENV === 'production' ? 'https://api.pedaki.fr/api' : `http://0.0.0.0:${env.PORT}/api`,
+    env.NODE_ENV === 'production'
+      ? 'https://api.pedaki.fr/api'
+      : `http://localhost:${env.PORT}/api`,
   securitySchemes: {
     bearerAuth: {
       type: 'http',

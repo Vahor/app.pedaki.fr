@@ -4,7 +4,8 @@ import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env';
-import { UserModel } from '~/models/user.model';
+import { PublicUserModel, UserModel } from '~/models/user.model';
+import { WorkspaceModel } from '~/models/workspace.model.ts';
 import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
 import { getTokenOrThrow } from '~/services/tokens';
 import { z } from 'zod';
@@ -89,7 +90,15 @@ export const authRouter = router({
   profile: privateProcedure
     .meta({ openapi: { method: 'GET', path: '/auth/profile', tags: ['Auth'], protect: true } })
     .input(z.undefined())
-    .output(z.any())
+    .output(
+      PublicUserModel.pick({
+        id: true,
+        email: true,
+        name: true,
+      }).extend({
+        workspaces: z.array(WorkspaceModel.pick({ id: true })),
+      }),
+    )
     .query(({ ctx }) => {
       return ctx.session;
     }),

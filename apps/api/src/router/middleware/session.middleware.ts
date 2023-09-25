@@ -11,12 +11,14 @@ const ctxWithUser = (ctx: Context) => {
   };
 };
 
+const error = new TRPCError({
+  code: 'UNAUTHORIZED',
+  message: 'You must be logged in',
+});
+
 export const isLogged = t.middleware(({ ctx, next }) => {
   if (!ctx.session?.id) {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You must be logged in',
-    });
+    throw error;
   }
 
   return next(ctxWithUser(ctx));

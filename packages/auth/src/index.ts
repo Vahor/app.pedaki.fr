@@ -10,6 +10,9 @@ declare module 'next-auth' {
       email: string;
       id: string;
       emailVerified: boolean;
+      workspaces: {
+        id: string;
+      }[];
     };
   }
   // Database results (also the output type of the `authorize`, `profile` callback)
@@ -19,6 +22,9 @@ declare module 'next-auth' {
     email: string;
     name: string;
     emailVerified: Date | null;
+    workspaces: {
+      id: string;
+    }[];
   }
 }
 
@@ -31,6 +37,9 @@ declare module 'next-auth/jwt' {
     id: string;
     emailVerified: boolean;
     picture: string;
+    workspaces: {
+      id: string;
+    }[];
   }
 }
 

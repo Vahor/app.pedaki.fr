@@ -38,7 +38,7 @@ export function createServer() {
       createContext,
     });
 
-    console.log(`Swagger UI available on http://0.0.0.0:${port}/docs`);
+    console.log(`Swagger UI available on http://localhost:${port}/docs`);
   };
 
   const init = async () => {
@@ -71,7 +71,7 @@ export function createServer() {
       await setupSwagger();
       server.swagger();
       await server.listen({ port, host: '0.0.0.0' });
-      console.log(`Server listening on http://0.0.0.0:${port}`);
+      console.log(`Server listening on http://localhost:${port}`);
     } catch (err) {
       server.log.error(err);
       throw err;
