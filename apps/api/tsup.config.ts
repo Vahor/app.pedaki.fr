@@ -19,7 +19,7 @@ export default defineConfig((options: Options) => ({
     platform: 'node',
     keepNames: true,
     clean: true,
-    bundle: true,
+    bundle: false,
     tsconfig: 'tsconfig.json',
     plugins: [
         esbuildPluginFilePathExtensions({esmExtension: 'js' })

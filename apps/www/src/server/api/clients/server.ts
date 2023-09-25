@@ -1,9 +1,9 @@
 'use server';
 
-import type { AppRouter } from '@pedaki/api/router';
+import type { AppRouter } from '@pedaki/api/router/index.js';
 import { httpBatchLink, loggerLink } from '@trpc/client';
 import { experimental_createTRPCNextAppDirServer } from '@trpc/next/app-dir/server';
-import { cookies } from 'next/headers';
+import { cookies } from 'next/headers.js';
 import superjson from 'superjson';
 import { getUrl } from './shared';
 

@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserModel } from '@pedaki/api/models/user.model';
-import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
-import { Button } from '@pedaki/design/ui/button';
+import { UserModel } from '@pedaki/api/models/user.model.js';
+import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading.js';
+import { Button } from '@pedaki/design/ui/button.js';
 import {
   Form,
   FormControl,
@@ -11,11 +11,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@pedaki/design/ui/form';
+} from '@pedaki/design/ui/form.js';
 import { IconGoogle, IconSpinner } from '@pedaki/design/ui/icons';
-import { Input } from '@pedaki/design/ui/input';
+import { Input } from '@pedaki/design/ui/input.js';
 import { signIn } from 'next-auth/react';
-import Link from 'next/link';
+import Link from 'next/link.js';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';

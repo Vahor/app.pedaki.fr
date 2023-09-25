@@ -1,7 +1,7 @@
 'use client';
 
-import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
-import { Button } from '@pedaki/design/ui/button';
+import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading.js';
+import { Button } from '@pedaki/design/ui/button.js';
 import { api } from '~/server/api/clients/client';
 import { signIn, signOut, useSession } from 'next-auth/react';
 

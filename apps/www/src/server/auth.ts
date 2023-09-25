@@ -1,7 +1,7 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { baseAuthOptions } from '@pedaki/auth';
-import { generateDataURL } from '@pedaki/common/utils/circle-gradient';
-import { matchPassword } from '@pedaki/common/utils/hash';
+import { generateDataURL } from '@pedaki/common/utils/circle-gradient.js';
+import { matchPassword } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import { env } from '~/env.mjs';
 import type { NextAuthOptions } from 'next-auth';

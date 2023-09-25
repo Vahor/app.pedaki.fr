@@ -1,4 +1,4 @@
-import { SignupForm } from './signup-form';
+import { SignupForm } from './signup-form.tsx';
 
 export default function RegisterPage() {
   return (

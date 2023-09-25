@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation.js';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 

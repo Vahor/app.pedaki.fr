@@ -1,7 +1,7 @@
 import { env } from '~/env.mjs';
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server.js';
 
 // replace this with a manual middleware
 // when on /auth redirect to / if logged in

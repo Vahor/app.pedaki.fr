@@ -1,6 +1,6 @@
 import { HandleErrorCode } from '~/app/auth/error-code';
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from 'next/image.js';
+import Link from 'next/link.js';
 import React, { Suspense } from 'react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

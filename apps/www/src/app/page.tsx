@@ -1,4 +1,4 @@
-import { Separator } from '@pedaki/design/ui/separator';
+import { Separator } from '@pedaki/design/ui/separator.js';
 import { User } from '~/app/user';
 import { env } from '~/env.mjs';
 import { auth } from '~/server/auth';

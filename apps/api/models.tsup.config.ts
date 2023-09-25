@@ -8,14 +8,14 @@ export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
   entry: ['src/**/*.(schema|model).ts', 'src/index.ts'],
-  format: process.env.DTS_ONLY !== undefined ? [] : process.env.API_DTS_ONLY !== undefined ? ['esm'] : ['esm'],
+  format: ['esm'],
   dts: process.env.NODE_ENV !== 'production',
   sourcemap: true,
   minify: false,
   minifyWhitespace: true,
   keepNames: true,
   clean: false,
-  bundle: true,
+  bundle: false,
   tsconfig: 'tsconfig.json',
   plugins: [
     esbuildPluginFilePathExtensions({esmExtension: 'js' })

@@ -9,6 +9,8 @@
     "NODE_ENV",
     "DTS_ONLY",
     "API_DTS_ONLY",
+    "MAILER_PREVIEW",
+    "SKIP_ENV_VALIDATION",
 
     "NEXT_PUBLIC_MAIN_URL",
     "NEXT_PUBLIC_APP_URL",
@@ -27,7 +29,9 @@
 
     "DATABASE_URL",
 
-    "NEXT_PUBLIC_MAIN_URL"
+    "NEXT_PUBLIC_MAIN_URL",
+    "NEXT_PUBLIC_WWW_URL",
+    "NEXT_PUBLIC_DOCS_URL"
   ],
   "remoteCache": {
     "signature": true
