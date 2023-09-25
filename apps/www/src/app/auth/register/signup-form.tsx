@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserModelSchema } from '@pedaki/api/models/user.model';
+import { UserModel } from '@pedaki/api/models/user.model';
 import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
 import {
@@ -21,7 +21,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const LoginFormSchema = UserModelSchema.pick({
+const LoginFormSchema = UserModel.pick({
   email: true,
   password: true,
   name: true,

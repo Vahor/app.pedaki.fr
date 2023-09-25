@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const UserModelSchema = z.object({
+export const UserModel = z.object({
   id: z.string(),
   email: z
     .string({ required_error: "L'adresse email est requise" })

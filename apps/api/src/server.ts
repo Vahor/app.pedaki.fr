@@ -16,7 +16,7 @@ export function createServer() {
   const port = env.PORT;
 
   const server = fastify({
-    logger: true,
+    logger: false,
   });
 
   const setupSwagger = async () => {
@@ -74,7 +74,7 @@ export function createServer() {
       console.log(`Server listening on http://0.0.0.0:${port}`);
     } catch (err) {
       server.log.error(err);
-      process.exit(1);
+      throw err;
     }
   };
 

@@ -82,7 +82,7 @@ model Workspace {
   name String @db.VarChar(100)
 
   // Used as slug, then as subdomain when the workspace is created
-  identifier String? @unique @db.VarChar(60)
+  identifier String @unique @db.VarChar(60)
 
   members     WorkspaceMember[]
   invitations WorkspaceInvitation[]

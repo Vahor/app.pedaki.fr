@@ -8,7 +8,7 @@ const openApiDocument = generateOpenApiDocument(appRouter, {
   baseUrl:
     env.NODE_ENV === 'production'
       ? 'https://api.pedaki.fr/api'
-      : `http://localhost:${env.PORT}/api`,
+      : `http://0.0.0.0:${env.PORT}/api`,
   securitySchemes: {
     bearerAuth: {
       type: 'http',
@@ -16,6 +16,7 @@ const openApiDocument = generateOpenApiDocument(appRouter, {
       bearerFormat: 'JWT',
     },
   },
+  tags: ["Auth", "Stack", "Workspace"],
 });
 
 Object.values(openApiDocument.paths as Record<string, Record<string, any>>).forEach(path => {

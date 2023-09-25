@@ -4,14 +4,14 @@ import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env';
-import { UserModelSchema } from '~/models/user.model';
+import { UserModel } from '~/models/user.model';
 import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
 import { getTokenOrThrow } from '~/services/tokens';
 import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../../trpc.ts';
 
 export const authRouter = router({
-  signup: publicProcedure.input(UserModelSchema.omit({ id: true })).mutation(async ({ input }) => {
+  signup: publicProcedure.input(UserModel.omit({ id: true })).mutation(async ({ input }) => {
     const password = hashPassword(input.password, env.PASSWORD_SALT);
 
     try {
@@ -34,8 +34,8 @@ export const authRouter = router({
   }),
 
   debug_delete_account: publicProcedure
-    .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account' } })
-    .input(UserModelSchema.pick({ id: true }))
+    .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account', tags: ["Auth"] } })
+    .input(UserModel.pick({ id: true }))
     .output(z.any())
     .mutation(async ({ input }) => {
       try {
@@ -86,8 +86,8 @@ export const authRouter = router({
       });
     }),
 
-  profile: publicProcedure
-    .meta({ openapi: { method: 'GET', path: '/auth/profile' } })
+  profile: privateProcedure
+    .meta({ openapi: { method: 'GET', path: '/auth/profile', tags: ["Auth"], protect: true } })
     .input(z.undefined())
     .output(z.any())
     .query(({ ctx }) => {
