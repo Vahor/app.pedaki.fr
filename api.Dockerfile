@@ -20,7 +20,7 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/settings/package.json ./packages/settings/
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY apps/api ./apps/api
 COPY packages ./packages
@@ -34,10 +34,10 @@ RUN cp -r node_modules/.prisma tmp/.prisma
 
 # Delete node_modules and reinstall only production dependencies
 RUN npx rimraf --glob **/node_modules
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter api
+RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter api
 
 # Copy back node_modules/.prisma
-RUN cp -r tmp/.prisma node_modules/.prisma
+RUN cp -r tmp/.prisma node_modules
 
 
 FROM base  AS runner
