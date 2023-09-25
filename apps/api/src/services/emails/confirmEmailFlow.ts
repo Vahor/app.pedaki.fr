@@ -1,7 +1,7 @@
-import { hash256 } from '@pedaki/common/utils/hash';
-import { generateToken } from '@pedaki/common/utils/random';
+import { hash256 } from '@pedaki/common/utils/hash.js';
+import { generateToken } from '@pedaki/common/utils/random.js';
 import { sendEmail } from '@pedaki/mailer';
-import { ConfirmEmailTemplate } from '@pedaki/mailer/templates';
+import ConfirmEmailTemplate from '@pedaki/mailer/templates/confirm-email.js';
 import type { PrismaClient } from '@prisma/client';
 import { env } from '~/env';
 

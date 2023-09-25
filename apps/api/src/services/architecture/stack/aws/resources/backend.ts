@@ -1,6 +1,6 @@
 import { rds } from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
-import type { StackParameters } from '../../type';
+import type { StackParameters } from '../../type.ts';
 
 export interface DbArgs {
   dbName: string;

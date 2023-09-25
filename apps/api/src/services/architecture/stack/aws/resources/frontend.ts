@@ -1,7 +1,7 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env';
-import type { StackParameters } from '../../type';
+import type { StackParameters } from '../../type.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;

@@ -1,11 +1,11 @@
 import * as pulumi from '@pulumi/pulumi';
-import { LocalWorkspace } from '@pulumi/pulumi/automation';
+import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
 import * as random from '@pulumi/random';
-import { PulumiUtils } from '../shared';
-import type { ServerProvider, StackOutputs, StackParameters } from '../type';
-import * as backend from './resources/backend';
-import * as frontend from './resources/frontend';
-import * as network from './resources/network';
+import { PulumiUtils } from '../shared.ts';
+import type { ServerProvider, StackOutputs, StackParameters } from '../type.ts';
+import * as backend from './resources/backend.ts';
+import * as frontend from './resources/frontend.ts';
+import * as network from './resources/network.ts';
 
 export class AwsServerProvider implements ServerProvider<'AWS'> {
   initialized = false;

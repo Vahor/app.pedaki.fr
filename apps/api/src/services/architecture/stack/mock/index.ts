@@ -1,4 +1,4 @@
-import type { ServerProvider, StackOutputs, StackParameters, WorkspaceInstance } from '../type';
+import type { ServerProvider, StackOutputs, StackParameters, WorkspaceInstance } from '../type.ts';
 
 export class TestServerProvider implements ServerProvider<'test'> {
   initialized = false;

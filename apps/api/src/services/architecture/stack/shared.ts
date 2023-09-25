@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { LocalWorkspace } from '@pulumi/pulumi/automation';
-import type { PulumiFn } from '@pulumi/pulumi/automation';
+
+import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
+import type { PulumiFn } from '@pulumi/pulumi/automation/index.js';
 import { env } from '~/env';
 import * as z from 'zod';
 

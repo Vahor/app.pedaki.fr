@@ -1,5 +1,5 @@
 import { generateOpenApiDocument } from 'trpc-openapi';
-import { env } from './env';
+import { env } from './env.ts';
 import { appRouter } from './router';
 
 const openApiDocument = generateOpenApiDocument(appRouter, {

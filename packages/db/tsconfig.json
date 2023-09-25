@@ -1,8 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "outDir": "dist",
     "target": "es2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
@@ -15,7 +22,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
+    "incremental": false,
     "noUncheckedIndexedAccess": true,
     "composite": false,
     "declaration": false,
@@ -25,16 +32,16 @@
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "experimentalDecorators": true,
-    "verbatimModuleSyntax": true,
-    "baseUrl": ".",
+    "verbatimModuleSyntax": true
   },
   "include": [
-    ".eslintrc.cjs",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.cjs",
-    "**/*.mjs",
-    "src/reset.d.ts"
+    "src"
   ],
-  "exclude": ["../node_modules", "node_modules", ".next", "out", "dist"]
+  "exclude": [
+    "../node_modules",
+    "node_modules",
+    ".next",
+    "out",
+    "dist"
+  ]
 }

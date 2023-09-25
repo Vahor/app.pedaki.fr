@@ -1,4 +1,4 @@
-import { hash256 } from '@pedaki/common/utils/hash';
+import { hash256 } from '@pedaki/common/utils/hash.js';
 import type { PrismaClient } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 

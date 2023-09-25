@@ -2,14 +2,15 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+// eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
 import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
-import { env } from './env';
-import { openApiDocument } from './openapi';
+import { env } from './env.ts';
+import { openApiDocument } from './openapi.ts';
 import { appRouter } from './router';
-import { createContext } from './router/context';
-import { serverFactory } from './services/architecture/factory';
+import { createContext } from './router/context.ts';
+import { serverFactory } from './services/architecture/factory.ts';
 
 export function createServer() {
   const port = env.PORT;

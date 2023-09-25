@@ -1,5 +1,5 @@
-import { generateDataURL } from '@pedaki/common/utils/circle-gradient';
-import { hashPassword } from '@pedaki/common/utils/hash';
+import { generateDataURL } from '@pedaki/common/utils/circle-gradient.js';
+import { hashPassword } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -8,7 +8,7 @@ import { UserModelSchema } from '~/models/user.model';
 import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
 import { getTokenOrThrow } from '~/services/tokens';
 import { z } from 'zod';
-import { privateProcedure, publicProcedure, router } from '../../trpc';
+import { privateProcedure, publicProcedure, router } from '../../trpc.ts';
 
 export const authRouter = router({
   signup: publicProcedure.input(UserModelSchema.omit({ id: true })).mutation(async ({ input }) => {
