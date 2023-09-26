@@ -40,6 +40,40 @@ export const workspaceRouter = router({
       }
     }),
 
+  getOne: workspaceProcedure
+    .input(WorkspaceModel.pick({ id: true }))
+    .output(WorkspaceModel)
+    .meta({ openapi: { method: 'GET', path: '/workspace', tags: ['Workspace'] } })
+    .query(async ({ input }) => {
+      const workspace = await prisma.workspace.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+      if (!workspace) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'NOT_FOUND',
+        });
+      }
+      return workspace;
+    }),
+
+  getMany: workspaceProcedure
+    .input(z.object({ ids: z.array(z.string()) }))
+    .output(z.array(WorkspaceModel))
+    .meta({ openapi: { method: 'POST', path: '/workspace/bulk', tags: ['Workspace'] } })
+    .query(async ({ input }) => {
+      const workspaces = await prisma.workspace.findMany({
+        where: {
+          id: {
+            in: input.ids,
+          },
+        },
+      });
+      return workspaces;
+    }),
+
   listMembers: workspaceProcedure
     .input(WorkspaceModel.pick({ id: true }))
     .output(
