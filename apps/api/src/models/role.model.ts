@@ -7,7 +7,7 @@ export const WorkspaceRole = z
   .object({
     name: z.string({ required_error: 'Le nom est requis' }),
     description: z.string().optional(),
-    permissions: z.array(WorkspacePermission.pick({ id: true })),
+    permissions: z.array(WorkspacePermission.pick({ identifier: true })).array(),
   })
   .merge(WithTimestamps)
   .merge(WithId);

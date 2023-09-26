@@ -4,6 +4,8 @@ import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env';
+import { WorkspacePermissionIdentifier } from '~/models/permissions.model.ts';
+import { WorkspaceRole } from '~/models/role.model.ts';
 import { PublicUserModel, UserModel } from '~/models/user.model';
 import { WorkspaceModel } from '~/models/workspace.model.ts';
 import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
@@ -96,7 +98,15 @@ export const authRouter = router({
         email: true,
         name: true,
       }).extend({
-        workspaces: z.array(WorkspaceModel.pick({ id: true })),
+        workspaces: z.array(
+          WorkspaceModel.pick({ id: true }).extend({
+            roles: z.array(
+              WorkspaceRole.pick({ id: true }).extend({
+                permissions: z.array(WorkspacePermissionIdentifier),
+              }),
+            ),
+          }),
+        ),
       }),
     )
     .query(({ ctx }) => {

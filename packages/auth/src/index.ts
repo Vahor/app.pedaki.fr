@@ -1,6 +1,7 @@
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import type { GetTokenParams, JWT } from 'next-auth/jwt';
+import type {Permission} from "~/guards/ressources";
 
 declare module 'next-auth' {
   interface Session extends Omit<DefaultSession, 'user'> {
@@ -12,6 +13,10 @@ declare module 'next-auth' {
       emailVerified: boolean;
       workspaces: {
         id: string;
+        roles: {
+          id: string;
+          permissions: Permission[];
+        }[]
       }[];
     };
   }
@@ -24,6 +29,10 @@ declare module 'next-auth' {
     emailVerified: Date | null;
     workspaces: {
       id: string;
+      roles: {
+        id: string;
+        permissions: Permission[];
+      }[]
     }[];
   }
 }
@@ -39,6 +48,10 @@ declare module 'next-auth/jwt' {
     picture: string;
     workspaces: {
       id: string;
+      roles: {
+        id: string;
+        permissions: Permission[];
+      }[]
     }[];
   }
 }
@@ -64,7 +77,6 @@ export const baseAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
   },
   providers: [],
 } satisfies NextAuthOptions;
