@@ -1,0 +1,39 @@
+import { TRPCError } from '@trpc/server';
+import { TAGS } from '~/router/routers/workspace/shared.ts';
+import { z } from 'zod';
+import { privateProcedure, publicProcedure, router } from '../../trpc.ts';
+
+export const workspaceInvitesRouter = router({
+  create: privateProcedure
+    .input(z.undefined())
+    .output(z.undefined())
+    .meta({ openapi: { method: 'POST', path: '/workspace/invites', tags: TAGS } })
+    .mutation(({ input, ctx }) => {
+      throw new TRPCError({
+        code: 'NOT_IMPLEMENTED',
+        message: 'NOT_IMPLEMENTED',
+      });
+    }),
+
+  getMany: privateProcedure
+    .input(z.undefined())
+    .output(z.undefined())
+    .meta({ openapi: { method: 'GET', path: '/workspace/invites', tags: TAGS } })
+    .mutation(({ input, ctx }) => {
+      throw new TRPCError({
+        code: 'NOT_IMPLEMENTED',
+        message: 'NOT_IMPLEMENTED',
+      });
+    }),
+
+  validate: publicProcedure
+    .input(z.undefined())
+    .output(z.undefined())
+    .meta({ openapi: { method: 'POST', path: '/workspace/invites/validate', tags: TAGS } })
+    .mutation(({ input, ctx }) => {
+      throw new TRPCError({
+        code: 'NOT_IMPLEMENTED',
+        message: 'NOT_IMPLEMENTED',
+      });
+    }),
+});
