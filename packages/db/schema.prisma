@@ -61,8 +61,7 @@ model Token {
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String? @map("user_id") @db.VarChar(25)
 
-  invitation   WorkspaceInvitation? @relation(fields: [invitationId], references: [id], onDelete: Cascade)
-  invitationId String?              @unique @map("invitation_id") @db.VarChar(25)
+  invitation WorkspaceInvitation?
 
   @@unique([type, hashedToken], name: "unique_token")
   @@index([userId])
@@ -146,7 +145,8 @@ model WorkspaceInvitation {
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String    @map("workspace_id") @db.VarChar(25)
 
-  token Token?
+  token   Token  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  tokenId String @unique @map("token_id") @db.VarChar(25)
 
   @@index([workspaceId])
   @@map("workspace_invitations")

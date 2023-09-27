@@ -32,7 +32,6 @@ export function createServer() {
     });
 
     // Handle incoming OpenAPI requests
-    // @ts-expect-error: I don't know how to fix this and it works
     await server.register(fastifyTRPCOpenApiPlugin, {
       basePath: '/api',
       router: appRouter,

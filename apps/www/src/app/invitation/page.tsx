@@ -1,7 +1,7 @@
 import type { TRPCError } from '@trpc/server';
 import { api } from '~/server/api/clients/server';
 
-export default async function ConfirmEmailPage({
+export default async function AcceptInvitationPage({
   searchParams,
 }: {
   searchParams: Record<string, string>;
@@ -15,7 +15,7 @@ export default async function ConfirmEmailPage({
 
   let error: any = null;
   // It throws an error if the token is invalid
-  await api.auth.confirmEmail.mutate({ token }).catch((err: TRPCError) => {
+  await api.workspace.invites.confirmEmail.mutate({ token }).catch((err: TRPCError) => {
     error = err;
   });
 

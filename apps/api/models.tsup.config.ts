@@ -1,6 +1,6 @@
 import cpy from 'cpy';
 import { esbuildPluginFilePathExtensions } from 'esbuild-plugin-file-path-extensions';
-import execa from 'execa';
+import { execaCommand } from 'execa';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 
@@ -18,9 +18,10 @@ export default defineConfig((options: Options) => ({
   bundle: false,
   tsconfig: 'tsconfig.json',
   plugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],
+  external: ['@prisma/client', '@trpc/server'],
   onSuccess: async () => {
     await cpy('package.json', 'dist');
-    await execa.command('pnpm exec tsconfig-replace-paths', {
+    await execaCommand('pnpm exec tsconfig-replace-paths', {
       stdout: process.stdout,
       stderr: process.stderr,
     });

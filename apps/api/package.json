@@ -7,12 +7,13 @@
   "scripts": {
     "dev": "tsx watch src/index",
     "build": "tsup && tsup --config models.tsup.config.ts",
+    "build:dts": "cross-env API_DTS_ONLY=true pnpm build",
     "start": "node dist/index.js",
     "seed": "tsx src/seeds/index.ts",
     "lint": "eslint . --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit --declaration"
   },
   "publishConfig": {
     "directory": "dist"
@@ -31,10 +32,10 @@
     "@pedaki/mailer": "^0.0.4",
     "@pedaki/settings": "workspace:*",
     "@pulumi/aws": "^6.2.1",
-    "@pulumi/pulumi": "^3.85.0",
+    "@trpc/server": "10.38.4",
+    "@pulumi/pulumi": "^3.86.0",
     "@pulumi/random": "^4.14.0",
     "@t3-oss/env-core": "^0.6.1",
-    "@trpc/server": "10.38.4",
     "fastify": "^4.23.2",
     "next-auth": "^4.23.1",
     "superjson": "^1.13.1",

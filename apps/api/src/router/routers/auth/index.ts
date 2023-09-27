@@ -54,9 +54,11 @@ export const authRouter = router({
 
   debug_send_validation_email: privateProcedure.mutation(({ ctx }) => {
     return confirmEmailFlow(prisma, {
-      id: ctx.session.id,
-      name: ctx.session.name,
-      email: 'nathan.d0601@gmail.com', //ctx.session.email
+      user: {
+        id: ctx.session.id,
+        name: ctx.session.name,
+        email: 'nathan.d0601@gmail.com', //ctx.session.email
+      },
     });
   }),
 
