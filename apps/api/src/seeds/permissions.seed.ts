@@ -1,4 +1,4 @@
-import { allPermissions } from '@pedaki/auth/guards/ressources.js';
+import { allPermissions } from '@pedaki/auth/permissions.js';
 import { prisma } from '@pedaki/db';
 
 export const seedPermissions = async () => {

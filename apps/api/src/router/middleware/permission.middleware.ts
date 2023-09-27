@@ -1,4 +1,4 @@
-import type { Permission } from '@pedaki/auth/guards/ressources.js';
+import type { Permission } from '@pedaki/auth/permissions.js';
 import { TRPCError } from '@trpc/server';
 import { t } from '~/router/init.ts';
 

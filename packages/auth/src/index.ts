@@ -1,4 +1,4 @@
-import type { Permission } from '~/guards/ressources';
+import type { Permission } from '~/permissions';
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import type { GetTokenParams, JWT } from 'next-auth/jwt';

@@ -1,7 +1,7 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { baseAuthOptions } from '@pedaki/auth';
-import type { Permission } from '@pedaki/auth/guards/ressources';
-import { allPermissions } from '@pedaki/auth/guards/ressources.js';
+import type { Permission } from '@pedaki/auth/permissions';
+import { allPermissions } from '@pedaki/auth/permissions.js';
 import { generateDataURL } from '@pedaki/common/utils/circle-gradient.js';
 import { matchPassword } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
