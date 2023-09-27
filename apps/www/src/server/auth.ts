@@ -1,6 +1,7 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { baseAuthOptions } from '@pedaki/auth';
 import type { Permission } from '@pedaki/auth/guards/ressources';
+import { allPermissions } from '@pedaki/auth/guards/ressources.js';
 import { generateDataURL } from '@pedaki/common/utils/circle-gradient.js';
 import { matchPassword } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
@@ -41,6 +42,7 @@ export const authOptions: NextAuthOptions = {
                         select: {
                           id: true,
                           permissions: true,
+                          isAdmin: true,
                         },
                       },
                     },
@@ -66,7 +68,9 @@ export const authOptions: NextAuthOptions = {
           id: m.workspaceId,
           roles: m.roles.flatMap(r => ({
             id: r.role.id,
-            permissions: r.role.permissions.map(p => p.identifier as Permission),
+            permissions: r.role.isAdmin
+              ? allPermissions
+              : r.role.permissions.map(p => p.identifier as Permission),
           })),
         })),
       };
@@ -156,6 +160,7 @@ export const authOptions: NextAuthOptions = {
                       select: {
                         id: true,
                         permissions: true,
+                        isAdmin: true,
                       },
                     },
                   },
@@ -175,8 +180,6 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        console.log(user.memberships);
-
         return {
           id: user.id,
           name: user.name,
@@ -187,7 +190,9 @@ export const authOptions: NextAuthOptions = {
             id: m.workspaceId,
             roles: m.roles.flatMap(r => ({
               id: r.role.id,
-              permissions: r.role.permissions.map(p => p.identifier as Permission),
+              permissions: r.role.isAdmin
+                ? allPermissions
+                : r.role.permissions.map(p => p.identifier as Permission),
             })),
           })),
         };

@@ -2,12 +2,6 @@ import { allPermissions } from '@pedaki/auth/guards/ressources.js';
 import { prisma } from '@pedaki/db';
 
 export const seedPermissions = async () => {
-  const allAdmins = await prisma.workspaceRole.findMany({
-    where: {
-      isAdmin: true,
-    },
-  });
-
   const exisingPermissions = await prisma.workspacePermission
     .findMany({
       select: {
@@ -36,20 +30,5 @@ export const seedPermissions = async () => {
         },
       },
     }),
-    // Add all permissions to all admins
-    ...allAdmins.map(admin =>
-      prisma.workspaceRole.update({
-        where: {
-          id: admin.id,
-        },
-        data: {
-          permissions: {
-            connect: allPermissions.map(permission => ({
-              identifier: permission,
-            })),
-          },
-        },
-      }),
-    ),
   ]);
 };

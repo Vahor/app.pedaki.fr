@@ -1,4 +1,3 @@
-import { allPermissions } from '@pedaki/auth/guards/ressources';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -56,11 +55,6 @@ export const workspaceRouter = router({
                   },
                 },
               },
-            },
-            permissions: {
-              connect: allPermissions.map(permission => ({
-                identifier: permission,
-              })),
             },
           },
         });
