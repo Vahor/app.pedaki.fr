@@ -1,3 +1,4 @@
+import { allPermissions } from '@pedaki/auth/guards/ressources';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -22,7 +23,7 @@ export const workspaceRouter = router({
     .meta({ openapi: { method: 'POST', path: '/workspaces', tags: TAGS } })
     .mutation(async ({ input, ctx }) => {
       try {
-        return await prisma.workspace.create({
+        const workspace = await prisma.workspace.create({
           data: {
             name: input.name,
             identifier: input.identifier,
@@ -37,7 +38,42 @@ export const workspaceRouter = router({
             },
           },
         });
+
+        // Create admin role and attach it to the user
+        await prisma.workspaceRole.create({
+          data: {
+            name: 'Admin',
+            isAdmin: true,
+            workspaceId: workspace.id,
+            memberRoles: {
+              create: {
+                member: {
+                  connect: {
+                    userId_workspaceId: {
+                      userId: ctx.session.id,
+                      workspaceId: workspace.id,
+                    },
+                  },
+                },
+              },
+            },
+            permissions: {
+              connect: allPermissions.map(permission => ({
+                identifier: permission,
+              })),
+            },
+          },
+        });
+
+        return workspace;
       } catch (error) {
+        // Delete the workspace if it was created
+        await prisma.workspace.delete({
+          where: {
+            identifier: input.identifier,
+          },
+        });
+
         if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
           throw new TRPCError({
             code: 'BAD_REQUEST',

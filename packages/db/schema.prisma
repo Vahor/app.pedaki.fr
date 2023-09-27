@@ -42,8 +42,8 @@ model User {
 
   image String @default("") @db.VarChar(1000)
 
-  accounts   Account[]
-  tokens     Token[]
+  accounts    Account[]
+  tokens      Token[]
   memberships WorkspaceMember[]
 
   @@index([id])
@@ -138,7 +138,7 @@ model WorkspaceSubscriptionReceipt {
 // After a long time, the token is automatically deleted, and the invitation is deleted with it
 // When the invitation is accepted we can delete the token only, this will delete the invitation as well
 model WorkspaceInvitation {
-  id String @id @default(cuid()) @db.VarChar(25)
+  id        String   @id @default(cuid()) @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -155,12 +155,16 @@ model WorkspaceInvitation {
 // Each workspace has a set of roles
 // When the workspace is created we populate the roles with the default roles
 model WorkspaceRole {
-  id String @id @default(cuid()) @db.VarChar(25)
+  id        String   @id @default(cuid()) @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  name        String @db.VarChar(100)
+  name        String  @db.VarChar(100)
   description String?
+  // As the role can be randmed we cant use the name as the identifier
+  // So we have to add a is_admin field
+  // This field is only used for the seeding, and is not used in the code
+  isAdmin     Boolean @default(false) @map("is_admin")
 
   workspaceId String @map("workspace_id") @db.VarChar(25)
 
@@ -174,15 +178,13 @@ model WorkspaceRole {
 
 // The permissions are common across all workspaces
 model WorkspacePermission {
-  id String @id @default(cuid()) @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  identifier String
+  identifier String @id @db.VarChar(100)
 
   roles WorkspaceRole[]
 
-  @@unique([identifier])
   @@map("workspace_permissions")
 }
 

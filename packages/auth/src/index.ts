@@ -1,7 +1,7 @@
+import type { Permission } from '~/guards/ressources';
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import type { GetTokenParams, JWT } from 'next-auth/jwt';
-import type {Permission} from "~/guards/ressources";
 
 declare module 'next-auth' {
   interface Session extends Omit<DefaultSession, 'user'> {
@@ -16,7 +16,7 @@ declare module 'next-auth' {
         roles: {
           id: string;
           permissions: Permission[];
-        }[]
+        }[];
       }[];
     };
   }
@@ -32,7 +32,7 @@ declare module 'next-auth' {
       roles: {
         id: string;
         permissions: Permission[];
-      }[]
+      }[];
     }[];
   }
 }
@@ -51,7 +51,7 @@ declare module 'next-auth/jwt' {
       roles: {
         id: string;
         permissions: Permission[];
-      }[]
+      }[];
     }[];
   }
 }
