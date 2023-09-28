@@ -71,7 +71,7 @@ export const authRouter = router({
     .mutation(async ({ input }) => {
       const { token } = input;
 
-      const tokenRecord = await getTokenOrThrow(prisma, token, true);
+      const tokenRecord = await getTokenOrThrow(prisma, token, 'CONFIRM_EMAIL', true);
 
       if (tokenRecord.userId === null) {
         throw new TRPCError({

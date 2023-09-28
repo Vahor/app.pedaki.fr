@@ -87,7 +87,9 @@ model Workspace {
   invitations WorkspaceInvitation[]
   settings    WorkspaceSetting[]
 
-  subscriptions WorkspaceSubscription[]
+  subscriptions   WorkspaceSubscription[]
+  roles           WorkspaceRole?          @relation(fields: [workspaceRoleId], references: [id])
+  workspaceRoleId String?                 @db.VarChar(25)
 
   @@index([id])
   @@map("workspaces")
@@ -170,6 +172,7 @@ model WorkspaceRole {
 
   permissions WorkspacePermission[]
   memberRoles WorkspaceMemberRole[]
+  workspaces  Workspace[]
 
   @@unique([name, workspaceId])
   @@index([workspaceId])

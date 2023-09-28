@@ -1,14 +1,19 @@
 import { hash256 } from '@pedaki/common/utils/hash.js';
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient, TokenType } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
-export const getTokenOrThrow = async (prisma: PrismaClient, token: string, deleteToken = true) => {
+export const getTokenOrThrow = async (
+  prisma: PrismaClient,
+  token: string,
+  type: TokenType,
+  deleteToken = true,
+) => {
   const hashedToken = hash256(token);
 
   // Look for the token
   const tokenRecord = await prisma.token.findFirst({
     where: {
-      type: 'CONFIRM_EMAIL',
+      type: type,
       hashedToken: hashedToken,
     },
   });

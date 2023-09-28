@@ -14,6 +14,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
+    "allowImportingTsExtensions": true,
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,

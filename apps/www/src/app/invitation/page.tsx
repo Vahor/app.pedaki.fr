@@ -15,7 +15,7 @@ export default async function AcceptInvitationPage({
 
   let error: any = null;
   // It throws an error if the token is invalid
-  await api.workspace.invites.confirmEmail.mutate({ token }).catch((err: TRPCError) => {
+  await api.workspace.invites.validate.mutate({ token }).catch((err: TRPCError) => {
     error = err;
   });
 

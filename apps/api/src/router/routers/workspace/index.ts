@@ -1,3 +1,4 @@
+import { defaultRoles, getRoleTranslation } from '@pedaki/auth/defaults.js';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
@@ -38,26 +39,39 @@ export const workspaceRouter = router({
           },
         });
 
-        // Create admin role and attach it to the user
-        await prisma.workspaceRole.create({
-          data: {
-            name: 'Admin',
-            isAdmin: true,
-            workspaceId: workspace.id,
-            memberRoles: {
-              create: {
-                member: {
-                  connect: {
-                    userId_workspaceId: {
-                      userId: ctx.session.id,
-                      workspaceId: workspace.id,
+        await prisma.$transaction([
+          // Create admin role and attach it to the user
+          prisma.workspaceRole.create({
+            data: {
+              name: getRoleTranslation('admin', 'fr').name,
+              description: getRoleTranslation('admin', 'fr').description,
+              isAdmin: true,
+              workspaceId: workspace.id,
+              memberRoles: {
+                create: {
+                  member: {
+                    connect: {
+                      userId_workspaceId: {
+                        userId: ctx.session.id,
+                        workspaceId: workspace.id,
+                      },
                     },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+          // Create the default roles
+          ...defaultRoles.map(role =>
+            prisma.workspaceRole.create({
+              data: {
+                name: getRoleTranslation(role.key, 'fr').name,
+                description: getRoleTranslation(role.key, 'fr').description,
+                workspaceId: workspace.id,
+              },
+            }),
+          ),
+        ]);
 
         return workspace;
       } catch (error) {
