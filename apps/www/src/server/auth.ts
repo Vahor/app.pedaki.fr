@@ -19,9 +19,14 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/login',
     error: '/auth/login', // Error code passed in query string as ?error=
   },
-  // @ts-expect-error - The type from next-auth and @auth/prisma-adapter are incompatible
   adapter: {
     ...PrismaAdapter(prisma),
+    // @ts-expect-error - The type from next-auth and @auth/prisma-adapter are incompatible
+    //  That's why we remove the workspaces
+    createUser: data => {
+      const { workspaces, ...rest } = data;
+      return prisma.user.create({ data: rest });
+    },
     async getUserByAccount(provider_providerAccountId) {
       const account = await prisma.account.findUnique({
         where: { provider_providerAccountId },
@@ -78,11 +83,17 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: ({ token, user, trigger, session }) => {
+      // console.log({token})
+      token._v ||= 0; // Set version to 0 if it's not set
+
       if (user) {
         token.id = user.id;
         token.emailVerified = user.emailVerified !== null;
         token.workspaces = user.workspaces;
       }
+
+      // TODO: periodically check if we need to update the token
+      //  Or if we need to disable the token
 
       if (trigger === 'update') {
         // TODO: Check type of session
@@ -98,6 +109,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: ({ session, token }) => {
+      // console.log({ session, token })
       return {
         ...session,
         user: {

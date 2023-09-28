@@ -1,3 +1,4 @@
+import { baseAuthOptions } from '@pedaki/auth';
 import { env } from '~/env.mjs';
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
@@ -32,11 +33,10 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret,
+    cookieName: baseAuthOptions.cookies.sessionToken.name,
   });
 
-  console.log(request.url);
   const needGuest = requireGuestRoutes.includes(pathname);
-  console.log({ needGuest, pathname });
 
   if (needGuest && token) {
     // Redirect to homepage if logged in

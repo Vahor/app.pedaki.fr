@@ -64,7 +64,7 @@ export const workspaceInvitesRouter = router({
         },
       });
 
-      if (ctx.session.workspaces.some((w) => w.id === invitation.workspaceId)) {
+      if (ctx.session.workspaces.some(w => w.id === invitation.workspaceId)) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'ALREADY_IN_WORKSPACE',

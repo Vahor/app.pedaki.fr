@@ -51,4 +51,5 @@ const config = {
 //  before adding it to the other apps
 export default million.next(config, {
     auto: {rsc: true},
+    mute: true,
 });
