@@ -10,6 +10,7 @@ import { workspaceRolesRouter } from '~/router/routers/workspace/roles.router.ts
 import { PREFIX, TAGS } from '~/router/routers/workspace/shared.ts';
 import { z } from 'zod';
 import { privateProcedure, router, workspaceProcedure } from '../../trpc.ts';
+import {assertQuota} from "~/services/quotas";
 
 export const workspaceRouter = router({
   roles: workspaceRolesRouter,
@@ -22,6 +23,8 @@ export const workspaceRouter = router({
     .output(WorkspaceModel)
     .meta({ openapi: { method: 'POST', path: '/workspaces', tags: TAGS } })
     .mutation(async ({ input, ctx }) => {
+      await assertQuota(prisma, 'WORKSPACE', ctx.session.id);
+
       try {
         const workspace = await prisma.workspace.create({
           data: {
