@@ -20,7 +20,6 @@ export default defineConfig((options: Options) => ({
   external: ['next-auth'],
   onSuccess: async () => {
     await cpy('package.json', 'dist');
-    await execaCommand('pwd', { stdout: process.stdout, stderr: process.stderr });
     await execaCommand('pnpm exec tsconfig-replace-paths', {
       stdout: process.stdout,
       stderr: process.stderr,
