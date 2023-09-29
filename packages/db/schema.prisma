@@ -42,9 +42,10 @@ model User {
 
   image String @default("") @db.VarChar(1000)
 
-  accounts    Account[]
-  tokens      Token[]
-  memberships WorkspaceMember[]
+  accounts     Account[]
+  tokens       Token[]
+  memberships  WorkspaceMember[]
+  CustomQuotas CustomQuotas[]
 
   @@index([id])
   @@map("users")
@@ -90,6 +91,7 @@ model Workspace {
   subscriptions   WorkspaceSubscription[]
   roles           WorkspaceRole?          @relation(fields: [workspaceRoleId], references: [id])
   workspaceRoleId String?                 @db.VarChar(25)
+  CustomQuotas    CustomQuotas[]
 
   @@index([id])
   @@map("workspaces")
@@ -261,4 +263,21 @@ model WorkspaceSetting {
   @@unique([key, workspaceId])
   @@index([workspaceId])
   @@map("workspace_settings")
+}
+
+model CustomQuotas {
+  key   String @id @db.VarChar(100)
+  value Int    @db.Int
+
+  wokspace    Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String?    @map("workspace_id") @db.VarChar(25)
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id") @db.VarChar(25)
+
+  @@unique([key, workspaceId])
+  @@unique([key, userId])
+  @@index([workspaceId])
+  @@index([userId])
+  @@map("custom_quotas")
 }
