@@ -56,3 +56,30 @@ export const SendMailButton = () => {
 
   return <Button onClick={handleSendMail}>Send Mail</Button>;
 };
+
+export const GetProfileButton = () => {
+  const { refetch } = api.auth.profile.useQuery(undefined, {
+    enabled: false,
+  });
+
+  const handleShowProfile = async () => {
+    return wrapWithLoading(async () => await refetch(), {
+      successProps: () => ({
+        title: 'Profile loaded',
+      }),
+      errorProps: error => {
+        return {
+          title: 'Profile not loaded',
+          description: error.message ?? 'Unknown error',
+        };
+      },
+      throwOnError: false,
+    }).then(result => {
+      if (result && result.data) {
+        alert(JSON.stringify(result.data));
+      }
+    });
+  };
+
+  return <Button onClick={handleShowProfile}>Show profile</Button>;
+};

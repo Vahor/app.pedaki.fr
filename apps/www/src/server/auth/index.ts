@@ -11,6 +11,7 @@ import { getServerSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { GoogleProfile } from 'next-auth/providers/google';
 import GoogleProvider from 'next-auth/providers/google';
+import { getUserData, getUserDataCached } from './utils';
 
 export const authOptions: NextAuthOptions = {
   ...baseAuthOptions,
@@ -82,18 +83,29 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: ({ token, user, trigger, session }) => {
-      // console.log({token})
-      token._v ||= 0; // Set version to 0 if it's not set
-
+    jwt: async ({ token, user, trigger, session }) => {
       if (user) {
         token.id = user.id;
         token.emailVerified = user.emailVerified !== null;
         token.workspaces = user.workspaces;
+      } else {
+        // Periodically check if we need to update the token
+        //  Or if we need to disable the token
+        const tokenAge = Date.now() - token.iat * 1000;
+        // Needs to be lower than the refetchInterval
+        if (tokenAge > 30 * 1000) {
+          console.log('Updating token', { tokenAge });
+          const updatedData = await getUserDataCached({ id: token.id });
+          if (updatedData.blocked) {
+            throw new Error(`User ${updatedData.id} is blocked`);
+          }
+          token.emailVerified = updatedData.emailVerified !== null;
+          token.workspaces = updatedData.workspaces;
+          token.email = updatedData.email;
+          token.name = updatedData.name;
+          token.picture = updatedData.image;
+        }
       }
-
-      // TODO: periodically check if we need to update the token
-      //  Or if we need to disable the token
 
       if (trigger === 'update') {
         // TODO: Check type of session
@@ -135,7 +147,7 @@ export const authOptions: NextAuthOptions = {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
-          image: profile.picture ?? generateDataURL(profile.name),
+          image: profile.picture || generateDataURL(profile.name),
           emailVerified: profile.email_verified ? new Date() : null,
           workspaces: [],
         };
@@ -152,62 +164,16 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            emailVerified: true,
-            password: true,
-            memberships: {
-              select: {
-                workspaceId: true,
-                roles: {
-                  select: {
-                    role: {
-                      select: {
-                        id: true,
-                        permissions: true,
-                        isAdmin: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        });
+        const condition = ({ password }: { password: string }) =>
+          matchPassword(credentials.password, password, env.PASSWORD_SALT);
 
-        if (!user?.password) {
+        const user = await getUserData({ email: credentials.email }, condition);
+        if (user.blocked) {
+          console.warn(`User ${user.id} is blocked`);
           return null;
         }
 
-        const passwordMatch = matchPassword(credentials.password, user.password, env.PASSWORD_SALT);
-
-        if (!passwordMatch) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          emailVerified: user.emailVerified,
-          workspaces: user.memberships.map(m => ({
-            id: m.workspaceId,
-            roles: m.roles.flatMap(r => ({
-              id: r.role.id,
-              permissions: r.role.isAdmin
-                ? allPermissions
-                : r.role.permissions.map(p => p.identifier as Permission),
-            })),
-          })),
-        };
+        return user;
       },
     }),
   ],

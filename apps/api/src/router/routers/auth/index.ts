@@ -99,6 +99,8 @@ export const authRouter = router({
         id: true,
         email: true,
         name: true,
+        emailVerified: true,
+        image: true,
       }).extend({
         workspaces: z.array(
           WorkspaceModel.pick({ id: true }).extend({

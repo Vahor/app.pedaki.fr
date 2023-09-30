@@ -1,4 +1,4 @@
-import { authOptions } from '~/server/auth';
+import { authOptions } from '~/server/auth/index.ts';
 import NextAuth from 'next-auth';
 
 const handler = NextAuth(authOptions) as Function;

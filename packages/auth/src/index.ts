@@ -1,7 +1,5 @@
 import type { Permission } from '~/permissions';
 import type { DefaultSession, NextAuthOptions } from 'next-auth';
-import { getToken } from 'next-auth/jwt';
-import type { GetTokenParams, JWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface Session extends Omit<DefaultSession, 'user'> {
@@ -41,6 +39,7 @@ declare module 'next-auth/jwt' {
   // Globally the same thing, this is the output type of the `jwt` callback
   // One main difference is the picture field which corresponds to the user's image field
   interface JWT {
+    iat: number;
     name: string;
     email: string;
     id: string;
@@ -67,7 +66,7 @@ export const baseAuthOptions = {
       name: `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'lax' as const,
         path: '/',
         domain: process.env.NODE_ENV === 'production' ? '.pedaki.fr' : undefined,
         secure: useSecureCookies,
@@ -76,19 +75,7 @@ export const baseAuthOptions = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 60 * 60, // 1 hour
   },
   providers: [],
 } satisfies NextAuthOptions;
-
-export const authFromRequest = async (
-  req: Partial<Pick<GetTokenParams['req'], 'headers' | 'cookies'>>,
-): Promise<JWT | null> => {
-  return await getToken({
-    // @ts-expect-error I know what I'm doing
-    req: req,
-    secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: baseAuthOptions.useSecureCookies,
-    cookieName: baseAuthOptions.cookies.sessionToken.name,
-  });
-};
