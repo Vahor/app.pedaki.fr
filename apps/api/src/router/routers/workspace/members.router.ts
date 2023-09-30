@@ -13,7 +13,7 @@ export const workspaceMembersRouter = router({
     .use(hasPermission(['create:billing:user']))
     .input(WorkspaceModel.pick({ id: true }))
     .output(z.undefined())
-    .meta({ openapi: { method: 'DELETE', path: '/workspace/members', tags: TAGS } })
+    .meta({ openapi: { method: 'DELETE', path: '/workspace/{id}/members', tags: TAGS } })
     .mutation(({ input, ctx }) => {
       ctx.session.id;
       throw new TRPCError({
@@ -31,7 +31,7 @@ export const workspaceMembersRouter = router({
         ),
       ),
     )
-    .meta({ openapi: { method: 'GET', path: '/workspace/members', tags: TAGS } })
+    .meta({ openapi: { method: 'GET', path: '/workspace/{id}/members', tags: TAGS } })
     .query(async ({ input }) => {
       const members = await prisma.workspaceMember.findMany({
         where: {

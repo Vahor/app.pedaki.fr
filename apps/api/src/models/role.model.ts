@@ -6,8 +6,9 @@ import { WorkspacePermission } from './permissions.model.ts';
 export const WorkspaceRole = z
   .object({
     name: z.string({ required_error: 'Le nom est requis' }),
-    description: z.string().optional(),
-    permissions: z.array(WorkspacePermission.pick({ identifier: true })).array(),
+    description: z.string().nullable(),
+    // TODO: WorkspacePermission.pick
+    permissions: z.array(z.string()),
   })
   .merge(WithTimestamps)
   .merge(WithId);
