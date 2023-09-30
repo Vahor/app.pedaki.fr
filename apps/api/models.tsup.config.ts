@@ -25,6 +25,10 @@ export default defineConfig((options: Options) => ({
       stdout: process.stdout,
       stderr: process.stderr,
     });
+    await execaCommand('node ../../scripts/fix-ts-paths.js', {
+      stdout: process.stdout,
+      stderr: process.stderr,
+    });
   },
   ...options,
 }));

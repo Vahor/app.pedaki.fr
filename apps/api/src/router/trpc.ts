@@ -1,5 +1,5 @@
-import { t } from '~/router/init';
-import { isLogged } from '~/router/middleware/session.middleware';
+import { t } from '~/router/init.ts';
+import { isLogged } from '~/router/middleware/session.middleware.ts';
 import { isInWorkspace } from '~/router/middleware/workspace.middleware.ts';
 
 export const router = t.router;

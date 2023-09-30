@@ -9,8 +9,8 @@ import fastify from 'fastify';
 import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
 import { env } from './env.ts';
 import { openApiDocument } from './openapi.ts';
-import { appRouter } from './router';
 import { createContext } from './router/context.ts';
+import { appRouter } from './router/router.ts';
 import { serverFactory } from './services/architecture/factory.ts';
 
 export function createServer() {

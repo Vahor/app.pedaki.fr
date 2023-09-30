@@ -8,7 +8,7 @@ import { workspaceMembersRouter } from '~/router/routers/workspace/members.route
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
 import { workspaceRolesRouter } from '~/router/routers/workspace/roles.router.ts';
 import { PREFIX, TAGS } from '~/router/routers/workspace/shared.ts';
-import { assertQuota } from '~/services/quotas';
+import { assertQuota } from '~/services/quotas/quotas.ts';
 import { z } from 'zod';
 import { privateProcedure, router, workspaceProcedure } from '../../trpc.ts';
 

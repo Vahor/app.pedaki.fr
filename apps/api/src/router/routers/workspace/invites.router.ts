@@ -2,7 +2,7 @@ import { prisma } from '@pedaki/db';
 import { TRPCError } from '@trpc/server';
 import { TAGS } from '~/router/routers/workspace/shared.ts';
 import { inviteInWorkspaceFlow } from '~/services/emails/inviteInWorkspaceFlow.ts';
-import { getTokenOrThrow } from '~/services/tokens';
+import { getTokenOrThrow } from '~/services/tokens/tokens.ts';
 import { z } from 'zod';
 import { privateProcedure, router } from '../../trpc.ts';
 

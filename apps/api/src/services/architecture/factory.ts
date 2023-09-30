@@ -1,5 +1,5 @@
-import { AwsServerProvider } from './stack/aws';
-import { TestServerProvider } from './stack/mock';
+import { AwsServerProvider } from './stack/aws/stack.ts';
+import { TestServerProvider } from './stack/mock/stack.ts';
 import { PulumiUtils } from './stack/shared.ts';
 import type { Provider, ServerProvider, WorkspaceInstance } from './stack/type.ts';
 

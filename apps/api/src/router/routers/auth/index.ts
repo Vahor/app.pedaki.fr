@@ -3,13 +3,13 @@ import { hashPassword } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { env } from '~/env';
+import { env } from '~/env.ts';
 import { WorkspacePermissionIdentifier } from '~/models/permissions.model.ts';
 import { WorkspaceRole } from '~/models/role.model.ts';
-import { PublicUserModel, UserModel } from '~/models/user.model';
+import { PublicUserModel, UserModel } from '~/models/user.model.ts';
 import { WorkspaceModel } from '~/models/workspace.model.ts';
-import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
-import { getTokenOrThrow } from '~/services/tokens';
+import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow.ts';
+import { getTokenOrThrow } from '~/services/tokens/tokens.ts';
 import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../../trpc.ts';
 

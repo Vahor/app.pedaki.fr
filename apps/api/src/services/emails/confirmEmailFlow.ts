@@ -2,7 +2,7 @@ import { hash256 } from '@pedaki/common/utils/hash.js';
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { sendEmail } from '@pedaki/mailer';
 import type { PrismaClient } from '@prisma/client';
-import { env } from '~/env';
+import { env } from '~/env.ts';
 import ConfirmEmailTemplate from './templates/confirm-email.tsx';
 
 export const confirmEmailFlow = async (

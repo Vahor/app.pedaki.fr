@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { serverFactory } from '~/services/architecture/factory';
+import { serverFactory } from '~/services/architecture/factory.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 

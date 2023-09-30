@@ -1,7 +1,7 @@
 import { WithTimestamps } from '~/models/shared/dates.model.ts';
 import { WithId } from '~/models/shared/id.model.ts';
 import { z } from 'zod';
-import { WorkspacePermission } from './permissions.model';
+import { WorkspacePermission } from './permissions.model.ts';
 
 export const WorkspaceRole = z
   .object({
