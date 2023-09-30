@@ -14,27 +14,29 @@ import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../../trpc.ts';
 
 export const authRouter = router({
-  signup: publicProcedure.input(UserModel.omit({ id: true })).mutation(async ({ input }) => {
-    const password = hashPassword(input.password, env.PASSWORD_SALT);
+  signup: publicProcedure
+    .input(UserModel.omit({ id: true, emailVerified: true, blocked: true }))
+    .mutation(async ({ input }) => {
+      const password = hashPassword(input.password, env.PASSWORD_SALT);
 
-    try {
-      await prisma.user.create({
-        data: {
-          name: input.name,
-          email: input.email,
-          password,
-          image: generateDataURL(input.name, 128),
-        },
-      });
-    } catch (e) {
-      if ((e as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'ALREADY_EXISTS',
+      try {
+        await prisma.user.create({
+          data: {
+            name: input.name,
+            email: input.email,
+            password,
+            image: generateDataURL(input.name, 128),
+          },
         });
+      } catch (e) {
+        if ((e as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'ALREADY_EXISTS',
+          });
+        }
       }
-    }
-  }),
+    }),
 
   debug_delete_account: publicProcedure
     .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account', tags: ['Auth'] } })
