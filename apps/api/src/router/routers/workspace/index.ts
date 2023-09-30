@@ -71,6 +71,11 @@ export const workspaceRouter = router({
                 name: getRoleTranslation(role.key, 'fr').name,
                 description: getRoleTranslation(role.key, 'fr').description,
                 workspaceId: workspace.id,
+                permissions: {
+                  connect: role.permissions.map(permission => ({
+                    identifier: permission,
+                  })),
+                },
               },
             }),
           ),
