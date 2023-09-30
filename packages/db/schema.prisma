@@ -14,7 +14,7 @@ datasource db {
 
 // Necessary for Next auth
 model Account {
-  id                String  @id @default(cuid()) @db.VarChar(25)
+  id                Int     @id @default(autoincrement())
   userId            String  @map("user_id") @db.VarChar(25)
   type              String
   provider          String
@@ -53,7 +53,7 @@ model User {
 }
 
 model Token {
-  id String @id @default(cuid()) @db.VarChar(25)
+  id Int @id @default(autoincrement())
 
   createdAt   DateTime  @default(now()) @map("created_at")
   type        TokenType
@@ -100,7 +100,7 @@ model Workspace {
 
 // To get the current subscription, we can just get the one with the latest paidUntil date
 model WorkspaceSubscription {
-  id        String   @id @default(cuid()) @db.VarChar(25)
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -116,7 +116,7 @@ model WorkspaceSubscription {
   workspaceId String    @db.VarChar(25)
 
   receipt   WorkspaceSubscriptionReceipt @relation(fields: [receiptId], references: [id])
-  receiptId String                       @unique @map("receipt_id") @db.VarChar(25)
+  receiptId Int                          @unique @map("receipt_id")
 
   @@index([workspaceId])
   @@index([receiptId])
@@ -124,7 +124,7 @@ model WorkspaceSubscription {
 }
 
 model WorkspaceSubscriptionReceipt {
-  id        String   @id @default(cuid()) @db.VarChar(25)
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -142,7 +142,7 @@ model WorkspaceSubscriptionReceipt {
 // After a long time, the token is automatically deleted, and the invitation is deleted with it
 // When the invitation is accepted we can delete the token only, this will delete the invitation as well
 model WorkspaceInvitation {
-  id        String   @id @default(cuid()) @db.VarChar(25)
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -150,8 +150,8 @@ model WorkspaceInvitation {
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String    @map("workspace_id") @db.VarChar(25)
 
-  token   Token  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
-  tokenId String @unique @map("token_id") @db.VarChar(25)
+  token   Token @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  tokenId Int   @unique @map("token_id")
 
   @@index([workspaceId])
   @@map("workspace_invitations")
@@ -230,7 +230,7 @@ model WorkspaceMemberRole {
 
 // AKA Server / Database etc
 model WorkspaceResource {
-  id        String   @id @default(cuid()) @db.VarChar(25)
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
@@ -243,7 +243,7 @@ model WorkspaceResource {
   data Json // As we can't know the structure of the data, we'll just store it as a json blob. We'll have to parse it knowing the type,region,provider etc
 
   subscription   WorkspaceSubscription? @relation(fields: [subscriptionId], references: [id])
-  subscriptionId String?                @db.VarChar(25)
+  subscriptionId Int?
 
   @@index([subscriptionId])
   @@map("workspace_resources")
@@ -251,7 +251,7 @@ model WorkspaceResource {
 
 // ex: auto_renew, default_region
 model WorkspaceSetting {
-  id        String   @id @default(cuid()) @db.VarChar(25)
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
