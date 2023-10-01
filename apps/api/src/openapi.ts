@@ -1,6 +1,6 @@
 import { generateOpenApiDocument } from 'trpc-openapi';
 import { env } from './env.ts';
-import { appRouter } from './router';
+import { appRouter } from './router/router.ts';
 
 const openApiDocument = generateOpenApiDocument(appRouter, {
   title: 'Pedaki Internal API',
@@ -16,6 +16,7 @@ const openApiDocument = generateOpenApiDocument(appRouter, {
       bearerFormat: 'JWT',
     },
   },
+  tags: ['Auth', 'Stack', 'Workspace'],
 });
 
 Object.values(openApiDocument.paths as Record<string, Record<string, any>>).forEach(path => {

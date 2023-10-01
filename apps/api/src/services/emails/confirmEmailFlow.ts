@@ -1,20 +1,23 @@
 import { hash256 } from '@pedaki/common/utils/hash.js';
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { sendEmail } from '@pedaki/mailer';
-import ConfirmEmailTemplate from '@pedaki/mailer/templates/confirm-email.js';
 import type { PrismaClient } from '@prisma/client';
-import { env } from '~/env';
+import { env } from '~/env.ts';
+import ConfirmEmailTemplate from './templates/confirm-email.tsx';
 
 export const confirmEmailFlow = async (
   prisma: PrismaClient,
-  user: {
-    id: string;
-    name: string;
-    email: string;
+  params: {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+    };
   },
 ) => {
   const token = generateToken(64);
   const hashedToken = hash256(token);
+  const { user } = params;
 
   // TODO check for spamming
 
@@ -38,11 +41,9 @@ export const confirmEmailFlow = async (
   ]);
 
   // Send email
-  const a = await sendEmail(user.email, ConfirmEmailTemplate, {
+  await sendEmail(user.email, ConfirmEmailTemplate, {
     name: user.name,
     url: `${env.APP_URL}/auth/confirm-email?token=${token}`,
   });
-  console.log(a);
-
   console.log(`[CONFIRM_EMAIL] ${user.email} ${token}`);
 };

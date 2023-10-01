@@ -4,19 +4,20 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
+import { seedDatabase } from '~/seeds/seeds.ts';
 import fastify from 'fastify';
 import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
 import { env } from './env.ts';
 import { openApiDocument } from './openapi.ts';
-import { appRouter } from './router';
 import { createContext } from './router/context.ts';
+import { appRouter } from './router/router.ts';
 import { serverFactory } from './services/architecture/factory.ts';
 
 export function createServer() {
   const port = env.PORT;
 
   const server = fastify({
-    logger: true,
+    logger: false,
   });
 
   const setupSwagger = async () => {
@@ -31,14 +32,13 @@ export function createServer() {
     });
 
     // Handle incoming OpenAPI requests
-    // @ts-expect-error: I don't know how to fix this and it works
     await server.register(fastifyTRPCOpenApiPlugin, {
       basePath: '/api',
       router: appRouter,
       createContext,
     });
 
-    console.log(`Swagger UI available on http://0.0.0.0:${port}/docs`);
+    console.log(`Swagger UI available on http://localhost:${port}/docs`);
   };
 
   const init = async () => {
@@ -71,10 +71,11 @@ export function createServer() {
       await setupSwagger();
       server.swagger();
       await server.listen({ port, host: '0.0.0.0' });
-      console.log(`Server listening on http://0.0.0.0:${port}`);
+      await seedDatabase();
+      console.log(`Server listening on http://localhost:${port}`);
     } catch (err) {
       server.log.error(err);
-      process.exit(1);
+      throw err;
     }
   };
 

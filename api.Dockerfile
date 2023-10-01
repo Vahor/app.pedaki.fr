@@ -24,6 +24,10 @@ RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/p
 
 COPY apps/api ./apps/api
 COPY packages ./packages
+COPY scripts ./scripts
+
+# TODO: We can do it with sed
+RUN grep -v '@trpc/server/\*": \["../../node_modules/@trpc/server/\*"\]' apps/api/tsconfig.json  > apps/api/tsconfig.json.tmp && mv apps/api/tsconfig.json.tmp apps/api/tsconfig.json
 
 ENV NODE_ENV=production
 RUN pnpm build --filter api

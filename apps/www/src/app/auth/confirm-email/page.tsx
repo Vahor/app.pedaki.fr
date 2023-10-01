@@ -9,6 +9,7 @@ export default async function ConfirmEmailPage({
   const { token } = searchParams;
 
   if (!token) {
+    // TODO: redirect to error page
     throw new Error('NO_TOKEN');
   }
 

@@ -3,39 +3,44 @@ import { hashPassword } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { env } from '~/env';
-import { UserModelSchema } from '~/models/user.model';
-import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow';
-import { getTokenOrThrow } from '~/services/tokens';
+import { env } from '~/env.ts';
+import { WorkspacePermissionIdentifier } from '~/models/permissions.model.ts';
+import { WorkspaceRole } from '~/models/role.model.ts';
+import { PublicUserModel, UserModel } from '~/models/user.model.ts';
+import { WorkspaceModel } from '~/models/workspace.model.ts';
+import { confirmEmailFlow } from '~/services/emails/confirmEmailFlow.ts';
+import { getTokenOrThrow } from '~/services/tokens/tokens.ts';
 import { z } from 'zod';
 import { privateProcedure, publicProcedure, router } from '../../trpc.ts';
 
 export const authRouter = router({
-  signup: publicProcedure.input(UserModelSchema.omit({ id: true })).mutation(async ({ input }) => {
-    const password = hashPassword(input.password, env.PASSWORD_SALT);
+  signup: publicProcedure
+    .input(UserModel.omit({ id: true, emailVerified: true, blocked: true }))
+    .mutation(async ({ input }) => {
+      const password = hashPassword(input.password, env.PASSWORD_SALT);
 
-    try {
-      await prisma.user.create({
-        data: {
-          name: input.name,
-          email: input.email,
-          password,
-          image: generateDataURL(input.name, 128),
-        },
-      });
-    } catch (e) {
-      if ((e as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'ALREADY_EXISTS',
+      try {
+        await prisma.user.create({
+          data: {
+            name: input.name,
+            email: input.email,
+            password,
+            image: generateDataURL(input.name, 128),
+          },
         });
+      } catch (e) {
+        if ((e as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'ALREADY_EXISTS',
+          });
+        }
       }
-    }
-  }),
+    }),
 
   debug_delete_account: publicProcedure
-    .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account' } })
-    .input(UserModelSchema.pick({ id: true }))
+    .meta({ openapi: { method: 'POST', path: '/auth/debug/delete-account', tags: ['Auth'] } })
+    .input(UserModel.pick({ id: true }))
     .output(z.any())
     .mutation(async ({ input }) => {
       try {
@@ -51,9 +56,11 @@ export const authRouter = router({
 
   debug_send_validation_email: privateProcedure.mutation(({ ctx }) => {
     return confirmEmailFlow(prisma, {
-      id: ctx.session.id,
-      name: ctx.session.name,
-      email: 'nathan.d0601@gmail.com', //ctx.session.email
+      user: {
+        id: ctx.session.id,
+        name: ctx.session.name,
+        email: 'nathan.d0601@gmail.com', //ctx.session.email
+      },
     });
   }),
 
@@ -66,7 +73,7 @@ export const authRouter = router({
     .mutation(async ({ input }) => {
       const { token } = input;
 
-      const tokenRecord = await getTokenOrThrow(prisma, token, true);
+      const tokenRecord = await getTokenOrThrow(prisma, token, 'CONFIRM_EMAIL', true);
 
       if (tokenRecord.userId === null) {
         throw new TRPCError({
@@ -86,10 +93,28 @@ export const authRouter = router({
       });
     }),
 
-  profile: publicProcedure
-    .meta({ openapi: { method: 'GET', path: '/auth/profile' } })
+  profile: privateProcedure
+    .meta({ openapi: { method: 'GET', path: '/auth/profile', tags: ['Auth'], protect: true } })
     .input(z.undefined())
-    .output(z.any())
+    .output(
+      PublicUserModel.pick({
+        id: true,
+        email: true,
+        name: true,
+        emailVerified: true,
+        image: true,
+      }).extend({
+        workspaces: z.array(
+          WorkspaceModel.pick({ id: true }).extend({
+            roles: z.array(
+              WorkspaceRole.pick({ id: true }).extend({
+                permissions: z.array(WorkspacePermissionIdentifier),
+              }),
+            ),
+          }),
+        ),
+      }),
+    )
     .query(({ ctx }) => {
       return ctx.session;
     }),

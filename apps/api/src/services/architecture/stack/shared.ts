@@ -2,7 +2,7 @@
 
 import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
 import type { PulumiFn } from '@pulumi/pulumi/automation/index.js';
-import { env } from '~/env';
+import { env } from '~/env.ts';
 import * as z from 'zod';
 
 export const projectName = 'user-app';

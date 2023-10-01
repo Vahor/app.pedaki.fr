@@ -11,33 +11,36 @@
   "scripts": {
     "start": "dotenv -- turbo run start",
     "build": "dotenv -- turbo run build",
-    "test": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test",
+    "test": "cross-env NODE_ENV=test dotenv -e .env.test -c -- turbo run test",
     "test:coverage": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test:coverage",
     "test:watch": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test:watch",
     "dev": "dotenv -- turbo run dev",
-    "lint": "SKIP_ENV_VALIDATION=true && turbo run lint",
+    "lint": "cross-env SKIP_ENV_VALIDATION=true turbo run lint",
     "format:check": "turbo run format:check",
     "typecheck": "turbo run typecheck",
     "format": "turbo run format",
     "clean": "turbo run clean && rimraf node_modules",
-    "check": "SKIP_ENV_VALIDATION=true && turbo typecheck lint format:check test"
+    "check": "cross-env SKIP_ENV_VALIDATION=true turbo typecheck lint format:check test"
   },
   "devDependencies": {
+    "@pedaki/eslint-config": "^0.0.9",
+    "@pedaki/prettier-config": "^0.0.5",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.2",
-    "@types/node": "^18.17.14",
-    "@vitest/coverage-v8": "^0.34.5",
+    "@types/node": "^18.18.0",
+    "@vitest/coverage-v8": "^0.34.6",
     "cpy": "^10.1.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "latest",
     "esbuild-plugin-file-path-extensions": "^1.0.0",
+    "execa": "^8.0.1",
     "fs-extra": "^11.1.1",
     "rimraf": "latest",
     "tsconfig-replace-paths": "^0.0.14",
     "tsup": "^7.2.0",
     "turbo": "latest",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.5"
+    "vitest": "^0.34.6"
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0",

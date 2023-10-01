@@ -1,6 +1,6 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
-import { env } from '~/env';
+import { env } from '~/env.ts';
 import type { StackParameters } from '../../type.ts';
 
 export interface WebServiceArgs {

@@ -13,7 +13,7 @@ export const Providers = ({ children }: Props) => {
   return (
     <>
       <Toaster />
-      <SessionProvider>
+      <SessionProvider refetchOnWindowFocus={true} refetchWhenOffline={false} refetchInterval={60}>
         <TrpcProvider>{children}</TrpcProvider>
       </SessionProvider>
     </>
