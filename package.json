@@ -23,6 +23,8 @@
     "check": "cross-env SKIP_ENV_VALIDATION=true turbo typecheck lint format:check test"
   },
   "devDependencies": {
+    "@pedaki/eslint-config": "^0.0.9",
+    "@pedaki/prettier-config": "^0.0.5",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.2",
     "@types/node": "^18.18.0",

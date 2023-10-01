@@ -1,6 +1,6 @@
 'use client';
 
-import type { AppRouter } from '@pedaki/api/router/index.js';
+import type { AppRouter } from '@pedaki/api/router/router.js';
 import { httpBatchLink, loggerLink, TRPCClientError } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 import { getUrl } from '~/server/api/clients/shared';

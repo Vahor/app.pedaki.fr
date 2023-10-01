@@ -47,7 +47,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@pedaki/eslint-config": "^0.0.7",
+    "@pedaki/eslint-config": "^0.0.9",
     "@pedaki/prettier-config": "^0.0.5",
     "@types/react": "^18.2.24",
     "@types/sanitize-html": "^2.9.1",

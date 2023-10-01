@@ -1,4 +1,4 @@
-import { allPermissions } from '@pedaki/auth/permissions';
+import { allPermissions } from '@pedaki/auth/permissions.ts';
 import { prisma } from '@pedaki/db';
 import { WorkspaceRole } from '~/models/role.model.ts';
 import { WorkspaceModel } from '~/models/workspace.model.ts';
