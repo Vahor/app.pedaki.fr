@@ -10,7 +10,7 @@ type UserData = User & {
   blocked: boolean;
 };
 
-export const getUserDataCached = async (filter: { id: string }): Promise<UserData> => {
+export const getUserDataCached = (filter: { id: string }): Promise<UserData> => {
   return cache<UserData>(async () => getUserData(filter), `getUserData:${filter.id}`, {
     ttl: 1000 * 10, // 1 minute
   });

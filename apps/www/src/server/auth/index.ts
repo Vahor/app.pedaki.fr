@@ -15,7 +15,7 @@ import { getUserData, getUserDataCached } from './utils';
 
 export const authOptions: NextAuthOptions = {
   ...baseAuthOptions,
-  debug: false,
+  debug: true,
   pages: {
     signIn: '/auth/login',
     error: '/auth/login', // Error code passed in query string as ?error=
@@ -170,7 +170,7 @@ export const authOptions: NextAuthOptions = {
         const user = await getUserData({ email: credentials.email }, condition);
         if (user.blocked) {
           console.warn(`User ${user.id} is blocked`);
-          return null;
+          throw new Error('USER_BLOCKED');
         }
 
         return user;
