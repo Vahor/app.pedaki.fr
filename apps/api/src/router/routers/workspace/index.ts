@@ -5,6 +5,7 @@ import { TRPCError } from '@trpc/server';
 import { CreateWorkspaceModel, WorkspaceModel } from '~/models/workspace.model.ts';
 import { workspaceInvitesRouter } from '~/router/routers/workspace/invites.router.ts';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
+import { workspacePermissionsRouter } from '~/router/routers/workspace/permissions.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
 import { workspaceRolesRouter } from '~/router/routers/workspace/roles.router.ts';
 import { PREFIX, TAGS } from '~/router/routers/workspace/shared.ts';
@@ -17,6 +18,7 @@ export const workspaceRouter = router({
   invites: workspaceInvitesRouter,
   resources: workspaceResourcesRouter,
   members: workspaceMembersRouter,
+  permissions: workspacePermissionsRouter,
 
   create: privateProcedure
     .input(CreateWorkspaceModel)
