@@ -80,7 +80,7 @@ export const getCurrentUsage_IN_WORKSPACE: QuotaMethod<'USER'> = async (
     where: {
       members: {
         some: {
-          userId: entityId,
+          email: entityId,
         },
       },
     },
