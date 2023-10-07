@@ -28,14 +28,30 @@ model Workspace {
   // An identifier is null if the workspaces was deleted (as we need it to be unique)
   identifier String? @unique @db.VarChar(60)
 
+  // The user responsible for the workspace
+  mainEmail String @map("main_email") @db.VarChar(320)
+
   members WorkspaceMember[]
 
   subscriptions WorkspaceSubscription[]
   quotas        CustomQuotas[]
   settings      WorkspaceSetting[]
+  token         WorkspaceToken?
 
   @@index([id])
   @@map("workspaces")
+}
+
+model WorkspaceToken {
+  id Int @id @default(autoincrement())
+
+  token       String    @unique @db.VarChar(100) /// @encrypted
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String    @unique @map("workspace_id") @db.VarChar(25)
+
+  @@index([workspaceId])
+  @@map("token_to_workspace")
 }
 
 // To get the current subscription, we can just get the one with the latest paidUntil date
@@ -82,7 +98,7 @@ model WorkspaceMember {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  email String @db.VarChar(100)
+  email String @db.VarChar(320)
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String    @map("workspace_id") @db.VarChar(25)
@@ -138,7 +154,7 @@ model CustomQuotas {
   wokspace    Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String?    @map("workspace_id") @db.VarChar(25)
 
-  email String? @map("email") @db.VarChar(100)
+  email String? @map("email") @db.VarChar(320)
 
   @@unique([key, workspaceId])
   @@unique([key, email])

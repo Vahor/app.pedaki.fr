@@ -13,8 +13,8 @@ export const workspaceRouter = router({
 
   create: publicProcedure
     .input(CreateWorkspaceModel)
-    .output(WorkspaceModel)
-    .meta({ openapi: { method: 'POST', path: '/workspaces' } })
+    // .output(WorkspaceModel)
+    // .meta({ openapi: { method: 'POST', path: '/workspaces' } })
     .mutation(async ({ input, ctx }) => {
       // TODO: email
       const email = "nathan.d0601@gmail.com"
@@ -25,6 +25,7 @@ export const workspaceRouter = router({
           data: {
             name: input.name,
             identifier: input.identifier,
+              mainEmail: email,
           },
         });
 
