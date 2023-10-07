@@ -12,7 +12,7 @@ export const Providers = ({ children }: Props) => {
   return (
     <>
       <Toaster />
-    <TrpcProvider>{children}</TrpcProvider>
+      <TrpcProvider>{children}</TrpcProvider>
     </>
   );
 };

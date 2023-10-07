@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactElement 
 }
 
 export const metadata = {
-  metadataBase: new URL('https://app.pedaki.fr'),
+  metadataBase: new URL('https://store.pedaki.fr'),
   title: {
     template: '%s - Pedaki',
     default: 'Pedaki',
@@ -26,7 +26,7 @@ export const metadata = {
   themeColor: '#ffffff',
   openGraph: {
     images: '/og-image.png',
-    url: 'https://app.pedaki.fr',
+    url: 'https://store.pedaki.fr',
   },
   robots: 'noindex, nofollow',
   colorScheme: 'light',

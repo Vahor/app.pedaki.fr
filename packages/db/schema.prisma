@@ -19,8 +19,14 @@ model Workspace {
 
   name String @db.VarChar(100)
 
+  // Date when a workspace was deleted
+  // We keep it in our database for 10 years
+  // So we can still download the subscription receipts
+  deletedAt DateTime? @map("deleted_at")
+
   // Used as subdomain when the workspace is created
-  identifier String @unique @db.VarChar(60)
+  // An identifier is null if the workspaces was deleted (as we need it to be unique)
+  identifier String? @unique @db.VarChar(60)
 
   members WorkspaceMember[]
 
