@@ -1,8 +1,9 @@
 import { prisma } from '@pedaki/db';
+import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { WorkspaceModel } from '~/models/workspace.model.ts';
 import { z } from 'zod';
-import {publicProcedure, router} from '../../trpc.ts';
+import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
 
 export const workspaceMembersRouter = router({
   delete: publicProcedure
@@ -16,22 +17,30 @@ export const workspaceMembersRouter = router({
       });
     }),
 
-  create: publicProcedure
-    .input(WorkspaceModel.pick({ id: true }).extend({ email: z.string() }))
+  create: workspaceProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+      }),
+    )
     .output(z.undefined())
-    .meta({ openapi: { method: 'POST', path: '/workspace/{id}/member' } })
-    .mutation(async ({ input }) => {
-      const {id: workspaceId, email} = input;
-      await prisma.workspaceMember.create({
-        data: {
-          email,
-          workspaceId,
-        },
-      });
-
-      // TODO: return type
+    .meta({ openapi: { method: 'POST', path: '/workspace/member' } })
+    .mutation(async ({ input, ctx }) => {
+      const { email } = input;
+      try {
+        await prisma.workspaceMember.create({
+          data: {
+            email,
+            workspaceId: ctx.workspaceId,
+          },
+        });
+      } catch (error) {
+        if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'ALREADY_EXISTS',
+          });
+        }
+      }
     }),
-
-
-
 });

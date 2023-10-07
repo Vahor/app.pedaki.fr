@@ -26,7 +26,7 @@ const loadCustomQuotas = async (
   const quotas = await prisma.customQuotas.findFirst({
     where: {
       key: type,
-      [target == 'USER' ? 'userId' : 'workspaceId']: entityId,
+      [target == 'USER' ? 'email' : 'workspaceId']: entityId,
     },
     select: {
       value: true,

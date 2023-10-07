@@ -7,11 +7,7 @@ export interface Context {
   res: FastifyReply;
 }
 
-export const createContext = ({
-  req,
-  res,
-}: CreateFastifyContextOptions): Context => {
-
+export const createContext = ({ req, res }: CreateFastifyContextOptions): Context => {
   return {
     req,
     res,

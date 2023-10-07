@@ -2,6 +2,7 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import { prisma } from '@pedaki/db';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -76,6 +77,8 @@ export function createServer() {
     } catch (err) {
       server.log.error(err);
       throw err;
+    } finally {
+      await prisma.$disconnect();
     }
   };
 
