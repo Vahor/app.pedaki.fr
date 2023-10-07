@@ -1,23 +1,46 @@
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
+import { CreateWorkspaceResponse } from '@pedaki/schema/workspace.model.js';
+import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import {CreateWorkspaceInput, CreateWorkspaceResponse} from '@pedaki/schema/workspace.model.ts';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
+import { workspaceReservationRouter } from '~/router/routers/workspace/reservation.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
+import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
 export const workspaceRouter = router({
   resources: workspaceResourcesRouter,
   members: workspaceMembersRouter,
+  reservation: workspaceReservationRouter,
 
-  create: publicProcedure
-    .input(CreateWorkspaceInput)
+  validate: publicProcedure
+    .input(
+      z.object({
+        pendingId: z.string().cuid(),
+      }),
+    )
     .output(CreateWorkspaceResponse)
     .meta({ openapi: { method: 'POST', path: '/workspace' } })
-    .mutation(async ({ input, ctx }) => {
-      // TODO: email
+    .mutation(async ({ input }) => {
+      // Get the pending data
+      const pending = await prisma.pendingWorkspaceCreation.findUnique({
+        where: {
+          id: input.pendingId,
+        },
+      });
+
+      if (!pending) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+
+      const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
+
       const email = 'nathan.d0601@gmail.com';
       await assertQuota(prisma, 'IN_WORKSPACE', 'USER', email);
 
@@ -26,8 +49,8 @@ export const workspaceRouter = router({
 
         const workspace = await prisma.workspace.create({
           data: {
-            name: input.name,
-            identifier: input.identifier,
+            name: pendingData.name,
+            identifier: pendingData.identifier,
             mainEmail: email,
           },
         });
@@ -56,7 +79,7 @@ export const workspaceRouter = router({
 
         return {
           ...workspace,
-          identifier: workspace.identifier ?? input.identifier,
+          identifier: pendingData.identifier,
         };
       } catch (error) {
         if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {

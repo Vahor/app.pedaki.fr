@@ -1,4 +1,4 @@
-import { CreateForm } from '~/app/new/create-form.tsx';
+import { CreateForm } from '~/app/new/properties/create-form.tsx';
 
 export default function NewWorkspacePage() {
   return (

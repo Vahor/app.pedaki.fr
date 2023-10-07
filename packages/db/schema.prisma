@@ -49,13 +49,27 @@ model WorkspaceToken {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   token     String  @unique /// @encrypted
-  tokenHash   String?    @unique @map("token_hash") /// @encryption:hash(token)
+  tokenHash String? @unique @map("token_hash") /// @encryption:hash(token)
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String    @unique @map("workspace_id") @db.VarChar(25)
 
   @@index([workspaceId])
   @@map("token_to_workspace")
+}
+
+model PendingWorkspaceCreation {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // In there we store the data needed to create the workspace (CreateWorkspaceInput)
+  data String @db.Text // JSON
+
+  // Used here as a lock to prevent creating two workspaces at the same time
+  identifier String @unique @db.VarChar(60)
+
+  @@map("pending_workspace_creation")
 }
 
 // To get the current subscription, we can just get the one with the latest paidUntil date

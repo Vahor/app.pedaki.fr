@@ -18,11 +18,11 @@ export const RegionMap = {
   test: {
     'us-east-2': 'US East (Ohio)',
     'eu-west-3': 'Europe (Paris)',
-  }
+  },
 } as const;
 export const Region = {
-    AWS: Object.keys(RegionMap.AWS),
-    test: Object.keys(RegionMap.test),
+  AWS: Object.keys(RegionMap.AWS),
+  test: Object.keys(RegionMap.test),
 } as const;
 export const RegionModel = z.record(ProviderModel, z.array(z.string())).refine(value => {
   return Object.entries(value).every(([provider, regions]) => {

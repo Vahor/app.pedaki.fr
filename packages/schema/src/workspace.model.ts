@@ -1,5 +1,5 @@
-import { isValidRegion, ProviderModel } from './region.model.ts';
 import { z } from 'zod';
+import { isValidRegion, ProviderModel } from './region.model.ts';
 
 export const restrictedIdentifiers = ['api', 'admin', 'app', 'docs'];
 
@@ -32,6 +32,5 @@ export const CreateWorkspaceInput = z
   );
 
 export const CreateWorkspaceResponse = z.object({
-    id: z.string(),
+  id: z.string(),
 });
-
