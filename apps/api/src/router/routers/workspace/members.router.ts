@@ -1,13 +1,12 @@
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { WorkspaceModel } from '~/models/workspace.model.ts';
 import { z } from 'zod';
 import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
 
 export const workspaceMembersRouter = router({
   delete: publicProcedure
-    .input(WorkspaceModel.pick({ id: true }))
+    .input(z.object({ id: z.string().cuid().length(25) }))
     .output(z.undefined())
     .meta({ openapi: { method: 'DELETE', path: '/workspace/{id}/member' } })
     .mutation(({ input, ctx }) => {

@@ -9,7 +9,7 @@ const prismaClientSingleton = () => {
     fieldEncryptionExtension({
       encryptionKey: process.env.PRISMA_ENCRYPTION_KEY,
     }),
-  );
+  ) as PrismaClient;
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

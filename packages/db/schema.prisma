@@ -17,7 +17,7 @@ model Workspace {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  name String @db.VarChar(100)
+  name String @db.VarChar(50)
 
   // Date when a workspace was deleted
   // We keep it in our database for 10 years

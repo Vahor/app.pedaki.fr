@@ -2,7 +2,7 @@ import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { CreateWorkspaceModel, WorkspaceModel } from '~/models/workspace.model.ts';
+import {CreateWorkspaceInput, CreateWorkspaceResponse} from '@pedaki/schema/workspace.model.ts';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
@@ -13,8 +13,8 @@ export const workspaceRouter = router({
   members: workspaceMembersRouter,
 
   create: publicProcedure
-    .input(CreateWorkspaceModel)
-    .output(WorkspaceModel)
+    .input(CreateWorkspaceInput)
+    .output(CreateWorkspaceResponse)
     .meta({ openapi: { method: 'POST', path: '/workspace' } })
     .mutation(async ({ input, ctx }) => {
       // TODO: email

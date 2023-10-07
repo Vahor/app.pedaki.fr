@@ -1,4 +1,5 @@
-export type Provider = 'AWS' | 'test';
+import type { Provider } from '@pedaki/schema/region.model.ts';
+
 export const Region = {
   AWS: ['us-east-2', 'eu-west-3'] as const,
   test: ['us-east-2', 'eu-west-2'] as const,

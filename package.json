@@ -11,6 +11,7 @@
   "scripts": {
     "start": "dotenv -- turbo run start",
     "build": "dotenv -- turbo run build",
+    "build:watch": "dotenv -- turbo run build:watch",
     "test": "cross-env NODE_ENV=test dotenv -e .env.test -c -- turbo run test",
     "test:coverage": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test:coverage",
     "test:watch": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test:watch",

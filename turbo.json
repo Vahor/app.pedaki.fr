@@ -7,6 +7,9 @@
     "signature": true
   },
   "pipeline": {
+    "build:watch": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build"
