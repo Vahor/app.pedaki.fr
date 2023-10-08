@@ -1,11 +1,13 @@
+import { encrypt } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import { env } from '~/env.ts';
 import { createPayment } from '~/services/stipe/create-payment.ts';
 import { products } from '~/services/stipe/products.ts';
 import { z } from 'zod';
-import { publicProcedure, router } from '../../trpc.ts';
+import { internalProcedure, publicProcedure, router } from '../../trpc.ts';
 
 export const workspaceReservationRouter = router({
   create: publicProcedure
@@ -16,7 +18,6 @@ export const workspaceReservationRouter = router({
         stripeUrl: z.string().url(),
       }),
     )
-    .meta({ openapi: { method: 'POST', path: '/workspace-reservation' } })
     .mutation(async ({ input }) => {
       const jsonData = JSON.stringify(input);
 
@@ -74,7 +75,6 @@ export const workspaceReservationRouter = router({
       }),
     )
     .output(CreateWorkspaceInput)
-    .meta({ openapi: { method: 'GET', path: '/workspace-reservation/{id}' } })
     .query(async ({ input }) => {
       // TODO: add cache and quotas here as it's easy to spam this endpoint
       const pending = await prisma.pendingWorkspaceCreation.findUnique({
@@ -104,16 +104,14 @@ export const workspaceReservationRouter = router({
         paid: z.boolean(),
       }),
     )
-    .meta({ openapi: { method: 'GET', path: '/workspace-reservation/{id}/status' } })
     .query(async ({ input }) => {
-      console.log('status', input);
       // TODO: add cache and quotas here as it's easy to spam this endpoint
       const pending = await prisma.pendingWorkspaceCreation.findUnique({
         where: {
           id: input.id,
         },
         select: {
-          paid: true,
+          paidAt: true,
         },
       });
 
@@ -125,7 +123,42 @@ export const workspaceReservationRouter = router({
       }
 
       return {
-        paid: pending.paid,
+        paid: pending.paidAt !== null
       };
+    }),
+
+  generateToken: publicProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+      }),
+    )
+    .output(z.string())
+    .query(async ({ input }) => {
+      // TODO: add cache and quotas here as it's easy to spam this endpoint
+      const pending = await prisma.pendingWorkspaceCreation.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          workspaceId: true,
+          paidAt: true,
+        },
+      });
+
+      if (!pending || !pending.paidAt || !pending.workspaceId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+
+      const raw = {
+        workspaceId: pending.workspaceId,
+        // 1 hour after payment
+        expiresAt: new Date(pending.paidAt.getTime() + 1000 * 60 * 60).toISOString(),
+      }
+
+      return encrypt(JSON.stringify(raw), env.API_ENCRYPTION_KEY);
     }),
 });

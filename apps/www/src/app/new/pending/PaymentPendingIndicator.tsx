@@ -1,9 +1,8 @@
 'use client';
 
-import { Button } from '@pedaki/design/ui/button';
 import { api } from '~/server/api/clients/client.ts';
-import Link from 'next/link';
 import React from 'react';
+import PaidContent from "~/app/new/pending/PaidContent.tsx";
 
 interface PaymentPendingIndicatorProps {
   initialIsPaid: boolean;
@@ -28,20 +27,7 @@ const PaymentPendingIndicator: React.FC<PaymentPendingIndicatorProps> = ({
   );
 
   if (data?.paid) {
-    return (
-      <div>
-        Payment successful!
-        <p>Message qui dit que les identifiants de base vont être envoyés par mail</p>
-        <p>Et que ça peut prendre quelques minutes avant d'être disponible</p>
-        <p>
-          Mais que en attendant il peut commencer à configurer son espace de travail, et hop un
-          bouton qui fait ça
-        </p>
-        <Link href={`/new/invitations?pendingId=${encodeURIComponent(pendingId)}`}>
-          <Button variant="neutral">Continuer la configuration</Button>
-        </Link>
-      </div>
-    );
+    return <PaidContent pendingId={pendingId} />;
   }
 
   return <div>Waiting for payment...</div>;

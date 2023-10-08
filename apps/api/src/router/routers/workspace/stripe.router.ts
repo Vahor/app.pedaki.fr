@@ -59,41 +59,46 @@ export const stripeRouter = router({
           const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
 
           // TODO move into a flow file
-          await prisma.$transaction([
-            prisma.pendingWorkspaceCreation.update({
-              where: {
-                id: pendingId,
+          const workspace = await prisma.workspace.create({
+            data: {
+              name: pendingData.name,
+              identifier: pendingData.identifier,
+              mainEmail: pendingData.email,
+              stripeCustomerId: data.customer,
+              members: {
+                create: {
+                  email: pendingData.email,
+                },
               },
-              data: {
-                paid: true,
-              },
-            }),
-            prisma.workspace.create({
-              data: {
-                name: pendingData.name,
-                identifier: pendingData.identifier,
-                mainEmail: pendingData.email,
-                stripeCustomerId: data.customer,
-                members: {
-                  create: {
-                    email: pendingData.email,
+              subscriptions: {
+                create: [
+                  {
+                    // TODO: type (create an enum for this)
+                    //  We can reuse the type from products.ts
+                    type: 'hosting',
+                    stripeSubscriptionId: data.subscription,
+                    // expires_at
+                    paidUntil: new Date(data.expires_at * 1000),
                   },
-                },
-                subscriptions: {
-                  create: [
-                    {
-                      // TODO: type (create an enum for this)
-                      //  We can reuse the type from products.ts
-                      type: 'hosting',
-                      stripeSubscriptionId: data.subscription,
-                      // expires_at
-                      paidUntil: new Date(data.expires_at * 1000),
-                    },
-                  ],
-                },
+                ],
               },
-            }),
-          ]);
+            },
+            select: {
+              id: true,
+            },
+          });
+
+          await prisma.pendingWorkspaceCreation.update({
+            where: {
+              id: pendingId,
+            },
+            data: {
+              workspaceId: workspace.id,
+              paidAt: new Date(),
+            },
+          });
+
+          // TODO: create server
 
           break;
         case 'invoice.paid':

@@ -33,7 +33,6 @@ export const isFromStripe = t.middleware(async ({ ctx, next }) => {
 
     return next({
       ctx: {
-        ...ctx,
         stripeEvent: event,
       },
     });

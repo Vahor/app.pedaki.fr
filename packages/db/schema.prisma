@@ -63,9 +63,11 @@ model PendingWorkspaceCreation {
   id String @id @default(cuid()) @db.VarChar(25)
 
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   stripePaymentId String? @unique @map("stripe_payment_id")
-  paid            Boolean @default(false)
+  paidAt            DateTime? @map("paid_at")
+  workspaceId     String? @unique @map("workspace_id") @db.VarChar(25)
 
   // In there we store the data needed to create the workspace (CreateWorkspaceInput)
   data String @db.Text // JSON

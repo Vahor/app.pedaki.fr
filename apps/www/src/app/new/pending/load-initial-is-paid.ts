@@ -1,4 +1,5 @@
-import { api } from '~/server/api/clients/server';
+"use server";
+import { api } from '~/server/api/clients/server.ts';
 
 interface LoadInitialIsPaidOutput {
   status: 'waiting' | 'paid' | 'invalid' | 'expired';
