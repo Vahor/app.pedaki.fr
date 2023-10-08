@@ -55,7 +55,7 @@ export function CreateForm() {
   const { isSubmitting } = form.formState;
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { replace } = useRouter();
+  const { push } = useRouter();
   const createReservationMutation = api.workspace.reservation.create.useMutation();
 
   function onSubmit(values: CreateWorkspaceFormValues) {
@@ -78,7 +78,7 @@ export function CreateForm() {
       throwOnError: true,
     })
       .then(data => {
-        replace(data.stripeUrl);
+        push(data.stripeUrl);
         setPaymentUrl(data.stripeUrl);
       })
       .catch(() => {

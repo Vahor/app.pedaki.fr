@@ -92,4 +92,40 @@ export const workspaceReservationRouter = router({
 
       return JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
     }),
+
+  status: publicProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+      }),
+    )
+    .output(
+      z.object({
+        paid: z.boolean(),
+      }),
+    )
+    .meta({ openapi: { method: 'GET', path: '/workspace-reservation/{id}/status' } })
+    .query(async ({ input }) => {
+      console.log('status', input);
+      // TODO: add cache and quotas here as it's easy to spam this endpoint
+      const pending = await prisma.pendingWorkspaceCreation.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          paid: true,
+        },
+      });
+
+      if (!pending) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+
+      return {
+        paid: pending.paid,
+      };
+    }),
 });

@@ -30,7 +30,7 @@ model Workspace {
 
   // The user responsible for the workspace
   stripeCustomerId String @map("stripe_customer_id")
-  mainEmail String @map("main_email") @db.VarChar(320)
+  mainEmail        String @map("main_email") @db.VarChar(320)
 
   members WorkspaceMember[]
 
@@ -65,6 +65,7 @@ model PendingWorkspaceCreation {
   createdAt DateTime @default(now()) @map("created_at")
 
   stripePaymentId String? @unique @map("stripe_payment_id")
+  paid            Boolean @default(false)
 
   // In there we store the data needed to create the workspace (CreateWorkspaceInput)
   data String @db.Text // JSON

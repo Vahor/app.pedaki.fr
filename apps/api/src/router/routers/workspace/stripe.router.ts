@@ -13,6 +13,7 @@ export const stripeRouter = router({
     .mutation(async ({ ctx }) => {
       const event = ctx.stripeEvent;
       console.log(event.type);
+      // TODO: move each event into a separate function (in stripe service folder ?)
       switch (event.type) {
         case 'checkout.session.completed':
           // Payment is successful and the subscription is created.
@@ -20,6 +21,7 @@ export const stripeRouter = router({
           // --
           // 	Sent when a customer clicks the Pay or Subscribe button in Checkout, informing you of a new purchase.
 
+          // TODO: use zod to make sure the data is valid
           const data = event.data.object as {
             metadata: PaymentMetadata;
             status: string;
@@ -27,6 +29,7 @@ export const stripeRouter = router({
             subscription: string;
             expires_at: number;
           };
+
           const status = data.status;
           const pendingId = data.metadata.pendingId;
           if (status !== 'complete') {
@@ -37,7 +40,6 @@ export const stripeRouter = router({
           }
 
           // We are now sure that the payment is complete, we can create the workspace
-
           const pending = await prisma.pendingWorkspaceCreation.findUnique({
             where: {
               id: pendingId,
@@ -58,9 +60,12 @@ export const stripeRouter = router({
 
           // TODO move into a flow file
           await prisma.$transaction([
-            prisma.pendingWorkspaceCreation.delete({
+            prisma.pendingWorkspaceCreation.update({
               where: {
                 id: pendingId,
+              },
+              data: {
+                paid: true,
               },
             }),
             prisma.workspace.create({
@@ -78,6 +83,7 @@ export const stripeRouter = router({
                   create: [
                     {
                       // TODO: type (create an enum for this)
+                      //  We can reuse the type from products.ts
                       type: 'hosting',
                       stripeSubscriptionId: data.subscription,
                       // expires_at

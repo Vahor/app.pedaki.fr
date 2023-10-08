@@ -56,7 +56,7 @@ export function createServer() {
       encoding: false, // don't convert the request body to string
       runFirst: true,
       global: false,
-      routes: ["/api/*"],
+      routes: ['/api/*'],
     });
 
     await server.register(fastifyTRPCOpenApiPlugin, {
