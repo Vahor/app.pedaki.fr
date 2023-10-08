@@ -23,10 +23,10 @@ const transformFile = (file) => {
     const content = fs.readFileSync(file, 'utf8');
     const matches = content.match(pattern);
 
-if (!matches) return;
+    if (!matches) return;
 
+    console.log(`Transforming file ${file}`);
     const newContent = content.replace(pattern, (match, p1, p2) => {
-        console.log(`Transforming ${p1}.${p2} to ${p1}.js`)
         return match.replace(`${p1}.${p2}`, `${p1}.js`);
     });
 

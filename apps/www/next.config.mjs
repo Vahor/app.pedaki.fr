@@ -22,11 +22,6 @@ const config = {
             source: "/",
             destination: "/new",
             permanent: false,
-        },
-        {
-            source: "/new",
-            destination: "/new/properties",
-            permanent: false,
         }
     ],
 

@@ -7,6 +7,7 @@ import { prisma } from '@pedaki/db';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { seedDatabase } from '~/seeds/seeds.ts';
 import fastify from 'fastify';
+import fastifyRawBody from 'fastify-raw-body';
 import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
 import { env } from './env.ts';
 import { openApiDocument } from './openapi.ts';
@@ -54,6 +55,11 @@ export function createServer() {
     });
     await server.register(cookie, {
       parseOptions: {},
+    });
+    await server.register(fastifyRawBody, {
+      encoding: false, // don't convert the request body to string
+      runFirst: true,
+      routes: ['/api/stripe/webhook'], // array of routes, **`global`** will be ignored, wildcard routes not supported
     });
     await server.register(fastifyTRPCPlugin, {
       prefix: '/t/api',

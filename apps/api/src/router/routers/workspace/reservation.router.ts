@@ -2,6 +2,8 @@ import { prisma } from '@pedaki/db';
 import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
+import { createPayment } from '~/services/stipe/create-payment.ts';
+import { products } from '~/services/stipe/products.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
@@ -11,6 +13,7 @@ export const workspaceReservationRouter = router({
     .output(
       z.object({
         id: z.string().cuid(),
+        stripeUrl: z.string().url(),
       }),
     )
     .meta({ openapi: { method: 'POST', path: '/workspace-reservation' } })
@@ -28,8 +31,30 @@ export const workspaceReservationRouter = router({
           },
         });
 
+        const payment = await createPayment({
+          product: products.hosted,
+          metadata: {
+            workspaceName: input.name,
+            pendingId: pending.id,
+          },
+          customer: {
+            email: input.email,
+          },
+        });
+
+        // Update pending with payment id
+        await prisma.pendingWorkspaceCreation.update({
+          where: {
+            id: pending.id,
+          },
+          data: {
+            stripePaymentId: payment.id,
+          },
+        });
+
         return {
           id: pending.id,
+          stripeUrl: payment.url,
         };
       } catch (error) {
         if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {

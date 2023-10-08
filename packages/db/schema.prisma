@@ -29,6 +29,7 @@ model Workspace {
   identifier String? @unique @db.VarChar(60)
 
   // The user responsible for the workspace
+  stripeCustomerId String @map("stripe_customer_id")
   mainEmail String @map("main_email") @db.VarChar(320)
 
   members WorkspaceMember[]
@@ -63,6 +64,8 @@ model PendingWorkspaceCreation {
 
   createdAt DateTime @default(now()) @map("created_at")
 
+  stripePaymentId String? @unique @map("stripe_payment_id")
+
   // In there we store the data needed to create the workspace (CreateWorkspaceInput)
   data String @db.Text // JSON
 
@@ -83,33 +86,16 @@ model WorkspaceSubscription {
   // and in our code we map it to a stripe product
   type String
 
+  stripeSubscriptionId String? @unique @map("stripe_subscription_id")
+
   paidUntil DateTime            @map("paid_until")
   resources WorkspaceResource[]
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String    @db.VarChar(25)
 
-  receipt   WorkspaceSubscriptionReceipt @relation(fields: [receiptId], references: [id])
-  receiptId Int                          @unique @map("receipt_id")
-
   @@index([workspaceId])
-  @@index([receiptId])
   @@map("workspace_subscriptions")
-}
-
-model WorkspaceSubscriptionReceipt {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-
-  // If the payment failed, we'll still have a receipt, but no subscription
-  subscription WorkspaceSubscription?
-
-  // TODO: improve the schema to add the price, status etc
-  //    I can't to it now as I don't know the structure of the data
-  data Json
-
-  @@map("workspace_subscription_receipts")
 }
 
 model WorkspaceMember {

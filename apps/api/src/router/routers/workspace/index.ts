@@ -7,7 +7,9 @@ import { TRPCError } from '@trpc/server';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
 import { workspaceReservationRouter } from '~/router/routers/workspace/reservation.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
+import { stripeRouter } from '~/router/routers/workspace/stripe.router.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
+import { getCustomerFromPayment } from '~/services/stipe/get-customer-from-paiement.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
@@ -15,6 +17,7 @@ export const workspaceRouter = router({
   resources: workspaceResourcesRouter,
   members: workspaceMembersRouter,
   reservation: workspaceReservationRouter,
+  stripe: stripeRouter,
 
   validate: publicProcedure
     .input(
@@ -30,14 +33,20 @@ export const workspaceRouter = router({
         where: {
           id: input.pendingId,
         },
+        select: {
+          data: true,
+          stripePaymentId: true,
+        },
       });
 
-      if (!pending) {
+      if (!pending || !pending.stripePaymentId) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'NOT_FOUND',
         });
       }
+
+      const customerId = await getCustomerFromPayment(pending.stripePaymentId);
 
       const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
 
@@ -52,6 +61,7 @@ export const workspaceRouter = router({
             name: pendingData.name,
             identifier: pendingData.identifier,
             mainEmail: email,
+            stripeCustomerId: customerId,
           },
         });
 

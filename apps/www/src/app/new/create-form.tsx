@@ -28,9 +28,8 @@ import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 const Schema = CreateWorkspaceInput.and(
@@ -39,8 +38,7 @@ const Schema = CreateWorkspaceInput.and(
 type CreateWorkspaceFormValues = z.infer<typeof Schema>;
 
 export function CreateForm() {
-  const pendingId = useWorkspaceFormStore(store => store.pendingId);
-  const setPendingId = useWorkspaceFormStore(store => store.setPendingId);
+  const setPaymentUrl = useWorkspaceFormStore(store => store.setPaymentUrl);
 
   const form = useForm<CreateWorkspaceFormValues>({
     resolver: zodResolver(Schema),
@@ -56,30 +54,10 @@ export function CreateForm() {
   });
   const { isSubmitting } = form.formState;
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { replace } = useRouter();
   const createReservationMutation = api.workspace.reservation.create.useMutation();
-  const { data: reservation } = api.workspace.reservation.getOne.useQuery(
-    {
-      id: pendingId!,
-    },
-    {
-      enabled: !!pendingId,
-    },
-  );
 
-  const reset = form.reset;
-
-  useEffect(() => {
-    if (reservation) {
-      toast('Reprendre la création du workspace ?', {
-        action: {
-          label: 'Oui',
-          onClick: () => {
-            reset(reservation);
-          },
-        },
-      });
-    }
-  }, [reservation, reset]);
   function onSubmit(values: CreateWorkspaceFormValues) {
     return wrapWithLoading(() => createReservationMutation.mutateAsync(values), {
       loadingProps: {
@@ -100,7 +78,8 @@ export function CreateForm() {
       throwOnError: true,
     })
       .then(data => {
-        setPendingId(data.id);
+        replace(data.stripeUrl);
+        setPaymentUrl(data.stripeUrl);
       })
       .catch(() => {
         // ignore

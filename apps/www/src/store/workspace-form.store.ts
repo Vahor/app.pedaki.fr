@@ -2,15 +2,15 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface WorkspaceFormStore {
-  pendingId: string | null;
-  setPendingId: (pendingId: string | null) => void;
+  paymentUrl: string | null;
+  setPaymentUrl: (paymentUrl: string | null) => void;
 }
 
 export const useWorkspaceFormStore = create<WorkspaceFormStore>()(
   persist(
     set => ({
-      pendingId: null,
-      setPendingId: pendingId => set({ pendingId }),
+      paymentUrl: null,
+      setPaymentUrl: paymentUrl => set({ paymentUrl }),
     }),
     {
       name: 'workspace-form-store',
