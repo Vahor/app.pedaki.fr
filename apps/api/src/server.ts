@@ -33,13 +33,7 @@ export function createServer() {
       routePrefix: '/docs',
     });
 
-    // Handle incoming OpenAPI requests
-    await server.register(fastifyTRPCOpenApiPlugin, {
-      basePath: '/api',
-      router: appRouter,
-      createContext,
-    });
-
+    server.swagger();
     console.log(`Swagger UI available on http://localhost:${port}/docs`);
   };
 
@@ -56,11 +50,21 @@ export function createServer() {
     await server.register(cookie, {
       parseOptions: {},
     });
+
+    // We need to access the rawBody for stripe webhooks
     await server.register(fastifyRawBody, {
       encoding: false, // don't convert the request body to string
       runFirst: true,
-      routes: ['/api/stripe/webhook'], // array of routes, **`global`** will be ignored, wildcard routes not supported
+      global: false,
+      routes: ["/api/*"],
     });
+
+    await server.register(fastifyTRPCOpenApiPlugin, {
+      basePath: '/api',
+      router: appRouter,
+      createContext,
+    });
+
     await server.register(fastifyTRPCPlugin, {
       prefix: '/t/api',
       useWSS: false,
@@ -73,10 +77,9 @@ export function createServer() {
   };
   const start = async () => {
     try {
+      await setupSwagger();
       await init();
       await serverFactory.init();
-      await setupSwagger();
-      server.swagger();
       await server.listen({ port, host: '0.0.0.0' });
       await seedDatabase();
       console.log(`Server listening on http://localhost:${port}`);
