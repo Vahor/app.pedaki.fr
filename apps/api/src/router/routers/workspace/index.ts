@@ -9,7 +9,7 @@ import { workspaceReservationRouter } from '~/router/routers/workspace/reservati
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
 import { stripeRouter } from '~/router/routers/workspace/stripe.router.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
-import { getCustomerFromPayment } from '~/services/stipe/get-customer-from-paiement.ts';
+import { getCustomerFromPayment } from '~/services/stipe/get-customer-from-payment.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 

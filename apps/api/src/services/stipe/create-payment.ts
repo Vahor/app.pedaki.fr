@@ -1,5 +1,4 @@
 import { env } from '~/env.ts';
-import { getCustomerFromPayment } from '~/services/stipe/get-customer-from-paiement.ts';
 import type { Product } from './products.ts';
 import stripe from './stripe.ts';
 
