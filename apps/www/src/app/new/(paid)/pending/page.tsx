@@ -16,18 +16,18 @@ export default async function PendingPaymentPage({
   if (initialIsPaid.status === 'expired') {
     return (
       <p>
-        Soit l'id correspond a un paiement trop ancien soit il n'est pas bon. Sauf si la personne
-        l'a entré a la main, c'est qu'il est trop ancien
+        Soit l&apos;id correspond a un paiement trop ancien soit il n&apos;est pas bon. Sauf si la
+        personne l&apos;a entré a la main, c&apos;est qu&apos;il est trop ancien
       </p>
     );
   }
 
   return (
     <main className="container py-8">
-      <p>Here I suppose this will be a page where we'll wait for the stripe paiement</p>
+      <p>Here I suppose this will be a page where we&apos;ll wait for the stripe paiement</p>
       <pre>{JSON.stringify(searchParams, null, 2)}</pre>
       <p>TODO: make a api request to check that the pendingId is valid</p>
-      <p>If that's the case, show that the paiement was successful</p>
+      <p>If that&apos;s the case, show that the paiement was successful</p>
       <pre>{JSON.stringify(initialIsPaid, null, 2)}</pre>
       <PaymentPendingIndicator
         initialIsPaid={initialIsPaid.status === 'paid'}

@@ -60,6 +60,7 @@ export function createServer() {
       routes: ['/api/*'],
     });
 
+    // @ts-expect-error: TODO: fix this
     await server.register(fastifyTRPCOpenApiPlugin, {
       basePath: '/api',
       router: appRouter,

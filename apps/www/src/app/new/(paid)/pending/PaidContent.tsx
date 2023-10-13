@@ -14,7 +14,7 @@ const PaidContent: React.FC<PaidContentProps> = ({ pendingId }) => {
     <div>
       Payment successful!
       <p>Message qui dit que les identifiants de base vont être envoyés par mail</p>
-      <p>Et que ça peut prendre quelques minutes avant d'être disponible</p>
+      <p>Et que ça peut prendre quelques minutes avant d&apos;être disponible</p>
       <p>
         Mais que en attendant il peut commencer à configurer son espace de travail, et hop un bouton
         qui fait ça

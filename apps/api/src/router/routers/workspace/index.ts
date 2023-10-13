@@ -39,7 +39,7 @@ export const workspaceRouter = router({
         },
       });
 
-      if (!pending || !pending.stripePaymentId) {
+      if (!pending?.stripePaymentId) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'NOT_FOUND',

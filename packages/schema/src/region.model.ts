@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const isValidRegion = (provider: Provider, region: string): region is Region<Provider> => {
-  return Region[provider].includes(region as any);
+  return Region[provider].includes(region);
 };
 
 /// Provider

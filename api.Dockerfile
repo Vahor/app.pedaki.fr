@@ -17,8 +17,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 COPY apps/api/package.json ./apps/api/
 COPY packages/db/package.json ./packages/db/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/settings/package.json ./packages/settings/
+COPY packages/schema/package.json ./packages/schema/
 
 RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
@@ -37,7 +36,7 @@ RUN mkdir -p tmp
 RUN cp -r node_modules/.prisma tmp/.prisma
 
 # Delete node_modules and reinstall only production dependencies
-RUN npx rimraf --glob **/node_modules
+RUN npx rimraf --glob ./**/node_modules
 RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter api
 
 # Copy back node_modules/.prisma
@@ -52,24 +51,28 @@ ENV PATH="/root/.pulumi/bin:$PATH"
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/packages/auth/dist ./node_modules/@pedaki/auth
-COPY --from=builder /app/packages/settings/dist ./node_modules/@pedaki/settings
+COPY --from=builder /app/packages/schema/dist ./node_modules/@pedaki/schema
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 
 ## Load public env vars
-ARG PULUMI_ACCESS_TOKEN
 ARG PORT=8080
+
 ARG RESEND_API_KEY
-ARG PASSWORD_SALT
+ARG PULUMI_ACCESS_TOKEN
 ARG DATABASE_URL
-ARG NEXTAUTH_SECRET
+ARG PRISMA_ENCRYPTION_KEY
+ARG STRIPE_SECRET_KEY
+ARG API_INTERNAL_SECRET
+ARG API_ENCRYPTION_KEY
 
 ENV PORT=$PORT
 ENV PULUMI_ACCESS_TOKEN=$PULUMI_ACCESS_TOKEN
 ENV RESEND_API_KEY=$RESEND_API_KEY
-ENV PASSWORD_SALT=$PASSWORD_SALT
 ENV DATABASE_URL=$DATABASE_URL
-ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV PRISMA_ENCRYPTION_KEY=$PRISMA_ENCRYPTION_KEY
+ENV STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
+ENV API_INTERNAL_SECRET=$API_INTERNAL_SECRET
+ENV API_ENCRYPTION_KEY=$API_ENCRYPTION_KEY
 
 ENV NODE_ENV=production
 ENV SKIP_SERVER_ENV_CHECK=true

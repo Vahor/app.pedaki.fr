@@ -180,7 +180,7 @@ export const workspaceReservationRouter = router({
         },
       });
 
-      if (!pending || !pending.paidAt || !pending.workspaceId) {
+      if (!pending?.paidAt || !pending.workspaceId) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'NOT_FOUND',

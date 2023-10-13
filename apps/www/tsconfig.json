@@ -23,6 +23,7 @@
     "declarationMap": true,
     "inlineSources": false,
     "noUnusedLocals": false,
+    "skipDefaultLibCheck": true,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "experimentalDecorators": true,
@@ -45,7 +46,6 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts",
-    "node_modules/@pedaki/auth/dist/index.d.ts",
     "src/reset.d.ts"
   ],
   "exclude": ["node_modules", ".next", "out", "dist"]
