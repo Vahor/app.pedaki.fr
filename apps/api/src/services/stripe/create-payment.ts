@@ -56,7 +56,7 @@ export const createPayment = async ({
         },
     metadata: metadata,
     //
-    success_url: `${env.APP_URL}/new/pending?status=success&pendingId=${metadata.pendingId}`,
+    success_url: `${env.APP_URL}/new/pending?token=${metadata.pendingId}`,
     cancel_url: `${env.APP_URL}/new`,
     payment_intent_data: isSubscription
       ? undefined

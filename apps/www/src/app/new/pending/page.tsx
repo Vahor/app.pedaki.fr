@@ -6,7 +6,7 @@ export default async function PendingPaymentPage({
 }: {
   searchParams: Record<string, string>;
 }) {
-  const pendingId = searchParams.pendingId;
+  const pendingId = searchParams.token;
   const initialIsPaid = await loadInitialIsPaid(pendingId);
 
   if (initialIsPaid.status === 'invalid') {
