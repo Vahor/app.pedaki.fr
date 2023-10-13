@@ -93,6 +93,40 @@ export const workspaceReservationRouter = router({
       return JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
     }),
 
+  getHealthUrl: publicProcedure
+    .input(
+      z.object({
+        id: z.string().cuid(),
+      }),
+    )
+    .output(
+      z.object({
+        url: z.string().url(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const pending = await prisma.pendingWorkspaceCreation.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          identifier: true,
+        },
+      });
+
+      if (!pending) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+
+      return {
+        // TODO base domain / health url
+        url: `https://${pending.identifier}.pedaki.fr/api/health`,
+      };
+    }),
+
   status: publicProcedure
     .input(
       z.object({

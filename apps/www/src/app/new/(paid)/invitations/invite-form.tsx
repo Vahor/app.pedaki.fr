@@ -13,7 +13,6 @@ import {
 } from '@pedaki/design/ui/form';
 import IconSpinner from '@pedaki/design/ui/icons/IconSpinner';
 import { Input } from '@pedaki/design/ui/input';
-import type { ValidToken } from '~/app/new/invitations/parse-token.ts';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceInvitationStore } from '~/store/workspace-invitation.store.ts';
 import React from 'react';

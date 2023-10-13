@@ -1,6 +1,6 @@
 'use client';
 
-import PaidContent from '~/app/new/pending/PaidContent.tsx';
+import PaidContent from '~/app/new/(paid)/pending/PaidContent.tsx';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
 import React, { useEffect } from 'react';

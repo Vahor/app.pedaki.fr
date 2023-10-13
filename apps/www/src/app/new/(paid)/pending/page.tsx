@@ -1,5 +1,5 @@
-import { loadInitialIsPaid } from '~/app/new/pending/load-initial-is-paid.ts';
-import PaymentPendingIndicator from '~/app/new/pending/PaymentPendingIndicator.tsx';
+import { loadInitialIsPaid } from '~/app/new/(paid)/pending/load-initial-is-paid.ts';
+import PaymentPendingIndicator from '~/app/new/(paid)/pending/PaymentPendingIndicator.tsx';
 
 export default async function PendingPaymentPage({
   searchParams,
