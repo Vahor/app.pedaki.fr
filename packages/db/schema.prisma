@@ -72,7 +72,7 @@ model PendingWorkspaceCreation {
   workspaceId     String?   @unique @map("workspace_id") @db.VarChar(25)
 
   // In there we store the data needed to create the workspace (CreateWorkspaceInput)
-  data String @db.Text // JSON
+  data String @db.Text /// @encrypted
 
   // Used here as a lock to prevent creating two workspaces at the same time
   identifier String @unique @db.VarChar(60)
@@ -87,7 +87,8 @@ model PendingWorkspaceInvite {
   workspaceId String    @map("workspace_id") @db.VarChar(25)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  email String @db.VarChar(320)
+  email String @db.VarChar(320) /// @encrypted
+  emailHash String? @unique @map("email_hash") /// @encryption:hash(email)
 
   @@unique([email, workspaceId])
   @@index([workspaceId])
