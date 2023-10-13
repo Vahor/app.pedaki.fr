@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { isValidRegion, ProviderModel } from './region.model.ts';
 
 export const restrictedIdentifiers = ['api', 'admin', 'app', 'docs'];
+export const WorkspaceId = z.string().cuid();
 
 export const CreateWorkspaceInput = z
   .object({
@@ -32,5 +33,5 @@ export const CreateWorkspaceInput = z
   );
 
 export const CreateWorkspaceResponse = z.object({
-  id: z.string(),
+  id: WorkspaceId,
 });

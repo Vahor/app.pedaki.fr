@@ -1,7 +1,7 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import { TRPCError } from '@trpc/server';
-import type { PaymentMetadata } from '~/services/stipe/create-payment.ts';
+import type { PaymentMetadata } from '~/services/stripe/create-payment.ts';
 import { z } from 'zod';
 import { router, stripeProcedure } from '../../trpc.ts';
 

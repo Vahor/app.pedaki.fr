@@ -1,8 +1,9 @@
 'use client';
 
+import PaidContent from '~/app/new/pending/PaidContent.tsx';
 import { api } from '~/server/api/clients/client.ts';
-import React from 'react';
-import PaidContent from "~/app/new/pending/PaidContent.tsx";
+import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
+import React, { useEffect } from 'react';
 
 interface PaymentPendingIndicatorProps {
   initialIsPaid: boolean;
@@ -13,6 +14,8 @@ const PaymentPendingIndicator: React.FC<PaymentPendingIndicatorProps> = ({
   initialIsPaid,
   pendingId,
 }) => {
+  const setPaymentUrl = useWorkspaceFormStore(store => store.setPaymentUrl);
+
   const { data } = api.workspace.reservation.status.useQuery(
     { id: pendingId },
     {
@@ -26,7 +29,17 @@ const PaymentPendingIndicator: React.FC<PaymentPendingIndicatorProps> = ({
     },
   );
 
+  useEffect(() => {
+    if (data?.paid) {
+      setPaymentUrl(null);
+    }
+  }, [data, setPaymentUrl]);
+
   if (data?.paid) {
+    if (typeof window !== 'undefined') {
+      // TODO: make sure that this is called only once
+      //  If that's not the case we can use a useEffect
+    }
     return <PaidContent pendingId={pendingId} />;
   }
 

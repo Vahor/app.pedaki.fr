@@ -41,6 +41,7 @@ export function createServer() {
     const allowedOrigins = ['https://app.pedaki.fr', 'https://www.pedaki.fr'];
     if (env.NODE_ENV === 'development') {
       allowedOrigins.push('http://localhost:4000');
+      allowedOrigins.push('http://127.0.0.1:4000');
     }
     await server.register(cors, {
       allowedHeaders: ['Content-Type', 'Authorization'],

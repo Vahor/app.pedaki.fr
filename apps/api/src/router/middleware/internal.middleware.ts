@@ -13,7 +13,6 @@ const missingSignature = new TRPCError({
 });
 
 export const isInternal = t.middleware(async ({ ctx, next }) => {
-  console.log(ctx.req.headers)
   const secret = ctx.req.headers['internal-secret'];
   if (!secret || typeof secret !== 'string') {
     throw missingSignature;

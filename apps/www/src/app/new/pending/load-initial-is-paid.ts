@@ -1,4 +1,5 @@
-"use server";
+'use server';
+
 import { api } from '~/server/api/clients/server.ts';
 
 interface LoadInitialIsPaidOutput {

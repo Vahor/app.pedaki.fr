@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env.ts';
 import { t } from '~/router/init.ts';
-import stripe from '~/services/stipe/stripe.ts';
+import stripe from '~/services/stripe/stripe.ts';
 
 const error = new TRPCError({
   code: 'UNAUTHORIZED',

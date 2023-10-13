@@ -4,10 +4,10 @@ import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env.ts';
-import { createPayment } from '~/services/stipe/create-payment.ts';
-import { products } from '~/services/stipe/products.ts';
+import { createPayment } from '~/services/stripe/create-payment.ts';
+import { products } from '~/services/stripe/products.ts';
 import { z } from 'zod';
-import { internalProcedure, publicProcedure, router } from '../../trpc.ts';
+import { publicProcedure, router } from '../../trpc.ts';
 
 export const workspaceReservationRouter = router({
   create: publicProcedure
@@ -123,7 +123,7 @@ export const workspaceReservationRouter = router({
       }
 
       return {
-        paid: pending.paidAt !== null
+        paid: pending.paidAt !== null,
       };
     }),
 
@@ -157,7 +157,7 @@ export const workspaceReservationRouter = router({
         workspaceId: pending.workspaceId,
         // 1 hour after payment
         expiresAt: new Date(pending.paidAt.getTime() + 1000 * 60 * 60).toISOString(),
-      }
+      };
 
       return encrypt(JSON.stringify(raw), env.API_ENCRYPTION_KEY);
     }),

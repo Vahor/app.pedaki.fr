@@ -5,19 +5,19 @@ import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
-import { workspaceReservationRouter } from '~/router/routers/workspace/reservation.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
-import { stripeRouter } from '~/router/routers/workspace/stripe.router.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
-import { getCustomerFromPayment } from '~/services/stipe/get-customer-from-payment.ts';
+import { getCustomerFromPayment } from '~/services/stripe/get-customer-from-payment.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
+import { workspaceInvitationRouter } from './invitations.router.ts';
+import { workspaceReservationRouter } from './reservations.router.ts';
 
 export const workspaceRouter = router({
-  resources: workspaceResourcesRouter,
-  members: workspaceMembersRouter,
+  resource: workspaceResourcesRouter,
+  member: workspaceMembersRouter,
   reservation: workspaceReservationRouter,
-  stripe: stripeRouter,
+  invitation: workspaceInvitationRouter,
 
   validate: publicProcedure
     .input(

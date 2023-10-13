@@ -25,7 +25,10 @@ export const useWorkspaceFormStore = create<WorkspaceFormStore>()(
     (set, get) => ({
       paymentUrl: null,
       updatedAt: 0,
-      setPaymentUrl: paymentUrl => set({ paymentUrl, updatedAt: Date.now() }),
+      setPaymentUrl: paymentUrl => {
+        set({ paymentUrl, updatedAt: Date.now() });
+        console.log('setPaymentUrl', paymentUrl, Date.now());
+      },
       getPaymentUrl: () => {
         const { paymentUrl, updatedAt } = get();
         if (isValidPaymentUrl(paymentUrl, updatedAt)) {
@@ -38,7 +41,6 @@ export const useWorkspaceFormStore = create<WorkspaceFormStore>()(
       name: 'workspace-form-store',
       storage: createJSONStorage(() => localStorage),
       partialize: (state: WorkspaceFormStore) => {
-        console.log('partialize', state.paymentUrl, state.updatedAt);
         if (isValidPaymentUrl(state.paymentUrl, state.updatedAt)) {
           return { paymentUrl: state.paymentUrl, updatedAt: state.updatedAt };
         }

@@ -40,6 +40,5 @@ files.forEach(file => {
     // Keep only js files
     if (!file.endsWith('.js')) return;
     transformFile(file);
-
 })
 
