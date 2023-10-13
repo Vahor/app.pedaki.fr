@@ -6,7 +6,7 @@ export const WorkspaceId = z.string().cuid();
 
 export const CreateWorkspaceInput = z
   .object({
-    name: z.string().min(3).max(50),
+    name: z.string().min(3).max(60),
     identifier: z
       .string()
       .min(3)
