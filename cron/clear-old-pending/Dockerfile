@@ -32,7 +32,7 @@ RUN cp -r node_modules/.prisma tmp/.prisma
 
 # Delete node_modules and reinstall only production dependencies
 RUN npx rimraf --glob ./**/node_modules
-RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-clear-old-pending
+RUN --mount=type=cache,id=s/0eb7c8d5-3796-4b22-b0dc-988ca0084b57-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-clear-old-pending
 
 # Copy back node_modules/.prisma
 RUN cp -r tmp/.prisma node_modules
