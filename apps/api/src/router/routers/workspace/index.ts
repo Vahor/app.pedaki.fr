@@ -50,7 +50,7 @@ export const workspaceRouter = router({
 
       const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
 
-      const email = 'nathan.d0601@gmail.com';
+      const email = 'contact@pedaki.fr';
       await assertQuota(prisma, 'IN_WORKSPACE', 'USER', email);
 
       try {
