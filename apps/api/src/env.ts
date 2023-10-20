@@ -9,13 +9,12 @@ export const env = createEnv({
     PULUMI_ACCESS_TOKEN: z.string(),
     PUBLIC_KEY: z.string().optional(),
 
-    PRISMA_ENCRYPTION_KEY: z.string().min(1).default('secret'),
-
     // optional for development
     RESEND_API_KEY: z.string().min(1),
     MAILER_PREVIEW: z.coerce.boolean().default(false),
 
     DATABASE_URL: z.string().url(),
+    PRISMA_ENCRYPTION_KEY: z.string().min(1).default('secret'),
 
     APP_URL: z.string().url().default('https://app.pedaki.fr'),
 

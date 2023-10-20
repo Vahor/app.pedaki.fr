@@ -21,6 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@pedaki/db": "workspace:*",
+    "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {

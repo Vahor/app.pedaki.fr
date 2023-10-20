@@ -1,6 +1,6 @@
 FROM node:18-slim AS base
-RUN apt-get update -y && apt-get install -y openssl curl ca-certificates && apt-get clean
 
+RUN apt-get update -y && apt-get install -y openssl curl ca-certificates && apt-get clean
 
 FROM base AS builder
 WORKDIR /app
@@ -47,10 +47,14 @@ COPY --from=builder /app/cron/clear-old-pending/dist ./dist
 ## Load public env vars
 ARG PORT=8000
 ARG DATABASE_URL
+ARG PRISMA_ENCRYPTION_KEY
+ARG CRON_INTERVAL_MINUTES
 
 ENV PORT=$PORT
 ENV NODE_ENV=production
 ENV DATABASE_URL=$DATABASE_URL
+ENV PRISMA_ENCRYPTION_KEY=$PRISMA_ENCRYPTION_KEY
+ENV CRON_INTERVAL_MINUTES=$CRON_INTERVAL_MINUTES
 
 EXPOSE $PORT
 
