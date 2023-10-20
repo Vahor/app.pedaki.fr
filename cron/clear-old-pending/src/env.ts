@@ -6,7 +6,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     PRISMA_ENCRYPTION_KEY: z.string().min(1).default('secret'),
 
-    CRON_INTERVAL_MINUTES: z.number(),
+    CRON_INTERVAL_MINUTES: z.coerce.number(),
   },
   runtimeEnv: process.env,
 });
