@@ -1,3 +1,4 @@
+// noinspection ES6UnusedImports
 import {env} from "./src/env.mjs";
 import million from "million/compiler";
 
@@ -17,6 +18,11 @@ const config = {
     },
 
     redirects: async () => [
+        {
+            source: "/",
+            destination: "/new",
+            permanent: false,
+        }
     ],
 
     modularizeImports: {
@@ -32,7 +38,7 @@ const config = {
     },
 
     compiler: {
-        // removeConsole: process.env.NODE_ENV === "production"
+        removeConsole: process.env.NODE_ENV === "production"
     },
 
     eslint: {

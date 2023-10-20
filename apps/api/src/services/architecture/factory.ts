@@ -1,7 +1,8 @@
+import type { Provider } from '@pedaki/schema/region.model.ts';
 import { AwsServerProvider } from './stack/aws/stack.ts';
 import { TestServerProvider } from './stack/mock/stack.ts';
 import { PulumiUtils } from './stack/shared.ts';
-import type { Provider, ServerProvider, WorkspaceInstance } from './stack/type.ts';
+import type { ServerProvider, WorkspaceInstance } from './stack/type.ts';
 
 const providers = {
   AWS: new AwsServerProvider(),

@@ -11,6 +11,7 @@
   "scripts": {
     "start": "dotenv -- turbo run start",
     "build": "dotenv -- turbo run build",
+    "build:watch": "dotenv -- turbo run build:watch",
     "test": "cross-env NODE_ENV=test dotenv -e .env.test -c -- turbo run test",
     "test:coverage": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test:coverage",
     "test:watch": "NODE_ENV=test dotenv -e .env.test -c -- turbo run test:watch",
@@ -23,7 +24,7 @@
     "check": "cross-env SKIP_ENV_VALIDATION=true turbo typecheck lint format:check test"
   },
   "devDependencies": {
-    "@pedaki/eslint-config": "^0.0.9",
+    "@pedaki/eslint-config": "^0.0.10",
     "@pedaki/prettier-config": "^0.0.5",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.2",
@@ -38,7 +39,7 @@
     "rimraf": "latest",
     "tsconfig-replace-paths": "^0.0.14",
     "tsup": "^7.2.0",
-    "turbo": "latest",
+    "turbo": "^1.10.15",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   },

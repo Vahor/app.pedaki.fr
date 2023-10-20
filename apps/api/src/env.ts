@@ -9,17 +9,21 @@ export const env = createEnv({
     PULUMI_ACCESS_TOKEN: z.string(),
     PUBLIC_KEY: z.string().optional(),
 
-    PASSWORD_SALT: z.string().min(1),
+    PRISMA_ENCRYPTION_KEY: z.string().min(1).default('secret'),
 
     // optional for development
     RESEND_API_KEY: z.string().min(1),
     MAILER_PREVIEW: z.coerce.boolean().default(false),
 
-    NEXTAUTH_SECRET: z.string().min(1).default('secret'),
-
     DATABASE_URL: z.string().url(),
 
     APP_URL: z.string().url().default('https://app.pedaki.fr'),
+
+    STRIPE_SECRET_KEY: z.string().min(1),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+
+    API_INTERNAL_SECRET: z.string().min(1),
+    API_ENCRYPTION_KEY: z.string().min(32),
   },
   runtimeEnv: process.env,
 });

@@ -1,97 +1,97 @@
-import { defaultRoles, getRoleTranslation } from '@pedaki/auth/defaults.js';
+import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
+import { CreateWorkspaceResponse } from '@pedaki/schema/workspace.model.js';
+import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { CreateWorkspaceModel, WorkspaceModel } from '~/models/workspace.model.ts';
-import { workspaceInvitesRouter } from '~/router/routers/workspace/invites.router.ts';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
-import { workspacePermissionsRouter } from '~/router/routers/workspace/permissions.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
-import { workspaceRolesRouter } from '~/router/routers/workspace/roles.router.ts';
-import { PREFIX, TAGS } from '~/router/routers/workspace/shared.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
+import { getCustomerFromPayment } from '~/services/stripe/get-customer-from-payment.ts';
 import { z } from 'zod';
-import { privateProcedure, router, workspaceProcedure } from '../../trpc.ts';
+import { publicProcedure, router } from '../../trpc.ts';
+import { workspaceInvitationRouter } from './invitations.router.ts';
+import { workspaceReservationRouter } from './reservations.router.ts';
 
 export const workspaceRouter = router({
-  roles: workspaceRolesRouter,
-  invites: workspaceInvitesRouter,
-  resources: workspaceResourcesRouter,
-  members: workspaceMembersRouter,
-  permissions: workspacePermissionsRouter,
+  resource: workspaceResourcesRouter,
+  member: workspaceMembersRouter,
+  reservation: workspaceReservationRouter,
+  invitation: workspaceInvitationRouter,
 
-  create: privateProcedure
-    .input(CreateWorkspaceModel)
-    .output(WorkspaceModel)
-    .meta({ openapi: { method: 'POST', path: '/workspaces', tags: TAGS } })
-    .mutation(async ({ input, ctx }) => {
-      await assertQuota(prisma, 'IN_WORKSPACE', 'USER', ctx.session.id);
+  validate: publicProcedure
+    .input(
+      z.object({
+        pendingId: z.string().cuid(),
+      }),
+    )
+    .output(CreateWorkspaceResponse)
+    .meta({ openapi: { method: 'POST', path: '/workspace' } })
+    .mutation(async ({ input }) => {
+      // Get the pending data
+      const pending = await prisma.pendingWorkspaceCreation.findUnique({
+        where: {
+          id: input.pendingId,
+        },
+        select: {
+          data: true,
+          stripePaymentId: true,
+        },
+      });
+
+      if (!pending?.stripePaymentId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+
+      const customerId = await getCustomerFromPayment(pending.stripePaymentId);
+
+      const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
+
+      const email = 'contact@pedaki.fr';
+      await assertQuota(prisma, 'IN_WORKSPACE', 'USER', email);
 
       try {
+        const workspaceToken = generateToken();
+
         const workspace = await prisma.workspace.create({
           data: {
-            name: input.name,
-            identifier: input.identifier,
-            members: {
-              create: {
-                user: {
-                  connect: {
-                    id: ctx.session.id,
-                  },
-                },
-              },
-            },
+            name: pendingData.name,
+            identifier: pendingData.identifier,
+            mainEmail: email,
+            stripeCustomerId: customerId,
           },
         });
 
         await prisma.$transaction([
-          // Create admin role and attach it to the user
-          prisma.workspaceRole.create({
+          // Add the user as a member of the workspace
+          prisma.workspaceMember.create({
             data: {
-              name: getRoleTranslation('admin', 'fr').name,
-              description: getRoleTranslation('admin', 'fr').description,
-              isAdmin: true,
+              // TODO: email
+              email: email,
               workspaceId: workspace.id,
-              memberRoles: {
-                create: {
-                  member: {
-                    connect: {
-                      userId_workspaceId: {
-                        userId: ctx.session.id,
-                        workspaceId: workspace.id,
-                      },
-                    },
-                  },
+            },
+          }),
+          // Create token for the workspace
+          prisma.workspaceToken.create({
+            data: {
+              token: workspaceToken,
+              workspace: {
+                connect: {
+                  id: workspace.id,
                 },
               },
             },
           }),
-          // Create the default roles
-          ...defaultRoles.map(role =>
-            prisma.workspaceRole.create({
-              data: {
-                name: getRoleTranslation(role.key, 'fr').name,
-                description: getRoleTranslation(role.key, 'fr').description,
-                workspaceId: workspace.id,
-                permissions: {
-                  connect: role.permissions.map(permission => ({
-                    identifier: permission,
-                  })),
-                },
-              },
-            }),
-          ),
         ]);
 
-        return workspace;
+        return {
+          ...workspace,
+          identifier: pendingData.identifier,
+        };
       } catch (error) {
-        // Delete the workspace if it was created
-        await prisma.workspace.delete({
-          where: {
-            identifier: input.identifier,
-          },
-        });
-
         if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
           throw new TRPCError({
             code: 'BAD_REQUEST',
@@ -100,40 +100,5 @@ export const workspaceRouter = router({
         }
         throw error;
       }
-    }),
-
-  getOne: workspaceProcedure
-    .input(WorkspaceModel.pick({ id: true }))
-    .output(WorkspaceModel)
-    .meta({ openapi: { method: 'GET', path: `${PREFIX}/{id}`, tags: TAGS } })
-    .query(async ({ input }) => {
-      const workspace = await prisma.workspace.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-      if (!workspace) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'NOT_FOUND',
-        });
-      }
-      return workspace;
-    }),
-
-  getMany: workspaceProcedure
-    .input(z.object({ ids: z.array(z.string()) }))
-    .output(z.array(WorkspaceModel))
-    // TODO: should be a GET request
-    .meta({ openapi: { method: 'POST', path: `${PREFIX}/bulk`, tags: TAGS } })
-    .query(async ({ input }) => {
-      const workspaces = await prisma.workspace.findMany({
-        where: {
-          id: {
-            in: input.ids,
-          },
-        },
-      });
-      return workspaces;
     }),
 });

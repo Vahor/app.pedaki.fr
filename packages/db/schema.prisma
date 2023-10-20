@@ -12,102 +12,101 @@ datasource db {
   relationMode = "prisma"
 }
 
-// Necessary for Next auth
-model Account {
-  id                Int     @id @default(autoincrement())
-  userId            String  @map("user_id") @db.VarChar(25)
-  type              String
-  provider          String
-  providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("accounts")
-}
-
-model User {
-  id            String    @id @default(cuid()) @db.VarChar(25)
-  name          String
-  email         String    @unique
-  emailVerified DateTime? @map("email_verified")
-  password      String?
-  blocked       Boolean   @default(false)
-
-  image String @default("") @db.VarChar(1000)
-
-  accounts     Account[]
-  tokens       Token[]
-  memberships  WorkspaceMember[]
-  CustomQuotas CustomQuotas[]
-
-  @@index([id])
-  @@map("users")
-}
-
-model Token {
-  id Int @id @default(autoincrement())
-
-  createdAt   DateTime  @default(now()) @map("created_at")
-  type        TokenType
-  hashedToken String    @map("hashed_token")
-  expiresAt   DateTime  @map("expires_at")
-
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @map("user_id") @db.VarChar(25)
-
-  invitation WorkspaceInvitation?
-
-  @@unique([type, hashedToken], name: "unique_token")
-  @@index([userId])
-  @@map("tokens")
-}
-
-enum TokenType {
-  CONFIRM_EMAIL
-  WORKSPACE_INVITATION
-}
-
 model Workspace {
   id        String   @id @default(cuid()) @db.VarChar(25)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  name String @db.VarChar(100)
+  name String @db.VarChar(50)
 
-  // Used as slug, then as subdomain when the workspace is created
-  identifier String @unique @db.VarChar(60)
+  // Date when a workspace was deleted
+  // We keep it in our database for 10 years
+  // So we can still download the subscription receipts
+  deletedAt DateTime? @map("deleted_at")
 
-  members     WorkspaceMember[]
-  invitations WorkspaceInvitation[]
-  settings    WorkspaceSetting[]
+  // Used as subdomain when the workspace is created
+  // An identifier is null if the workspaces was deleted (as we need it to be unique)
+  identifier String? @unique @db.VarChar(60)
 
-  subscriptions   WorkspaceSubscription[]
-  roles           WorkspaceRole?          @relation(fields: [workspaceRoleId], references: [id])
-  workspaceRoleId String?                 @db.VarChar(25)
-  CustomQuotas    CustomQuotas[]
+  // The user responsible for the workspace
+  stripeCustomerId String @map("stripe_customer_id")
+  mainEmail        String @map("main_email") @db.VarChar(320)
+
+  members WorkspaceMember[]
+
+  subscriptions  WorkspaceSubscription[]
+  quotas         CustomQuotas[]
+  settings       WorkspaceSetting[]
+  token          WorkspaceToken?
+  pendingInvites PendingWorkspaceInvite[]
 
   @@index([id])
-  @@map("workspaces")
+  @@map("workspace")
+}
+
+model WorkspaceToken {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  token     String  @unique /// @encrypted
+  tokenHash String? @unique @map("token_hash") /// @encryption:hash(token)
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String    @unique @map("workspace_id") @db.VarChar(25)
+
+  @@index([workspaceId])
+  @@map("token_to_workspace")
+}
+
+// Delete with a cron or when the workspace is created
+model PendingWorkspaceCreation {
+  id String @id @default(cuid()) @db.VarChar(25)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  stripePaymentId String?   @unique @map("stripe_payment_id")
+  paidAt          DateTime? @map("paid_at")
+  workspaceId     String?   @unique @map("workspace_id") @db.VarChar(25)
+
+  // In there we store the data needed to create the workspace (CreateWorkspaceInput)
+  data String @db.Text /// @encrypted
+
+  // Used here as a lock to prevent creating two workspaces at the same time
+  identifier String @unique @db.VarChar(60)
+
+  @@map("pending_workspace_creation")
+}
+
+
+model PendingWorkspaceInvite {
+  createdAt DateTime @default(now()) @map("created_at")
+
+  workspaceId String    @map("workspace_id") @db.VarChar(25)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  email String @db.VarChar(320) /// @encrypted
+  emailHash String? @unique @map("email_hash") /// @encryption:hash(email)
+
+  @@unique([email, workspaceId])
+  @@index([workspaceId])
+  @@map("pending_workspace_invite")
 }
 
 // To get the current subscription, we can just get the one with the latest paidUntil date
 model WorkspaceSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   // Type can be "extra_support", "scaler" etc.
   // This type should map to a product on our code
   // and in our code we map it to a stripe product
   type String
+
+  stripeSubscriptionId String? @unique @map("stripe_subscription_id")
 
   paidUntil DateTime            @map("paid_until")
   resources WorkspaceResource[]
@@ -115,124 +114,30 @@ model WorkspaceSubscription {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId String    @db.VarChar(25)
 
-  receipt   WorkspaceSubscriptionReceipt @relation(fields: [receiptId], references: [id])
-  receiptId Int                          @unique @map("receipt_id")
-
   @@index([workspaceId])
-  @@index([receiptId])
   @@map("workspace_subscriptions")
-}
-
-model WorkspaceSubscriptionReceipt {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  // If the payment failed, we'll still have a receipt, but no subscription
-  subscription WorkspaceSubscription?
-
-  // TODO: improve the schema to add the price, status etc
-  //    I can't to it now as I don't know the structure of the data
-  data Json
-
-  @@map("workspace_subscription_receipts")
-}
-
-// The invitation is expired if the token is expired
-// After a long time, the token is automatically deleted, and the invitation is deleted with it
-// When the invitation is accepted we can delete the token only, this will delete the invitation as well
-model WorkspaceInvitation {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  email       String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  workspaceId String    @map("workspace_id") @db.VarChar(25)
-
-  token   Token @relation(fields: [tokenId], references: [id], onDelete: Cascade)
-  tokenId Int   @unique @map("token_id")
-
-  @@index([workspaceId])
-  @@map("workspace_invitations")
-}
-
-// Each workspace has a set of roles
-// When the workspace is created we populate the roles with the default roles
-model WorkspaceRole {
-  id        String   @id @default(cuid()) @db.VarChar(25)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  name        String  @db.VarChar(100)
-  description String?
-  // As the role can be randmed we cant use the name as the identifier
-  // So we have to add a is_admin field
-  // This field is only used for the seeding, and is not used in the code
-  isAdmin     Boolean @default(false) @map("is_admin")
-
-  workspaceId String @map("workspace_id") @db.VarChar(25)
-
-  permissions WorkspacePermission[]
-  memberRoles WorkspaceMemberRole[]
-  workspaces  Workspace[]
-
-  @@unique([name, workspaceId])
-  @@index([workspaceId])
-  @@map("workspace_roles")
-}
-
-// The permissions are common across all workspaces
-model WorkspacePermission {
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  identifier String @id @db.VarChar(100)
-
-  roles WorkspaceRole[]
-
-  @@map("workspace_permissions")
 }
 
 model WorkspaceMember {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  roles  WorkspaceMemberRole[]
-  user   User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String                @map("user_id") @db.VarChar(25)
+  email String @db.VarChar(320)
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String    @map("workspace_id") @db.VarChar(25)
 
-  @@id([userId, workspaceId])
+  @@id([email, workspaceId])
   @@index([workspaceId])
-  @@index([userId])
+  @@index([email])
   @@map("workspace_members")
-}
-
-model WorkspaceMemberRole {
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
-  role   WorkspaceRole @relation(fields: [roleId], references: [id])
-  roleId String        @map("role_id") @db.VarChar(25)
-
-  member   WorkspaceMember @relation(fields: [memberId, workspaceId], references: [userId, workspaceId], onDelete: Cascade)
-  memberId String          @map("member_id") @db.VarChar(25)
-
-  workspaceId String @map("workspace_id") @db.VarChar(25)
-
-  @@unique([roleId, memberId])
-  @@index([memberId, workspaceId])
-  @@map("workspace_member_to_workspace_roles")
 }
 
 // AKA Server / Database etc
 model WorkspaceResource {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   region   String @db.VarChar(25)
   provider String @db.VarChar(25)
@@ -253,7 +158,7 @@ model WorkspaceResource {
 model WorkspaceSetting {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   key   String
   value String
@@ -273,12 +178,11 @@ model CustomQuotas {
   wokspace    Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String?    @map("workspace_id") @db.VarChar(25)
 
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @map("user_id") @db.VarChar(25)
+  email String? @map("email") @db.VarChar(320)
 
   @@unique([key, workspaceId])
-  @@unique([key, userId])
+  @@unique([key, email])
   @@index([workspaceId])
-  @@index([userId])
+  @@index([email])
   @@map("custom_quotas")
 }

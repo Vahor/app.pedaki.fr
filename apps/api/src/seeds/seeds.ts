@@ -1,7 +1,5 @@
-import { seedPermissions } from '~/seeds/permissions.seed.ts';
-
+// eslint-disable-next-line @typescript-eslint/require-await
 export const seedDatabase = async () => {
   console.log('Starting seeds...');
-  await seedPermissions();
   console.log('Seeds finished');
 };
