@@ -10,19 +10,19 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable pnpm
 
-COPY turbo.json ./
-COPY .npmrc ./
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY ../../turbo.json ./
+COPY ../../.npmrc ./
+COPY ../../package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-COPY apps/api/package.json ./apps/api/
-COPY packages/db/package.json ./packages/db/
-COPY packages/schema/package.json ./packages/schema/
+COPY package.json ./apps/api/
+COPY ../../packages/db/package.json ./packages/db/
+COPY ../../packages/schema/package.json ./packages/schema/
 
 RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY apps/api ./apps/api
-COPY packages ./packages
-COPY scripts ./scripts
+COPY ../../packages ./packages
+COPY ../../scripts ./scripts
 
 # TODO: We can do it with sed
 RUN grep -v '@trpc/server/\*": \["../../node_modules/@trpc/server/\*"\]' apps/api/tsconfig.json  > apps/api/tsconfig.json.tmp && mv apps/api/tsconfig.json.tmp apps/api/tsconfig.json
