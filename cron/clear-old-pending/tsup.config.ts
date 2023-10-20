@@ -1,15 +1,13 @@
+import cpy from 'cpy';
 import { esbuildPluginFilePathExtensions } from 'esbuild-plugin-file-path-extensions';
+import { execaCommand } from 'execa';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
-import cpy from "cpy";
-import {execaCommand} from "execa";
 
 export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
-  entry: [
-    'src/**/*.(tsx|ts|cjs)'
-  ],
+  entry: ['src/**/*.(tsx|ts|cjs)'],
   format:
     process.env.API_DTS_ONLY !== undefined || process.env.DTS_ONLY !== undefined ? [] : ['esm'],
   dts: process.env.NODE_ENV !== 'production',
