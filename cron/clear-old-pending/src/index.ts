@@ -4,7 +4,7 @@ import { env } from '~/env.ts';
 const main = async () => {
   console.log("Starting cron 'clear-old-pending'");
 
-  const maxAge = 1000 * 60 * env.CRON_INTERVAL_MINUTES;
+  const maxAge = 1000 * 60 * env.PENDING_MAX_AGE;
   const maxDate = new Date(Date.now() - maxAge);
 
   const result = await prisma.pendingWorkspaceCreation.deleteMany({
