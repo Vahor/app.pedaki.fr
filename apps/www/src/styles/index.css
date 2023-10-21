@@ -1,0 +1,12 @@
+@keyframes loading {
+    0% {
+        stroke-dasharray: 0, 1000;
+    }
+    100% {
+        stroke-dasharray: 1000, 0;
+    }
+}
+
+.loading-circle {
+    animation: loading 2s linear infinite;
+}

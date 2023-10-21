@@ -24,7 +24,7 @@ const PaymentPendingIndicator: React.FC<PaymentPendingIndicatorProps> = ({
         if (data?.paid) {
           return false;
         }
-        return 5000;
+        return 3000;
       },
     },
   );
@@ -36,10 +36,6 @@ const PaymentPendingIndicator: React.FC<PaymentPendingIndicatorProps> = ({
   }, [data, setPaymentUrl]);
 
   if (data?.paid) {
-    if (typeof window !== 'undefined') {
-      // TODO: make sure that this is called only once
-      //  If that's not the case we can use a useEffect
-    }
     return <PaidContent pendingId={pendingId} />;
   }
 

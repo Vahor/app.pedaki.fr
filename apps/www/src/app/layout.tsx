@@ -1,5 +1,6 @@
 import React from 'react';
 import '@pedaki/design/tailwind/index.css';
+import '~/styles/index.css';
 import { cn } from '@pedaki/design/utils';
 import Header from '~/app/header.tsx';
 import { Providers } from '~/app/providers';

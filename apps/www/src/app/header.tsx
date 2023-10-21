@@ -15,9 +15,11 @@ const Header = () => {
             <CurrentPage />
           </div>
           <div>
-            <Link href={env.NEXT_PUBLIC_DOCS_URL}>
-              <Button variant="outline">Documentation</Button>
-            </Link>
+            <Button variant="outline" asChild>
+              <Link href={env.NEXT_PUBLIC_DOCS_URL}>
+                Documentation
+              </Link>
+            </Button>
           </div>
         </div>
       </header>

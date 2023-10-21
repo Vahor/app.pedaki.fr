@@ -17,6 +17,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { BaseForm } from './base-form.tsx';
+import wait from "@pedaki/common/utils/wait";
 
 export type FormType = ReturnType<typeof useForm<CreateWorkspaceFormValues>>;
 const Schema = CreateWorkspaceInput.and(
@@ -46,7 +47,7 @@ const FormWrapper = () => {
   const createReservationMutation = api.workspace.reservation.create.useMutation();
 
   function onSubmit(values: CreateWorkspaceFormValues) {
-    return wrapWithLoading(() => createReservationMutation.mutateAsync(values), {
+    return wrapWithLoading(() => wait(createReservationMutation.mutateAsync(values), 500), {
       loadingProps: {
         title: '...',
       },
