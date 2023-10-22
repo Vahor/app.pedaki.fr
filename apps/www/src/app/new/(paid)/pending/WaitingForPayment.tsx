@@ -2,7 +2,6 @@
 
 import { IconShoppingBag } from '@pedaki/design/ui/icons';
 import ErrorWrapper from '~/app/new/(paid)/pending/error-wrapper.tsx';
-import PaidContent from '~/app/new/(paid)/pending/PaidContent.tsx';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
 import React, { useEffect } from 'react';
@@ -23,7 +22,7 @@ const WaitingForPayment: React.FC<PaymentPendingIndicatorProps> = ({
     {
       initialData: { paid: initialIsPaid },
       refetchInterval: data => {
-        if (data?.paid) {
+        if (initialIsPaid || data?.paid) {
           return false;
         }
         return 3000;
@@ -38,7 +37,7 @@ const WaitingForPayment: React.FC<PaymentPendingIndicatorProps> = ({
   }, [data, setPaymentUrl]);
 
   if (data?.paid) {
-    return <PaidContent pendingId={pendingId} />;
+    return <span>todo redirect</span>;
   }
 
   return (
