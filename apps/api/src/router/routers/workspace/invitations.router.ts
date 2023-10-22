@@ -49,6 +49,30 @@ export const workspaceInvitationRouter = router({
       }
     }),
 
+  delete: publicProcedure
+    .input(CreateWorkspaceInvitationInput)
+    .output(z.undefined())
+    .mutation(async ({ input }) => {
+      const { workspaceId } = decryptToken(input.token);
+
+      try {
+        await prisma.pendingWorkspaceInvite.delete({
+          where: {
+            email: input.email,
+            workspaceId: workspaceId,
+          },
+        });
+      } catch (error) {
+        if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'ALREADY_EXISTS',
+          });
+        }
+        throw error;
+      }
+    }),
+
   getMany: publicProcedure
     .input(z.object({ token: z.string() }))
     .output(z.object({ emails: z.array(z.string()) }))

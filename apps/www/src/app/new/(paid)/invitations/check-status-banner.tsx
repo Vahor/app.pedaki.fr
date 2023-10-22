@@ -1,30 +1,21 @@
 'use client';
 
-import { api } from '~/server/api/clients/client.ts';
-import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useRef } from 'react';
+import InfoCallout from '@pedaki/design/ui/callout/InfoCallout';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
-export const CheckStatusBanner: React.FC = () => {
-  const searchParams = useSearchParams();
-  const pendingId = searchParams.get('token');
+interface CheckStatusBannerProps {
+  url: string;
+}
 
-  const { data } = api.workspace.reservation.getHealthUrl.useQuery(
-    {
-      id: pendingId!,
-    },
-    {
-      enabled: !!pendingId,
-    },
-  );
-
-  // TODO: add more types (unknown|up|down)
-  const isUpRef = useRef<boolean>(false);
+export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ url }) => {
+  const router = useRouter();
 
   useEffect(() => {
-    if (!data || isUpRef.current) return;
+    if (!url) return;
 
     const interval = setInterval(async () => {
-      await fetch(data.url, {
+      await fetch(url, {
         method: 'HEAD',
         mode: 'no-cors',
       })
@@ -32,8 +23,8 @@ export const CheckStatusBanner: React.FC = () => {
           // TODO: add more check ?
           const isUp = response.status === 200;
           if (isUp) {
-            isUpRef.current = true;
             clearInterval(interval);
+            router.push('/new/ready');
           }
         })
         .catch(() => {
@@ -43,7 +34,12 @@ export const CheckStatusBanner: React.FC = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [data]);
+  }, [url, router]);
 
-  return <div>{isUpRef.current ? 'Up' : 'Down'}</div>;
+  return (
+    <InfoCallout>
+      <p>Votre workspace est en cours de création.</p>
+      <p>Les invitations seront envoyées lorsque le workpace sera prêt.</p>
+    </InfoCallout>
+  );
 };

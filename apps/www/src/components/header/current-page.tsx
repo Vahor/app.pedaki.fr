@@ -24,17 +24,28 @@ const page_mapping = [
     path: '/new/invitations',
     translationKey: 'step_3',
   },
+  {
+    path: '/new/ready',
+    translationKey: 'step_4',
+  },
 ] as const;
+
+// Ex: 404 page
+const unknown_page = {
+  translationKey: 'unknown',
+};
 
 const CurrentPage = () => {
   const pathname = usePathname();
   const activeIndex = page_mapping.findIndex(page => page.path === pathname);
+  const translationKey =
+    activeIndex === -1 ? unknown_page.translationKey : page_mapping[activeIndex]!.translationKey;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="transparent" size="sm" className="flex items-center md:gap-2">
-          <span>{page_mapping[activeIndex]!.translationKey}.large</span>
+          <span>{translationKey}.large</span>
           <IconChevronDown className="h-4 w-4 text-secondary" />
         </Button>
       </DropdownMenuTrigger>

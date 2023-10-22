@@ -84,7 +84,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nom</FormLabel>
+                <FormLabel>Adresse mail</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="John"

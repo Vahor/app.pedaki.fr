@@ -1,7 +1,7 @@
 import { IconCalendarX, IconX } from '@pedaki/design/ui/icons';
-import StatusWrapper from '~/app/new/(paid)/pending/status-wrapper.tsx';
 import { loadInitialIsPaid } from '~/app/new/(paid)/pending/load-initial-is-paid.ts';
 import WaitingForPayment from '~/app/new/(paid)/pending/WaitingForPayment.tsx';
+import StatusWrapper from '~/app/status-wrapper.tsx';
 import React from 'react';
 
 export default async function PendingPaymentPage({
@@ -11,6 +11,7 @@ export default async function PendingPaymentPage({
 }) {
   const pendingId = searchParams.token;
   const initialIsPaid = await loadInitialIsPaid(pendingId);
+  // TODO: faire les textes (trads)
 
   if (initialIsPaid.status === 'invalid') {
     return (
@@ -34,7 +35,5 @@ export default async function PendingPaymentPage({
     );
   }
 
-  return (
-    <WaitingForPayment initialIsPaid={initialIsPaid.status === 'paid'} pendingId={pendingId!} />
-  );
+  return <WaitingForPayment status={initialIsPaid.status} pendingId={pendingId!} />;
 }
