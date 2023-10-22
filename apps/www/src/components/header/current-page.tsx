@@ -20,6 +20,10 @@ const page_mapping = [
     path: '/new/pending',
     translationKey: 'step_2',
   },
+  {
+    path: '/new/invitations',
+    translationKey: 'step_3',
+  },
 ] as const;
 
 const CurrentPage = () => {

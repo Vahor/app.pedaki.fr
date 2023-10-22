@@ -1,5 +1,5 @@
 import { IconCalendarX, IconX } from '@pedaki/design/ui/icons';
-import ErrorWrapper from '~/app/new/(paid)/pending/error-wrapper.tsx';
+import StatusWrapper from '~/app/new/(paid)/pending/status-wrapper.tsx';
 import { loadInitialIsPaid } from '~/app/new/(paid)/pending/load-initial-is-paid.ts';
 import WaitingForPayment from '~/app/new/(paid)/pending/WaitingForPayment.tsx';
 import React from 'react';
@@ -14,7 +14,7 @@ export default async function PendingPaymentPage({
 
   if (initialIsPaid.status === 'invalid') {
     return (
-      <ErrorWrapper
+      <StatusWrapper
         titleKey="Identifiant invalide"
         descriptionKey="L'identifiant de paiement est invalide."
         icon={IconX}
@@ -25,7 +25,7 @@ export default async function PendingPaymentPage({
 
   if (initialIsPaid.status === 'expired') {
     return (
-      <ErrorWrapper
+      <StatusWrapper
         titleKey="Identifiant expiré"
         descriptionKey="L'identifiant de paiement est expiré."
         icon={IconCalendarX}
