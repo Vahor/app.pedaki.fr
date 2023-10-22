@@ -5,12 +5,14 @@ import { env } from '~/env.mjs';
 import Link from 'next/link';
 import React from 'react';
 import { Balancer } from 'react-wrap-balancer';
+import {cn} from "@pedaki/design/utils";
 
 interface ErrorWrapperProps {
   titleKey: string;
   descriptionKey: string;
   icon: IconType;
   loadingIndicator?: boolean;
+  iconClassName?: string;
 }
 
 const ErrorWrapper = ({
@@ -18,6 +20,7 @@ const ErrorWrapper = ({
   descriptionKey,
   icon: Icon,
   loadingIndicator,
+                          iconClassName,
 }: ErrorWrapperProps) => {
   return (
     <div className="relative flex h-full flex-col items-center">
@@ -27,7 +30,7 @@ const ErrorWrapper = ({
           loadingIndicator={loadingIndicator}
         />
         <div className="rounded-md border">
-          <Icon className="h-12 w-12 p-3 text-grayA-11 " />
+          <Icon className={cn("h-12 w-12 p-3 text-grayA-11 ", iconClassName)} />
         </div>
       </div>
 

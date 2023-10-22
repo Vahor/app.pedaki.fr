@@ -3,7 +3,7 @@
 import type { IconProps } from '@pedaki/design/ui/icons';
 import React, { useEffect } from 'react';
 
-const opacity = [1, 0.8, 0.6, 0.4, 0.2];
+const opacity = [0.2, 0.4, 0.6, 0.8, 1];
 const loadingOpacity = [0.8, 0.6, 0.4, 0.2, 0, 0, 0];
 
 const getOpacity = (index: number, isLoading: boolean | undefined) => {

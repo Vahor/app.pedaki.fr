@@ -18,6 +18,7 @@ export default async function PendingPaymentPage({
         titleKey="Identifiant invalide"
         descriptionKey="L'identifiant de paiement est invalide."
         icon={IconX}
+        iconClassName="text-red-9"
       />
     );
   }
@@ -28,6 +29,7 @@ export default async function PendingPaymentPage({
         titleKey="Identifiant expiré"
         descriptionKey="L'identifiant de paiement est expiré."
         icon={IconCalendarX}
+        iconClassName="text-red-9"
       />
     );
   }
