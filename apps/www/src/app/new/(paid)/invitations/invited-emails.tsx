@@ -98,7 +98,7 @@ const RemoveInvitedEmailButton = ({ email, token }: { email: string; token: stri
             email,
             token,
           }),
-          500,
+          200,
         ),
       {
         loadingProps: null,

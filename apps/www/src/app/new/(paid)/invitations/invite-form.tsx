@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import wait from '@pedaki/common/utils/wait';
 import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
 import {
@@ -44,10 +45,13 @@ export function InviteForm({ rawToken }: InviteFormProps) {
   function onSubmit(values: InviteFormValues) {
     return wrapWithLoading(
       () =>
-        createInvitationMutation.mutateAsync({
-          email: values.email,
-          token: rawToken,
-        }),
+        wait(
+          createInvitationMutation.mutateAsync({
+            email: values.email,
+            token: rawToken,
+          }),
+          200,
+        ),
       {
         loadingProps: {
           title: '...',
