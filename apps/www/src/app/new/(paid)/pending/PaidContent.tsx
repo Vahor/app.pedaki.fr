@@ -19,11 +19,11 @@ const PaidContent: React.FC<PaidContentProps> = ({ pendingId }) => {
         Mais que en attendant il peut commencer à configurer son espace de travail, et hop un bouton
         qui fait ça
       </p>
-        <Button variant="neutral" disabled={!data} asChild>
-            <Link href={`/new/invitations?token=${encodeURIComponent(data ?? '')}`}>
-                Continuer la configuration
-            </Link>
-        </Button>
+      <Button variant="neutral" disabled={!data} asChild>
+        <Link href={`/new/invitations?token=${encodeURIComponent(data ?? '')}`}>
+          Continuer la configuration
+        </Link>
+      </Button>
     </div>
   );
 };

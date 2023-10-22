@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import wait from '@pedaki/common/utils/wait';
 import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
 import { Form } from '@pedaki/design/ui/form';
@@ -17,7 +18,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { BaseForm } from './base-form.tsx';
-import wait from "@pedaki/common/utils/wait";
 
 export type FormType = ReturnType<typeof useForm<CreateWorkspaceFormValues>>;
 const Schema = CreateWorkspaceInput.and(
