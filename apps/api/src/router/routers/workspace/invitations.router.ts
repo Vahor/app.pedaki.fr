@@ -58,8 +58,10 @@ export const workspaceInvitationRouter = router({
       try {
         await prisma.pendingWorkspaceInvite.delete({
           where: {
-            email: input.email,
-            workspaceId: workspaceId,
+            email_workspaceId: {
+              email: input.email,
+              workspaceId: workspaceId,
+            },
           },
         });
       } catch (error) {
