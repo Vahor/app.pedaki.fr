@@ -21,7 +21,7 @@ export const loadInitialIsPaid = async (pendingId: unknown): Promise<LoadInitial
     }
     // Network error
     if (isNetworkError(e)) {
-      return { status: 'paid' };
+      return { status: 'waiting' };
     }
     return { status: 'invalid' };
   }
