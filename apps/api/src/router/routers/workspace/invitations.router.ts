@@ -31,6 +31,23 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input }) => {
       const { workspaceId } = decryptToken(input.token);
 
+      const workspace = await prisma.workspace.findUnique({
+        where: { id: workspaceId },
+        select: { mainEmail: true },
+      });
+      if (!workspace) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+      if (workspace.mainEmail === input.email) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'MAIN_EMAIL',
+        });
+      }
+
       try {
         await prisma.pendingWorkspaceInvite.create({
           data: {
@@ -56,12 +73,10 @@ export const workspaceInvitationRouter = router({
       const { workspaceId } = decryptToken(input.token);
 
       try {
-        await prisma.pendingWorkspaceInvite.delete({
+        await prisma.pendingWorkspaceInvite.deleteMany({
           where: {
-            email_workspaceId: {
-              email: input.email,
-              workspaceId: workspaceId,
-            },
+            email: input.email,
+            workspaceId: workspaceId,
           },
         });
       } catch (error) {

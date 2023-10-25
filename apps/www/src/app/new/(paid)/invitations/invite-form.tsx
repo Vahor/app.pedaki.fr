@@ -14,6 +14,7 @@ import {
 } from '@pedaki/design/ui/form';
 import IconSpinner from '@pedaki/design/ui/icons/IconSpinner';
 import { Input } from '@pedaki/design/ui/input';
+import { CreateWorkspaceInvitationInput } from '@pedaki/schema/invitation.model.js';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceInvitationStore } from '~/store/workspace-invitation.store.ts';
 import React from 'react';
@@ -24,9 +25,8 @@ interface InviteFormProps {
   rawToken: string;
 }
 
-const Schema = z.object({
-  email: z.string().email(),
-});
+const Schema = CreateWorkspaceInvitationInput.pick({ email: true });
+
 type InviteFormValues = z.infer<typeof Schema>;
 
 export function InviteForm({ rawToken }: InviteFormProps) {
@@ -91,7 +91,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
                 <FormLabel>Adresse mail</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="John"
+                    placeholder="john@example.com"
                     type="email"
                     autoComplete="email"
                     disabled={isSubmitting}

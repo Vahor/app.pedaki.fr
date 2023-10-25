@@ -72,7 +72,12 @@ export function InvitedEmails({ initialEmails, token }: InvitedEmailsProps) {
                   {twoLettersFromEmail(email)}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-base text-secondary">{email}</span>
+              <span
+                className="max-w-[40ch] overflow-hidden text-ellipsis text-base text-secondary"
+                title={email}
+              >
+                {email}
+              </span>
               <div className="flex-1"></div>
               <RemoveInvitedEmailButton email={email} token={token} />
             </Card>
