@@ -45,6 +45,7 @@ export function InvitedEmails({ initialEmails, token }: InvitedEmailsProps) {
             className="absolute -z-10 h-full w-full bgi-grid-gray-500"
             style={{
               maskImage: 'radial-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0))',
+              WebkitMaskImage: 'radial-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0))',
               backgroundPositionY: '-16px',
               backgroundPositionX: '-16px',
             }}
