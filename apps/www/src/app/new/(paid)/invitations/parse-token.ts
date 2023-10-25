@@ -7,6 +7,7 @@ import { z } from 'zod';
 const schema = z.object({
   workspaceId: z.string(),
   workspaceHealthUrl: z.string(),
+  workspaceUrl: z.string(),
   expiresAt: z.string(),
 });
 
@@ -35,6 +36,7 @@ export const parseToken = (token: unknown): ParseTokenOutput => {
     return {
       workspaceId: parsed.workspaceId,
       workspaceHealthUrl: parsed.workspaceHealthUrl,
+      workspaceUrl: parsed.workspaceUrl,
       expiresAt: parsed.expiresAt,
       status: 'valid',
     };

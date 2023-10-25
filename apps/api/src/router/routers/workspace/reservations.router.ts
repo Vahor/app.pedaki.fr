@@ -191,6 +191,7 @@ export const workspaceReservationRouter = router({
       const raw = {
         workspaceId: pending.workspaceId,
         workspaceHealthUrl: `https://${pending.identifier}.pedaki.fr/api/health`,
+        workspaceUrl: `https://${pending.identifier}.pedaki.fr`,
         // 3 hour after payment
         expiresAt: new Date(pending.paidAt.getTime() + 1000 * 60 * 60 * 3).toISOString(),
       };
