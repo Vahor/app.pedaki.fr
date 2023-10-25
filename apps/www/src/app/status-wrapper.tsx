@@ -40,7 +40,7 @@ const StatusWrapper = ({
 
       <h1 className="text-2xl font-bold">{titleKey}</h1>
 
-      <Balancer className="mb-8 mt-4 max-w-screen-sm text-secondary">
+      <Balancer className="mb-8 mt-4 max-w-screen-sm text-secondary text-center">
         {descriptionKey}
         {supportLink && " Si vous pensez qu'il s'agit d'une erreur, veuillez contacter le support."}
       </Balancer>
