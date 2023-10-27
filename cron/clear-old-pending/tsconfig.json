@@ -32,13 +32,11 @@
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "~/*": ["src/*"],
-      "@trpc/server/*": ["../../node_modules/@trpc/server/*"]
+      "~/*": ["src/*"]
     }
   },
   "include": [
-    "src",
-    "node_modules/@pedaki/auth/dist/index.d.ts",
+    "src"
   ],
   "exclude": ["../node_modules", "node_modules", ".next", "out", "dist"]
 }

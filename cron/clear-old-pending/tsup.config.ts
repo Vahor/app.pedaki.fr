@@ -19,7 +19,7 @@ export default defineConfig((options: Options) => ({
   clean: true,
   bundle: false,
   tsconfig: 'tsconfig.json',
-  external: ['@prisma/client', '@trpc/server'],
+  external: ['@prisma/client'],
   plugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],
   onSuccess: async () => {
     await cpy('package.json', 'dist');
