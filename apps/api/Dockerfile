@@ -1,4 +1,4 @@
-FROM node:18-slim AS base
+FROM node:18.17-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl curl ca-certificates && apt-get clean
 
