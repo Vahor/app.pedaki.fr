@@ -38,15 +38,18 @@ export function createServer() {
   };
 
   const init = async () => {
-    const allowedOrigins = ['https://app.pedaki.fr', 'https://www.pedaki.fr'];
-    if (env.NODE_ENV === 'development') {
-      allowedOrigins.push('http://localhost:4000');
-      allowedOrigins.push('http://127.0.0.1:4000');
-    }
     await server.register(cors, {
       allowedHeaders: ['Content-Type', 'Authorization'],
-      origin: allowedOrigins,
       credentials: true,
+      origin: (origin, callback) => {
+        if (env.NODE_ENV === 'development') {
+          return callback(null, true);
+        }
+        if (!origin || !new URL(origin).host.endsWith('pedaki.fr')) {
+          return callback(new Error('Origin not allowed'), false);
+        }
+        return callback(null, true);
+      },
     });
     await server.register(cookie, {
       parseOptions: {},
