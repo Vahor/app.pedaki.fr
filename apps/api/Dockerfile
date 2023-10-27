@@ -14,10 +14,11 @@ COPY turbo.json ./
 COPY .npmrc ./
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-COPY package.json ./apps/api/
+COPY apps/api/package.json ./apps/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/schema/package.json ./packages/schema/
 
+# TODO: remove no-frozen-lockfile
 RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY apps/api ./apps/api

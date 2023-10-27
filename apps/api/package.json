@@ -42,10 +42,10 @@
     "stripe": "^14.2.0",
     "superjson": "^2.2.0",
     "trpc-openapi": "^1.2.0",
+    "@pedaki/common": "^0.1.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@pedaki/common": "^0.1.3",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/node": "^18.18.0",
     "esbuild-plugin-tsconfig-paths": "^1.0.1",
