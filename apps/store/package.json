@@ -1,5 +1,5 @@
 {
-  "name": "@pedaki/www",
+  "name": "@pedaki/store",
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/vahor/app.pedaki.fr.git/issues"
   },
-  "homepage": "https://app.pedaki.fr",
+  "homepage": "https://store.pedaki.fr",
   "scripts": {
     "build": "next build",
     "dev": "dotenv -- next dev -p 4000",
