@@ -1,7 +1,6 @@
 FROM node:18-slim AS base
 
-RUN apt-get update -y && apt-get install -y openssl curl ca-certificates
-
+RUN apt-get update -y && apt-get install -y openssl curl ca-certificates && apt-get clean
 
 FROM base  AS builder
 WORKDIR /app
@@ -15,7 +14,7 @@ COPY turbo.json ./
 COPY .npmrc ./
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-COPY apps/api/package.json ./apps/api/
+COPY package.json ./apps/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/schema/package.json ./packages/schema/
 
