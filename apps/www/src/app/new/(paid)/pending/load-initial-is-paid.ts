@@ -1,5 +1,6 @@
 'use server';
 
+import isNetworkError from '@pedaki/common/utils/is-network-error';
 import { api } from '~/server/api/clients/server.ts';
 
 interface LoadInitialIsPaidOutput {
@@ -17,6 +18,10 @@ export const loadInitialIsPaid = async (pendingId: unknown): Promise<LoadInitial
   } catch (e) {
     if ((e as Error).message === 'NOT_FOUND') {
       return { status: 'expired' };
+    }
+    // Network error
+    if (isNetworkError(e)) {
+      return { status: 'waiting' };
     }
     return { status: 'invalid' };
   }

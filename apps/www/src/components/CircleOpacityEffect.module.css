@@ -1,0 +1,45 @@
+/*const loadingOpacity = [0.8, 0.6, 0.4, 0.2, 0, 0, 0];*/
+.animation {
+    animation-duration: 2s;
+    animation-timing-function: steps(7, end);
+    animation-iteration-count: infinite;
+    animation-name: pulse;
+}
+
+.animation:nth-child(1) {
+    animation-delay: 0.2s;
+}
+.animation:nth-child(2) {
+    animation-delay: 0.4s;
+}
+.animation:nth-child(3) {
+    animation-delay: 0.6s;
+}
+.animation:nth-child(4) {
+    animation-delay: 0.8s;
+}
+
+@keyframes pulse {
+    0% {
+        stroke-opacity: 0.8;
+    }
+    15% {
+        stroke-opacity: 0.6;
+    }
+    30% {
+        stroke-opacity: 0.4;
+    }
+    45% {
+        stroke-opacity: 0.2;
+    }
+    60% {
+        stroke-opacity: 0;
+    }
+    75% {
+        stroke-opacity: 0;
+    }
+    100% {
+        stroke-opacity: 0;
+    }
+
+}

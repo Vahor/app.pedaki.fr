@@ -1,7 +1,7 @@
 import { cn } from '@pedaki/design/utils/cn.js';
-import { Fira_Code, Open_Sans } from 'next/font/google';
+import { Fira_Code, Inter } from 'next/font/google';
 
-export const FontSans = Open_Sans({
+export const FontSans = Inter({
   display: 'swap',
   variable: '--font-sans',
   subsets: ['latin'],

@@ -22,6 +22,7 @@ export const CreateWorkspaceInput = z
     provider: ProviderModel,
     region: z.string(),
     email: z.string().email(),
+    subscriptionInterval: z.enum(['monthly', 'yearly']),
   })
   .refine(
     value => {

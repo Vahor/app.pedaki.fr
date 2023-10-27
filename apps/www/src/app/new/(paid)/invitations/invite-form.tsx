@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import wait from '@pedaki/common/utils/wait';
 import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@pedaki/design/ui/form';
 import IconSpinner from '@pedaki/design/ui/icons/IconSpinner';
 import { Input } from '@pedaki/design/ui/input';
+import { CreateWorkspaceInvitationInput } from '@pedaki/schema/invitation.model.js';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceInvitationStore } from '~/store/workspace-invitation.store.ts';
 import React from 'react';
@@ -23,9 +25,8 @@ interface InviteFormProps {
   rawToken: string;
 }
 
-const Schema = z.object({
-  email: z.string().email(),
-});
+const Schema = CreateWorkspaceInvitationInput.pick({ email: true });
+
 type InviteFormValues = z.infer<typeof Schema>;
 
 export function InviteForm({ rawToken }: InviteFormProps) {
@@ -44,10 +45,13 @@ export function InviteForm({ rawToken }: InviteFormProps) {
   function onSubmit(values: InviteFormValues) {
     return wrapWithLoading(
       () =>
-        createInvitationMutation.mutateAsync({
-          email: values.email,
-          token: rawToken,
-        }),
+        wait(
+          createInvitationMutation.mutateAsync({
+            email: values.email,
+            token: rawToken,
+          }),
+          200,
+        ),
       {
         loadingProps: {
           title: '...',
@@ -84,10 +88,10 @@ export function InviteForm({ rawToken }: InviteFormProps) {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nom</FormLabel>
+                <FormLabel>Adresse mail</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="John"
+                    placeholder="john@example.com"
                     type="email"
                     autoComplete="email"
                     disabled={isSubmitting}

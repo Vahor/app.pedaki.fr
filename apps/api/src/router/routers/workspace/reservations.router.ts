@@ -176,6 +176,7 @@ export const workspaceReservationRouter = router({
         },
         select: {
           workspaceId: true,
+          identifier: true,
           paidAt: true,
         },
       });
@@ -189,8 +190,10 @@ export const workspaceReservationRouter = router({
 
       const raw = {
         workspaceId: pending.workspaceId,
-        // 1 hour after payment
-        expiresAt: new Date(pending.paidAt.getTime() + 1000 * 60 * 60).toISOString(),
+        workspaceHealthUrl: `https://${pending.identifier}.pedaki.fr/api/health`,
+        workspaceUrl: `https://${pending.identifier}.pedaki.fr`,
+        // 3 hour after payment
+        expiresAt: new Date(pending.paidAt.getTime() + 1000 * 60 * 60 * 3).toISOString(),
       };
 
       return encrypt(JSON.stringify(raw), env.API_ENCRYPTION_KEY);

@@ -22,7 +22,8 @@ export const stripeRouter = router({
           // 	Sent when a customer clicks the Pay or Subscribe button in Checkout, informing you of a new purchase.
 
           // TODO: use zod to make sure the data is valid
-          const data = event.data.object as {
+          // TODO: fix type
+          const data = event.data.object as unknown as {
             metadata: PaymentMetadata;
             status: string;
             customer: string;
