@@ -16,7 +16,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
     PRISMA_ENCRYPTION_KEY: z.string().min(1).default('secret'),
 
-    APP_URL: z.string().url().default('https://app.pedaki.fr'),
+    STORE_URL: z.string().url().default('https://store.pedaki.fr'),
 
     STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
