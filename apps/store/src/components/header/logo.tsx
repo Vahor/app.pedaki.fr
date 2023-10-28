@@ -16,7 +16,7 @@ const Logo: React.FC<{
         className="inline dark:hidden"
       />
       <Image
-        src="https://static.pedaki.fr/logo/logo-light.svg"
+        src="https://static.pedaki.fr/logo/logo-dark.svg"
         alt="Pedaki"
         height={height}
         width={width}
