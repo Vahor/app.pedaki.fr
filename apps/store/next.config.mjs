@@ -9,12 +9,11 @@ const config = {
     swcMinify: true,
     poweredByHeader: false,
     experimental: {
-        serverActions: true,
         esmExternals: true,
     },
 
     images: {
-        domains: ["pedaki.fr"],
+        domains: ["static.pedaki.fr"],
     },
 
     redirects: async () => [

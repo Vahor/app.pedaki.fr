@@ -9,14 +9,14 @@ const Logo: React.FC<{
   return (
     <Link className="flex select-none items-center hover:opacity-75" href="/">
       <Image
-        src="/logo-light.svg"
+        src="https://static.pedaki.fr/logo/logo-light.svg"
         alt="Pedaki"
         height={height}
         width={width}
         className="inline dark:hidden"
       />
       <Image
-        src="/logo-dark.svg"
+        src="https://static.pedaki.fr/logo/logo-light.svg"
         alt="Pedaki"
         height={height}
         width={width}
