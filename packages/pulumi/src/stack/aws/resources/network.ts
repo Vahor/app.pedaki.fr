@@ -1,6 +1,6 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
-import type { StackParameters } from '../../type.ts';
+import type { StackParameters } from '~/type.ts';
 
 export interface VpcArgs {
   cidrBlock?: string;

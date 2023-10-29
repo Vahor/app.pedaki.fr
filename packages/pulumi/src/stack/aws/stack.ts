@@ -2,7 +2,7 @@ import * as pulumi from '@pulumi/pulumi';
 import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
 import * as random from '@pulumi/random';
 import { PulumiUtils } from '../shared.ts';
-import type { ServerProvider, StackOutputs, StackParameters } from '../type.ts';
+import type { ServerProvider, StackOutputs, StackParameters } from '~/type.ts';
 import * as backend from './resources/backend.ts';
 import * as frontend from './resources/frontend.ts';
 import * as network from './resources/network.ts';

@@ -13,7 +13,7 @@ import { env } from './env.ts';
 import { openApiDocument } from './openapi.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
-import { serverFactory } from './services/architecture/factory.ts';
+import {serverFactory} from "@pedaki/pulumi/factory.js";
 
 export function createServer() {
   const port = env.PORT;

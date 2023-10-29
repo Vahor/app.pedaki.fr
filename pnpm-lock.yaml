@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@pedaki/eslint-config':
-        specifier: ^0.1.1
-        version: 0.1.1(@tanstack/eslint-plugin-query@5.0.5)(@typescript-eslint/eslint-plugin@6.9.0)(@typescript-eslint/parser@6.9.0)(eslint-config-next@14.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-node@11.1.0)(eslint@8.50.0)
+        specifier: ^0.1.2
+        version: 0.1.2(@tanstack/eslint-plugin-query@5.0.5)(@typescript-eslint/eslint-plugin@6.9.0)(@typescript-eslint/parser@6.9.0)(eslint-config-next@14.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-node@11.1.0)(eslint@8.50.0)
       '@pedaki/prettier-config':
         specifier: ^0.0.5
         version: 0.0.5(prettier@3.0.3)
@@ -89,18 +89,12 @@ importers:
       '@pedaki/mailer':
         specifier: ^0.0.8
         version: 0.0.8(@react-email/button@0.0.11)(@react-email/head@0.0.6)(@react-email/html@0.0.6)(@react-email/link@0.0.6)(@react-email/render@0.0.8)(@react-email/tailwind@0.0.11)(react-email@1.9.5)(resend@1.1.0)
+      '@pedaki/pulumi':
+        specifier: workspace:*
+        version: link:../../packages/pulumi/dist
       '@pedaki/schema':
         specifier: workspace:*
         version: link:../../packages/schema/dist
-      '@pulumi/aws':
-        specifier: ^6.6.1
-        version: 6.6.1
-      '@pulumi/pulumi':
-        specifier: ^3.91.1
-        version: 3.91.1
-      '@pulumi/random':
-        specifier: ^4.14.0
-        version: 4.14.0
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.4)
@@ -216,8 +210,8 @@ importers:
         version: 4.4.4(@types/react@18.2.33)(react@18.2.0)
     devDependencies:
       '@pedaki/eslint-config':
-        specifier: ^0.1.1
-        version: 0.1.1(@tanstack/eslint-plugin-query@5.0.5)(@typescript-eslint/eslint-plugin@6.9.0)(@typescript-eslint/parser@6.9.0)(eslint-config-next@14.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-node@11.1.0)(eslint@8.50.0)
+        specifier: ^0.1.2
+        version: 0.1.2(@tanstack/eslint-plugin-query@5.0.5)(@typescript-eslint/eslint-plugin@6.9.0)(@typescript-eslint/parser@6.9.0)(eslint-config-next@14.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-node@11.1.0)(eslint@8.50.0)
       '@pedaki/prettier-config':
         specifier: ^0.0.5
         version: 0.0.5(prettier@3.0.3)
@@ -266,6 +260,28 @@ importers:
       prisma:
         specifier: ^5.5.2
         version: 5.5.2
+    publishDirectory: dist
+
+  packages/pulumi:
+    dependencies:
+      '@pedaki/schema':
+        specifier: workspace:*
+        version: link:../schema/dist
+      '@pulumi/aws':
+        specifier: ^6.6.1
+        version: 6.6.1
+      '@pulumi/pulumi':
+        specifier: ^3.91.1
+        version: 3.91.1
+      '@pulumi/random':
+        specifier: ^4.14.0
+        version: 4.14.0
+      '@t3-oss/env-core':
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.4)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     publishDirectory: dist
 
   packages/schema:
@@ -1721,8 +1737,9 @@ packages:
       windy-radix-palette: 2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.3.3)
     dev: false
 
-  /@pedaki/eslint-config@0.1.1(@tanstack/eslint-plugin-query@5.0.5)(@typescript-eslint/eslint-plugin@6.9.0)(@typescript-eslint/parser@6.9.0)(eslint-config-next@14.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-node@11.1.0)(eslint@8.50.0):
-    resolution: {integrity: sha512-xzhijuvu5y2jv0mawPRQMisBiD7EvPDlWeWMow7fe7q5G/DNG3Pagl/YijUM9/BvlakDtskBBnC+vTyyToe3tQ==}
+  /@pedaki/eslint-config@0.1.2(@tanstack/eslint-plugin-query@5.0.5)(@typescript-eslint/eslint-plugin@6.9.0)(@typescript-eslint/parser@6.9.0)(eslint-config-next@14.0.0)(eslint-config-prettier@9.0.0)(eslint-plugin-node@11.1.0)(eslint@8.50.0):
+    resolution: {integrity: sha512-k5gC36eMgAWWg1y5ylARHkZzPdkOq1CShbovuFz4zfyI1MIZiCggwfuceXdE83lxJXQ+gleMEyo65gUCVpNt5g==}
+    engines: {node: '>=18.0.0'}
     peerDependencies:
       '@tanstack/eslint-plugin-query': ^5.0.0
       '@typescript-eslint/eslint-plugin': 6.9.0
@@ -6720,7 +6737,7 @@ packages:
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
       jose: 4.14.6
-      next: 14.0.0(@babel/core@7.23.0)(@opentelemetry/api@1.6.0)(react-dom@18.2.0)(react@18.2.0)
+      next: 14.0.0(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0)
       oauth: 0.9.15
       openid-client: 5.5.0
       preact: 10.17.1
@@ -6728,46 +6745,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       uuid: 8.3.2
-    dev: false
-
-  /next@14.0.0(@babel/core@7.23.0)(@opentelemetry/api@1.6.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-J0jHKBJpB9zd4+c153sair0sz44mbaCHxggs8ryVXSFBuBqJ8XdE9/ozoV85xGh2VnSjahwntBZZgsihL9QznA==}
-    engines: {node: '>=18.17.0'}
-    hasBin: true
-    peerDependencies:
-      '@opentelemetry/api': ^1.1.0
-      react: ^18.2.0
-      react-dom: ^18.2.0
-      sass: ^1.3.0
-    peerDependenciesMeta:
-      '@opentelemetry/api':
-        optional: true
-      sass:
-        optional: true
-    dependencies:
-      '@next/env': 14.0.0
-      '@opentelemetry/api': 1.6.0
-      '@swc/helpers': 0.5.2
-      busboy: 1.6.0
-      caniuse-lite: 1.0.30001540
-      postcss: 8.4.31
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      styled-jsx: 5.1.1(@babel/core@7.23.0)(react@18.2.0)
-      watchpack: 2.4.0
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 14.0.0
-      '@next/swc-darwin-x64': 14.0.0
-      '@next/swc-linux-arm64-gnu': 14.0.0
-      '@next/swc-linux-arm64-musl': 14.0.0
-      '@next/swc-linux-x64-gnu': 14.0.0
-      '@next/swc-linux-x64-musl': 14.0.0
-      '@next/swc-win32-arm64-msvc': 14.0.0
-      '@next/swc-win32-ia32-msvc': 14.0.0
-      '@next/swc-win32-x64-msvc': 14.0.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
     dev: false
 
   /next@14.0.0(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.68.0):
