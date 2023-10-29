@@ -1,7 +1,7 @@
+import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
-import {serverFactory} from "@pedaki/pulumi/factory.js";
 
 const StackParametersSchema = z.object({
   name: z.string(),

@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { prisma } from '@pedaki/db';
+import { serverFactory } from '@pedaki/pulumi/factory.js';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -13,7 +14,6 @@ import { env } from './env.ts';
 import { openApiDocument } from './openapi.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
-import {serverFactory} from "@pedaki/pulumi/factory.js";
 
 export function createServer() {
   const port = env.PORT;
