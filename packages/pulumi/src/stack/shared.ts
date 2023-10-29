@@ -4,6 +4,7 @@ import type {
   PulumiFn,
 } from '@pulumi/pulumi/automation/index.js';
 import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
+import { env } from '~/env.ts';
 
 export const projectName = 'user-app';
 export const organisation = 'pedaki';
@@ -18,7 +19,7 @@ export class PulumiUtils {
         config: {
           [name]: {
             environment: {
-              imports: [process.env.AWS_ENVIRONMENT, 'ghcr-premium'],
+              imports: [env.AWS_ENVIRONMENT, 'ghcr-premium'],
             },
           },
         },

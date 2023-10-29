@@ -1,4 +1,5 @@
 /// api:dev: {"stacks":[{"orgName":"pedaki","projectName":"user-app","stackName":"string","lastUpdate":1694625930,"resourceCount":4}]}
+import { env } from '~/env.ts';
 import { z } from 'zod';
 
 interface StackListResponse {
@@ -47,7 +48,7 @@ export class PulumiApi {
   private static listStacks = async (): Promise<StackListResponse['stacks']> => {
     const result = await fetch('https://api.pulumi.com/api/user/stacks?organization=pedaki', {
       headers: {
-        Authorization: `token ${process.env.PULUMI_ACCESS_TOKEN}`,
+        Authorization: `token ${env.PULUMI_ACCESS_TOKEN}`,
         'Content-Type': 'application/json',
       },
     });
@@ -66,7 +67,7 @@ export class PulumiApi {
       `https://api.pulumi.com/api/stacks/${organization}/${project}/${stackName}`,
       {
         headers: {
-          Authorization: `token ${process.env.PULUMI_ACCESS_TOKEN}`,
+          Authorization: `token ${env.PULUMI_ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
       },
@@ -87,7 +88,7 @@ export class PulumiApi {
       `https://api.pulumi.com/api/stacks/${organization}/${project}/${stackName}/export`,
       {
         headers: {
-          Authorization: `token ${process.env.PULUMI_ACCESS_TOKEN}`,
+          Authorization: `token ${env.PULUMI_ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
       },
