@@ -11,6 +11,7 @@ concurrency:
 jobs:
   lint:
     name: Code check
+    if: github.event.pull_request.draft == false
     env:
       SKIP_ENV_VALIDATION: true
       NEXT_TELEMETRY_DISABLED: 1
@@ -23,6 +24,9 @@ jobs:
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
