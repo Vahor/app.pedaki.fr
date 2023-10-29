@@ -1,18 +1,7 @@
 import type { ServerProvider, StackOutputs, StackParameters, WorkspaceInstance } from '~/type.ts';
 
 export class TestServerProvider implements ServerProvider<'test'> {
-  initialized = false;
-
   stacks: WorkspaceInstance[] = [];
-
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async init(): Promise<void> {
-    this.initialized = true;
-  }
-
-  public isInitialized(): boolean {
-    return this.initialized;
-  }
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async create(params: StackParameters<'test'>): Promise<StackOutputs> {

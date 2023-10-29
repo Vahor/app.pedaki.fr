@@ -6,30 +6,20 @@ import type {
 import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
 import { env } from '~/env.ts';
 
-export const projectName = 'user-app';
-export const organisation = 'pedaki';
+export const projectName = `premium-${env.NODE_ENV}`;
 
-const stackName = (name: string) => `premium/${organisation}/${name}`;
+const stackName = (name: string) => `${name}`;
 
 export class PulumiUtils {
-  private static prepareStackOptions(name: string, program: PulumiFn): LocalWorkspaceOptions {
+  private static prepareStackOptions(program: PulumiFn): LocalWorkspaceOptions {
     return {
       program: program,
-      stackSettings: {
-        config: {
-          [name]: {
-            environment: {
-              imports: [env.AWS_ENVIRONMENT, 'ghcr-premium'],
-            },
-          },
-        },
-      },
     };
   }
 
   private static prepareInlineProgram(name: string, program: PulumiFn): InlineProgramArgs {
     return {
-      stackName: name,
+      stackName: stackName(name),
       projectName,
       program,
     };
@@ -39,7 +29,7 @@ export class PulumiUtils {
     const finalName = stackName(name);
     return await LocalWorkspace.createOrSelectStack(
       this.prepareInlineProgram(finalName, program),
-      this.prepareStackOptions(finalName, program),
+      this.prepareStackOptions(program),
     );
   }
 
@@ -47,7 +37,7 @@ export class PulumiUtils {
     const finalName = stackName(name);
     return await LocalWorkspace.selectStack(
       this.prepareInlineProgram(finalName, program),
-      this.prepareStackOptions(finalName, program),
+      this.prepareStackOptions(program),
     );
   }
 
