@@ -1,4 +1,4 @@
-import type { ServerProvider, StackOutputs, StackParameters, WorkspaceInstance } from '../type.ts';
+import type { ServerProvider, StackOutputs, StackParameters, WorkspaceInstance } from '~/type.ts';
 
 export class TestServerProvider implements ServerProvider<'test'> {
   initialized = false;
@@ -43,9 +43,5 @@ export class TestServerProvider implements ServerProvider<'test'> {
   public delete(params: StackParameters<'test'>): Promise<void> {
     this.stacks = this.stacks.filter(stack => stack.workspaceId !== params.workspaceId);
     return Promise.resolve(undefined);
-  }
-
-  public listStacks(): WorkspaceInstance[] {
-    return this.stacks;
   }
 }

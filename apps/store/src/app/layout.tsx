@@ -20,6 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactElement 
   );
 }
 
+export const viewport = {
+  colorScheme: 'light',
+  themeColor: '#ffffff',
+};
+
 export const metadata = {
   metadataBase: new URL('https://store.pedaki.fr'),
   title: {
@@ -28,13 +33,11 @@ export const metadata = {
   },
   // TODO: add description
   description: 'todo',
-  themeColor: '#ffffff',
   openGraph: {
     images: '/og-image.png',
     url: 'https://store.pedaki.fr',
   },
   robots: 'noindex, nofollow',
-  colorScheme: 'light',
   icons: [
     { rel: 'icon', url: 'https://static.pedaki.fr/logo/favicon.ico' },
     { rel: 'apple-touch-icon', url: 'https://static.pedaki.fr/logo/apple-touch-icon.png' },

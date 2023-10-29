@@ -1,8 +1,8 @@
 import type { Provider } from '@pedaki/schema/region.model.ts';
+import { PulumiApi } from '~/utils/pulumi-api.ts';
 import { AwsServerProvider } from './stack/aws/stack.ts';
 import { TestServerProvider } from './stack/mock/stack.ts';
-import { PulumiUtils } from './stack/shared.ts';
-import type { ServerProvider, WorkspaceInstance } from './stack/type.ts';
+import type { ServerProvider, WorkspaceInstance } from './type.ts';
 
 const providers = {
   AWS: new AwsServerProvider(),
@@ -19,7 +19,7 @@ class ServerProviderFactory {
   }
 
   public async listStacks(): Promise<WorkspaceInstance[]> {
-    return await PulumiUtils.listStacksWithProperties().then(stacks =>
+    return await PulumiApi.listStacksWithProperties().then(stacks =>
       stacks.map(stack => {
         return {
           workspaceId: stack.outputs.WorkspaceId ?? '',

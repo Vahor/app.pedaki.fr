@@ -1,7 +1,6 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
-import { env } from '~/env.ts';
-import type { StackParameters } from '../../type.ts';
+import type { StackParameters } from '~/type.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -36,22 +35,6 @@ export class WebService extends pulumi.ComponentResource {
       })
       .then(ami => ami.id);
 
-    let ec2KeyPair: aws.ec2.KeyPair | null = null;
-
-    if (env.PUBLIC_KEY) {
-      ec2KeyPair = new aws.ec2.KeyPair(
-        `${name}-keypair`,
-        {
-          publicKey: env.PUBLIC_KEY,
-          tags: {
-            ...args.tags,
-            Name: `${name}-keypair`,
-          },
-        },
-        { parent: this },
-      );
-    }
-
     const ec2Name = `${name}-ec2`;
     const ec2 = new aws.ec2.Instance(
       ec2Name,
@@ -61,7 +44,6 @@ export class WebService extends pulumi.ComponentResource {
         subnetId: args.subnetIds[0],
         ami: amiId,
         userData: this.startScript(args),
-        keyName: ec2KeyPair?.keyName,
         userDataReplaceOnChange: true, // Force to recreate the ec2 instance when the script changes
         tags: {
           ...args.tags,

@@ -1,16 +1,7 @@
-/* eslint-disable */
-
-import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
-import type { PulumiFn } from '@pulumi/pulumi/automation/index.js';
-import { env } from '~/env.ts';
-import * as z from 'zod';
-
-export const projectName = 'user-app';
-export const organisation = 'pedaki';
-
-const stackName = (name: string) => `${organisation}/${name}`;
-
 /// api:dev: {"stacks":[{"orgName":"pedaki","projectName":"user-app","stackName":"string","lastUpdate":1694625930,"resourceCount":4}]}
+import { env } from '~/env.ts';
+import { z } from 'zod';
+
 interface StackListResponse {
   stacks: {
     orgName: string;
@@ -53,30 +44,7 @@ export const StackStateResponseSchema = z.object({
 });
 export type StackStateResponse = z.infer<typeof StackStateResponseSchema>;
 
-export class PulumiUtils {
-  public static createOrSelectStack = async (name: string, program: PulumiFn) => {
-    return await LocalWorkspace.createOrSelectStack({
-      stackName: stackName(name),
-      projectName,
-      program,
-    });
-  };
-
-  public static selectStack = async (name: string, program: PulumiFn) => {
-    return await LocalWorkspace.selectStack({
-      stackName: stackName(name),
-      projectName,
-      program,
-    });
-  };
-
-  public static deleteStack = async (name: string, program: PulumiFn) => {
-    const stack = await this.selectStack(name, program);
-    await stack.destroy({ onOutput: console.info });
-    await stack.workspace.removeStack(stackName(name));
-    return stack;
-  };
-
+export class PulumiApi {
   private static listStacks = async (): Promise<StackListResponse['stacks']> => {
     const result = await fetch('https://api.pulumi.com/api/user/stacks?organization=pedaki', {
       headers: {
@@ -86,7 +54,8 @@ export class PulumiUtils {
     });
 
     // TODO: check for errors and validate response
-    return ((await result.json()) as any).stacks as StackListResponse['stacks'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return (await result.json()).stacks as StackListResponse['stacks'];
   };
 
   private static getStackData = async (
@@ -105,7 +74,8 @@ export class PulumiUtils {
     );
 
     // TODO: check for errors and validate response
-    return (await result.json()) as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await result.json();
   };
 
   public static getStackState = async (
@@ -125,7 +95,8 @@ export class PulumiUtils {
     );
 
     // TODO: check for errors and validate response
-    return (await result.json()) as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await result.json();
   };
 
   private static flatOutputs = (ressources: Resource[]): Record<string, string> => {

@@ -4,6 +4,8 @@ import { z } from 'zod';
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    AWS_ENVIRONMENT: z.enum(['aws-dev']).default('aws-dev'),
+
     PORT: z.coerce.number().default(8080),
 
     PULUMI_ACCESS_TOKEN: z.string(),
