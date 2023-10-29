@@ -1,5 +1,4 @@
 import * as pulumi from '@pulumi/pulumi';
-import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
 import * as random from '@pulumi/random';
 import type { ServerProvider, StackOutputs, StackParameters } from '~/type.ts';
 import { PulumiUtils } from '../shared.ts';
@@ -8,27 +7,8 @@ import * as frontend from './resources/frontend.ts';
 import * as network from './resources/network.ts';
 
 export class AwsServerProvider implements ServerProvider<'AWS'> {
-  initialized = false;
-
-  public async init(): Promise<void> {
-    if (this.initialized) {
-      return;
-    }
-    const ws = await LocalWorkspace.create({});
-
-    await ws.installPlugin('aws', 'v4.0.0');
-
-    this.initialized = true;
-  }
-
-  public isInitialized(): boolean {
-    return this.initialized;
-  }
-
   public async create(params: StackParameters): Promise<StackOutputs> {
     const stack = await PulumiUtils.createOrSelectStack(params.workspaceId, this.program(params));
-    await stack.setConfig('aws:region', { value: params.region });
-
     const upRes = await stack.up({ onOutput: console.info });
 
     // TODO: throw error if the output are not valid (use zod ?)

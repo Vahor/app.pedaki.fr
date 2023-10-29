@@ -27,15 +27,6 @@ export interface StackOutputs {
 
 export interface ServerProvider<P extends Provider = Provider> {
   /**
-   * Initialize the provider
-   * Can only be called once
-   */
-  init: () => Promise<void>;
-  /**
-   * Check if the provider is initialized
-   */
-  isInitialized: () => boolean;
-  /**
    * Create a stack
    * @param params stack parameters
    * @returns stack outputs

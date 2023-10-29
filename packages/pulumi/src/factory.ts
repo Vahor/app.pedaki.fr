@@ -1,7 +1,7 @@
 import type { Provider } from '@pedaki/schema/region.model.ts';
 import { PulumiApi } from '~/utils/pulumi-api.ts';
-import { AwsServerProvider } from './stack/aws/stack.ts';
-import { TestServerProvider } from './stack/mock/stack.ts';
+import { AwsServerProvider } from './stack/aws/provider.ts';
+import { TestServerProvider } from './stack/mock/provider.ts';
 import type { ServerProvider, WorkspaceInstance } from './type.ts';
 
 const providers = {
@@ -10,10 +10,6 @@ const providers = {
 } as const;
 
 class ServerProviderFactory {
-  public init(): Promise<Awaited<void>[]> {
-    return Promise.all(Object.values(providers).map(provider => provider.init()));
-  }
-
   public getProvider<P extends Provider>(provider: P): ServerProvider<P> {
     return providers[provider] as ServerProvider<P>;
   }
