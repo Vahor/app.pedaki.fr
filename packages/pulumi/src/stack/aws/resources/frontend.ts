@@ -17,7 +17,6 @@ export interface WebServiceArgs {
   stackParameters: StackParameters<'AWS'>;
 }
 
-// Creates DB
 export class WebService extends pulumi.ComponentResource {
   public readonly dnsName: pulumi.Output<string>;
   public readonly publicIp: pulumi.Output<string>;

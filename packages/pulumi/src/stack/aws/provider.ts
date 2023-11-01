@@ -80,7 +80,6 @@ export class AwsServerProvider implements ServerProvider<'AWS'> {
 
   private tags = (params: StackParameters<'AWS'>) => ({
     WorkspaceId: params.workspaceId,
-    Provider: 'AWS',
     Size: params.size,
     Region: params.region,
   });
