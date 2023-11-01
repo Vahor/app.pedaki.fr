@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { prisma } from '@pedaki/db';
+import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.ts';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -13,7 +14,6 @@ import { env } from './env.ts';
 import { openApiDocument } from './openapi.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
-import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.ts';
 
 export function createServer() {
   const port = env.PORT;
@@ -86,7 +86,7 @@ export function createServer() {
       await server.listen({ port, host: '0.0.0.0' });
       await seedDatabase();
       console.log(`Server listening on http://localhost:${port}`);
-      console.log(`Will use docker image: ${DOCKER_IMAGE}`)
+      console.log(`Will use docker image: ${DOCKER_IMAGE}`);
     } catch (err) {
       server.log.error(err);
       throw err;

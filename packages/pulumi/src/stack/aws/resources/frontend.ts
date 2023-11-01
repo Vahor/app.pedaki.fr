@@ -2,7 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
-import {DOCKER_IMAGE} from "~/utils/docker.ts";
+import { DOCKER_IMAGE } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -62,7 +62,6 @@ export class WebService extends pulumi.ComponentResource {
   }
 
   private startScript = (args: WebServiceArgs) => {
-
     return pulumi.interpolate`#!/bin/bash
         sudo yum update -y
         sudo yum install docker -y
