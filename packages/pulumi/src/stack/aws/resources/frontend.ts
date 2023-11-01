@@ -69,8 +69,9 @@ export class WebService extends pulumi.ComponentResource {
         
         sudo docker login -u ${env.DOCKER_USERNAME} -p ${env.DOCKER_PASSWORD} ${env.DOCKER_HOST}
         sudo docker pull ${DOCKER_IMAGE}
-        sudo docker run -d -p 80:80 \
+        sudo docker run -d -p 80:80 --restart=always \
             -e NEXT_PUBLIC_TESTVALUE="${args.dbHost}" \
+            -e SECRET_PRIVATE_VARIABLE="${args.dbName}" \
             ${DOCKER_IMAGE}
         `;
   };
