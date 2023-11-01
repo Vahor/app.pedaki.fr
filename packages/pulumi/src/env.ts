@@ -8,7 +8,12 @@ export const env = createEnv({
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_SECRET_ACCESS_KEY: z.string(),
 
-    DOCKER_IMAGE: z.string(),
+    GITHUB_ACCESS_TOKEN: z.string(),
+
+    DOCKER_HOST: z.string(),
+    DOCKER_ORGANISATION: z.string(),
+    DOCKER_PACKAGE_NAME: z.string(),
+    DOCKER_IMAGE_VERSION: z.string(),
     DOCKER_USERNAME: z.string(),
     DOCKER_PASSWORD: z.string(),
 

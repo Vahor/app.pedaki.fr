@@ -20,8 +20,9 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
+    "@pedaki/common": "^0.1.4",
     "@pedaki/schema": "workspace:*",
-    "@pulumi/aws": "^6.6.1",
+    "@pulumi/aws": "^6.7.0",
     "@pulumi/pulumi": "^3.91.1",
     "@pulumi/random": "^4.14.0",
     "@t3-oss/env-core": "^0.7.1",

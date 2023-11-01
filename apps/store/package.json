@@ -38,13 +38,13 @@
     "@trpc/server": "10.43.0",
     "dayjs": "^1.11.10",
     "million": "^2.6.4",
-    "next": "14.0.0",
+    "next": "14.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-wrap-balancer": "^1.1.0",
     "sharp": "^0.32.6",
     "zod": "^3.22.4",
-    "zustand": "^4.4.4"
+    "zustand": "^4.4.5"
   },
   "devDependencies": {
     "@pedaki/eslint-config": "^0.1.2",
