@@ -1,0 +1,37 @@
+{
+  "name": "@pedaki/services",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "lint": "eslint . --cache",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "typecheck": "tsc --noEmit --declaration"
+  },
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "keywords": [],
+  "author": "Nathan David <me@vahor.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "@pedaki/schema": "workspace:*",
+    "@pedaki/db": "workspace:*",
+    "stripe": "^14.2.0",
+    "@t3-oss/env-core": "^0.7.1",
+    "zod": "^3.22.4"
+  },
+  "engines": {
+    "node": ">=18.0.0 <19.0.0",
+    "pnpm": ">=8.0.0",
+    "yarn": "use-pnpm",
+    "npm": "use-pnpm"
+  },
+  "packageManager": "pnpm@8.7.6",
+  "prettier": "@pedaki/prettier-config"
+}

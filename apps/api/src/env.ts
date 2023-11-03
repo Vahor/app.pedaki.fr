@@ -20,7 +20,6 @@ export const env = createEnv({
 
     STORE_URL: z.string().url().default('https://store.pedaki.fr'),
 
-    STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
 
     API_INTERNAL_SECRET: z.string().min(1),

@@ -101,6 +101,9 @@ importers:
       '@pedaki/schema':
         specifier: workspace:*
         version: link:../../packages/schema/dist
+      '@pedaki/services':
+        specifier: workspace:*
+        version: link:../../packages/services/dist
       '@t3-oss/env-core':
         specifier: ^0.7.1
         version: 0.7.1(typescript@5.2.2)(zod@3.22.4)
@@ -116,9 +119,6 @@ importers:
       next-auth:
         specifier: ^4.24.4
         version: 4.24.4(next@14.0.1)(react-dom@18.2.0)(react@18.2.0)
-      stripe:
-        specifier: ^14.2.0
-        version: 14.2.0
       superjson:
         specifier: ^2.2.0
         version: 2.2.0
@@ -302,6 +302,25 @@ importers:
       tsx:
         specifier: ^3.14.0
         version: 3.14.0
+    publishDirectory: dist
+
+  packages/services:
+    dependencies:
+      '@pedaki/db':
+        specifier: workspace:*
+        version: link:../db/dist
+      '@pedaki/schema':
+        specifier: workspace:*
+        version: link:../schema/dist
+      '@t3-oss/env-core':
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.4)
+      stripe:
+        specifier: ^14.2.0
+        version: 14.2.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     publishDirectory: dist
 
 packages:
