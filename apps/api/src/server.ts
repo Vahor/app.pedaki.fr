@@ -3,7 +3,7 @@ import cors from '@fastify/cors';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { prisma } from '@pedaki/db';
-import { serverFactory } from '@pedaki/pulumi/factory.js';
+import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -83,10 +83,10 @@ export function createServer() {
     try {
       await setupSwagger();
       await init();
-      await serverFactory.init();
       await server.listen({ port, host: '0.0.0.0' });
       await seedDatabase();
       console.log(`Server listening on http://localhost:${port}`);
+      console.log(`Will use docker image: ${DOCKER_IMAGE}`);
     } catch (err) {
       server.log.error(err);
       throw err;

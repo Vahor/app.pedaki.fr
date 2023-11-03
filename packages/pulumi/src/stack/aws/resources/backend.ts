@@ -13,7 +13,6 @@ export interface DbArgs {
   stackParameters: StackParameters<'AWS'>;
 }
 
-// Creates DB
 export class Db extends pulumi.ComponentResource {
   public readonly dbHost: pulumi.Output<string>;
   public readonly dbName: pulumi.Output<string>;

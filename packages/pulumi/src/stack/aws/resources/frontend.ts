@@ -1,6 +1,8 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
+import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
+import { DOCKER_IMAGE } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -15,7 +17,6 @@ export interface WebServiceArgs {
   stackParameters: StackParameters<'AWS'>;
 }
 
-// Creates DB
 export class WebService extends pulumi.ComponentResource {
   public readonly dnsName: pulumi.Output<string>;
   public readonly publicIp: pulumi.Output<string>;
@@ -61,10 +62,18 @@ export class WebService extends pulumi.ComponentResource {
 
   private startScript = (args: WebServiceArgs) => {
     return pulumi.interpolate`#!/bin/bash
-        yum install -y mysql
-        DATABASES=$(mysql -h ${args.dbHost} -P ${args.dbPort} -u ${args.dbUser} -p${args.dbPassword} -e "SHOW DATABASES;")
-        echo "Hello, Shrek! The time is $(date -R)! RDSEndpoint: ${args.dbHost}, RDS Port: ${args.dbPort}, User: ${args.dbUser}, Password: ${args.dbPassword}, Databases: $DATABASES" > index.html
-        nohup python -m SimpleHTTPServer 80 &`;
+        sudo yum update -y
+        sudo yum install docker -y
+        sudo service docker start
+        sudo systemctl enable docker
+        
+        sudo docker login -u ${env.DOCKER_USERNAME} -p ${env.DOCKER_PASSWORD} ${env.DOCKER_HOST}
+        sudo docker pull ${DOCKER_IMAGE}
+        sudo docker run -d -p 80:80 --restart=always \
+            -e NEXT_PUBLIC_TESTVALUE="${args.dbHost}" \
+            -e SECRET_PRIVATE_VARIABLE="${args.dbName}" \
+            ${DOCKER_IMAGE}
+        `;
   };
 
   private ec2InstanceType = (size: StackParameters<'AWS'>['size']) => {
