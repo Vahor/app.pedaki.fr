@@ -32,7 +32,7 @@
     "@pedaki/mailer": "^0.0.8",
     "@pedaki/schema": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
-    "@trpc/server": "10.43.0",
+    "@trpc/server": "10.43.1",
     "fastify": "^4.24.3",
     "fastify-raw-body": "^4.2.2",
     "next-auth": "^4.24.4",

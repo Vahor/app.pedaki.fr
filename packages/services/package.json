@@ -22,7 +22,7 @@
   "dependencies": {
     "@pedaki/schema": "workspace:*",
     "@pedaki/db": "workspace:*",
-    "stripe": "^14.2.0",
+    "stripe": "^14.3.0",
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
   },
