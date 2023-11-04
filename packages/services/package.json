@@ -20,11 +20,12 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@pedaki/schema": "workspace:*",
-    "@pedaki/db": "workspace:*",
     "@pedaki/common": "0.4.2-beta.7",
-    "stripe": "^14.3.0",
+    "@pedaki/db": "workspace:*",
+    "@pedaki/schema": "workspace:*",
     "@t3-oss/env-core": "^0.7.1",
+    "@trpc/server": "10.43.1",
+    "stripe": "^14.3.0",
     "zod": "^3.22.4"
   },
   "engines": {
@@ -34,5 +35,8 @@
     "npm": "use-pnpm"
   },
   "packageManager": "pnpm@8.7.6",
-  "prettier": "@pedaki/prettier-config"
+  "prettier": "@pedaki/prettier-config",
+  "devDependencies": {
+    "@prisma/client": "^5.5.2"
+  }
 }
