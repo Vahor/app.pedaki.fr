@@ -10,7 +10,7 @@ import z from 'zod';
 class PendingWorkspaceService {
   tokenSchema = z.object({
     workspaceId: z.string(),
-    expiresAt: z.date(),
+    expiresAt: z.coerce.date(),
     workspaceHealthUrl: z.string(),
     workspaceUrl: z.string(),
   });
@@ -63,7 +63,7 @@ class PendingWorkspaceService {
 
   decryptToken(token: string): z.infer<typeof this.tokenSchema> {
     const decrypted = decrypt(token, env.API_ENCRYPTION_KEY);
-    const parsed = this.tokenSchema.parse(decrypted);
+    const parsed = this.tokenSchema.parse(JSON.parse(decrypted));
     if (new Date(parsed.expiresAt) < new Date()) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
