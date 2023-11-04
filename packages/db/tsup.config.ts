@@ -6,9 +6,9 @@ export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
   entry: ['src/**/*.(tsx|ts|cjs)'],
-  format: process.env.DTS_ONLY ? [] : ['esm'],
+  format: ['esm'], // ESM only as .js files are needed for build
   dts: process.env.NODE_ENV !== 'production',
-  sourcemap: process.env.DTS_ONLY !== undefined,
+  sourcemap: false,
   minify: true,
   minifyWhitespace: true,
   keepNames: true,
