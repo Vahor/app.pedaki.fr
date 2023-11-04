@@ -2,7 +2,6 @@ import { prisma } from '@pedaki/db';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
-
 class WorkspaceService {
   getHealthStatusUrl(identifier: string) {
     return `https://${identifier}.pedaki.fr/api/_health`;

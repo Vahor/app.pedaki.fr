@@ -7,7 +7,6 @@ import type { PendingWorkspace } from '~/pending-workspace/pending-workspace.mod
 import { workspaceService } from '~/workspace/workspace.service.ts';
 import z from 'zod';
 
-
 class PendingWorkspaceService {
   tokenSchema = z.object({
     workspaceId: z.string(),

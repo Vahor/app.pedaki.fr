@@ -15,7 +15,6 @@ import { openApiDocument } from './openapi.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
 
-
 export function createServer() {
   const port = env.PORT;
 

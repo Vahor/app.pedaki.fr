@@ -5,7 +5,6 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { router, stripeProcedure } from '../../trpc.ts';
 
-
 export const stripeRouter = router({
   webhook: stripeProcedure
     .input(z.object({}).passthrough())

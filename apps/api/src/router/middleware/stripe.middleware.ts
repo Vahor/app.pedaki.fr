@@ -3,7 +3,6 @@ import { TRPCError } from '@trpc/server';
 import { env } from '~/env.ts';
 import { t } from '~/router/init.ts';
 
-
 const error = new TRPCError({
   code: 'UNAUTHORIZED',
   message: 'INVALID_TOKEN',
