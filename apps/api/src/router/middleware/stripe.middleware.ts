@@ -1,7 +1,7 @@
+import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { TRPCError } from '@trpc/server';
 import { env } from '~/env.ts';
 import { t } from '~/router/init.ts';
-import stripe from '~/services/stripe/stripe.ts';
 
 const error = new TRPCError({
   code: 'UNAUTHORIZED',
@@ -29,7 +29,7 @@ export const isFromStripe = t.middleware(async ({ ctx, next }) => {
   }
 
   try {
-    const event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
+    const event = stripeService.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
 
     return next({
       ctx: {

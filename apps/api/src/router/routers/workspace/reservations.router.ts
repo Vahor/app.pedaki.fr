@@ -1,11 +1,11 @@
-import { encrypt } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
+import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
+import { products } from '@pedaki/services/stripe/products.js';
+import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
+import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { env } from '~/env.ts';
-import { createPayment } from '~/services/stripe/create-payment.ts';
-import { products } from '~/services/stripe/products.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
@@ -19,42 +19,22 @@ export const workspaceReservationRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      const jsonData = JSON.stringify(input);
-
       try {
-        const pending = await prisma.pendingWorkspaceCreation.create({
-          data: {
-            data: jsonData,
-            identifier: input.identifier,
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        const payment = await createPayment({
+        const pendingId = await pendingWorkspaceService.create(input);
+        const payment = await stripeService.createPayment({
           product: products.hosted,
           metadata: {
             workspaceName: input.name,
-            pendingId: pending.id,
+            pendingId,
           },
           customer: {
             email: input.email,
           },
         });
-
-        // Update pending with payment id
-        await prisma.pendingWorkspaceCreation.update({
-          where: {
-            id: pending.id,
-          },
-          data: {
-            stripePaymentId: payment.id,
-          },
-        });
+        await pendingWorkspaceService.linkStripePayment(pendingId, payment.id);
 
         return {
-          id: pending.id,
+          id: pendingId,
           stripeUrl: payment.url,
         };
       } catch (error) {
@@ -122,8 +102,7 @@ export const workspaceReservationRouter = router({
       }
 
       return {
-        // TODO base domain / health url
-        url: `https://${pending.identifier}.pedaki.fr/api/health`,
+        url: workspaceService.getHealthStatusUrl(pending.identifier),
       };
     }),
 
@@ -170,6 +149,7 @@ export const workspaceReservationRouter = router({
     .output(z.string())
     .query(async ({ input }) => {
       // TODO: add cache and quotas here as it's easy to spam this endpoint
+
       const pending = await prisma.pendingWorkspaceCreation.findUnique({
         where: {
           id: input.id,
@@ -180,22 +160,24 @@ export const workspaceReservationRouter = router({
           paidAt: true,
         },
       });
-
-      if (!pending?.paidAt || !pending.workspaceId) {
+      if (!pending?.identifier || !pending.workspaceId) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'NOT_FOUND',
         });
       }
 
-      const raw = {
-        workspaceId: pending.workspaceId,
-        workspaceHealthUrl: `https://${pending.identifier}.pedaki.fr/api/health`,
-        workspaceUrl: `https://${pending.identifier}.pedaki.fr`,
-        // 3 hour after payment
-        expiresAt: new Date(pending.paidAt.getTime() + 1000 * 60 * 60 * 3).toISOString(),
-      };
+      if (!pending.paidAt) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_PAID',
+        });
+      }
 
-      return encrypt(JSON.stringify(raw), env.API_ENCRYPTION_KEY);
+      return pendingWorkspaceService.generateToken({
+        workspaceId: pending.workspaceId,
+        identifier: pending.identifier,
+        paidAt: pending.paidAt,
+      });
     }),
 });

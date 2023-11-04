@@ -1,76 +1,27 @@
-import { decrypt } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import { CreateWorkspaceInvitationInput } from '@pedaki/schema/invitation.model.js';
+import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
+import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { env } from '~/env.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
-
-const tokenSchema = z.object({
-  workspaceId: z.string(),
-  expiresAt: z.string(),
-});
-
-export const decryptToken = (token: string) => {
-  const decrypted = decrypt(token, env.API_ENCRYPTION_KEY);
-  const parsed = tokenSchema.parse(JSON.parse(decrypted));
-  if (new Date(parsed.expiresAt) < new Date()) {
-    throw new TRPCError({
-      code: 'BAD_REQUEST',
-      message: 'EXPIRED',
-    });
-  }
-  return parsed;
-};
 
 export const workspaceInvitationRouter = router({
   create: publicProcedure
     .input(CreateWorkspaceInvitationInput)
     .output(z.undefined())
     .mutation(async ({ input }) => {
-      const { workspaceId } = decryptToken(input.token);
+      const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      const workspace = await prisma.workspace.findUnique({
-        where: { id: workspaceId },
-        select: { mainEmail: true },
-      });
-      if (!workspace) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
-      }
-      if (workspace.mainEmail === input.email) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'MAIN_EMAIL',
-        });
-      }
-
-      try {
-        await prisma.pendingWorkspaceInvite.create({
-          data: {
-            email: input.email,
-            workspaceId: workspaceId,
-          },
-        });
-      } catch (error) {
-        if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'ALREADY_EXISTS',
-          });
-        }
-        throw error;
-      }
+      await invitationService.addPendingInvite(workspaceId, input.email);
     }),
 
   delete: publicProcedure
     .input(CreateWorkspaceInvitationInput)
     .output(z.undefined())
     .mutation(async ({ input }) => {
-      const { workspaceId } = decryptToken(input.token);
+      const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
       try {
         await prisma.pendingWorkspaceInvite.deleteMany({
@@ -94,7 +45,7 @@ export const workspaceInvitationRouter = router({
     .input(z.object({ token: z.string() }))
     .output(z.object({ emails: z.array(z.string()) }))
     .query(async ({ input }) => {
-      const { workspaceId } = decryptToken(input.token);
+      const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
       const emails = await prisma.pendingWorkspaceInvite.findMany({
         where: { workspaceId: workspaceId },

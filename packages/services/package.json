@@ -1,5 +1,5 @@
 {
-  "name": "@pedaki/schema",
+  "name": "@pedaki/services",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -20,10 +20,13 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
+    "@pedaki/common": "0.4.2-beta.7",
+    "@pedaki/db": "workspace:*",
+    "@pedaki/schema": "workspace:*",
+    "@t3-oss/env-core": "^0.7.1",
+    "@trpc/server": "10.43.1",
+    "stripe": "^14.3.0",
     "zod": "^3.22.4"
-  },
-  "devDependencies": {
-    "tsx": "^3.14.0"
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0",
@@ -32,5 +35,8 @@
     "npm": "use-pnpm"
   },
   "packageManager": "pnpm@8.7.6",
-  "prettier": "@pedaki/prettier-config"
+  "prettier": "@pedaki/prettier-config",
+  "devDependencies": {
+    "@prisma/client": "^5.5.2"
+  }
 }

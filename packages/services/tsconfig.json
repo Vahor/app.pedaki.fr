@@ -32,16 +32,11 @@
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "~/*": [
-        "src/*"
-      ],
-      "@trpc/server/*": [
-        "../../node_modules/@trpc/server/*"
-      ]
+      "~/*": ["src/*"]
     }
   },
   "include": [
     "src"
   ],
-  "exclude": ["../../node_modules","../node_modules", "node_modules", ".next", "out", "dist"]
+  "exclude": ["../node_modules", "node_modules", ".next", "out", "dist"]
 }

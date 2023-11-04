@@ -24,6 +24,9 @@
     "check": "cross-env SKIP_ENV_VALIDATION=true turbo typecheck lint format:check test",
     "prepare": "husky install"
   },
+  "dependencies": {
+    "husky": "^8.0.3"
+  },
   "devDependencies": {
     "@pedaki/eslint-config": "^0.1.2",
     "@pedaki/prettier-config": "^0.0.5",
@@ -37,7 +40,6 @@
     "esbuild-plugin-file-path-extensions": "^1.0.0",
     "execa": "^8.0.1",
     "fs-extra": "^11.1.1",
-    "husky": "^8.0.3",
     "rimraf": "latest",
     "lint-staged": "^15.0.2",
     "tsconfig-replace-paths": "^0.0.14",
