@@ -8,8 +8,6 @@ export const env = createEnv({
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_SECRET_ACCESS_KEY: z.string(),
 
-    GITHUB_ACCESS_TOKEN: z.string(),
-
     APP_DOCKER_HOST: z.string(),
     APP_DOCKER_ORGANISATION: z.string(),
     APP_DOCKER_PACKAGE_NAME: z.string(),
