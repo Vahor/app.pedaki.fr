@@ -6,9 +6,6 @@ class StripeService {
   private stripe: Stripe;
 
   constructor() {
-    if (!env.STRIPE_SECRET_KEY) {
-      throw new Error('Missing STRIPE_SECRET_KEY');
-    }
     this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
       apiVersion: '2023-10-16',
       typescript: true,
