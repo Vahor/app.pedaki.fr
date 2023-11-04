@@ -35,8 +35,6 @@ model Workspace {
   members WorkspaceMember[]
 
   subscriptions  WorkspaceSubscription[]
-  quotas         CustomQuotas[]
-  settings       WorkspaceSetting[]
   token          WorkspaceToken?
   pendingInvites PendingWorkspaceInvite[]
 
@@ -151,37 +149,4 @@ model WorkspaceResource {
 
   @@index([subscriptionId])
   @@map("workspace_resources")
-}
-
-// ex: auto_renew, default_region
-model WorkspaceSetting {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-
-  key   String
-  value String
-
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  workspaceId String    @map("workspace_id") @db.VarChar(25)
-
-  @@unique([key, workspaceId])
-  @@index([workspaceId])
-  @@map("workspace_settings")
-}
-
-model CustomQuotas {
-  key   String @id @db.VarChar(100)
-  value Int    @db.Int
-
-  wokspace    Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  workspaceId String?    @map("workspace_id") @db.VarChar(25)
-
-  email String? @map("email") @db.VarChar(255)
-
-  @@unique([key, workspaceId])
-  @@unique([key, email])
-  @@index([workspaceId])
-  @@index([email])
-  @@map("custom_quotas")
 }

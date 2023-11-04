@@ -7,7 +7,6 @@ import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
-import { assertQuota } from '~/services/quotas/quotas.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 import { workspaceInvitationRouter } from './invitations.router.ts';
@@ -51,7 +50,6 @@ export const workspaceRouter = router({
       const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
 
       const email = 'contact@pedaki.fr';
-      await assertQuota(prisma, 'IN_WORKSPACE', 'USER', email);
 
       try {
         const workspaceToken = generateToken();
