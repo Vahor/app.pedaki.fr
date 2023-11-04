@@ -1,13 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import { fieldEncryptionExtension } from 'prisma-field-encryption';
+import { env } from './env.ts';
+
 
 const prismaClientSingleton = () => {
   const client = new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn', 'info'] : ['error'],
+    log: env.NODE_ENV === 'development' ? ['query', 'error', 'warn', 'info'] : ['error'],
   });
   return client.$extends(
     fieldEncryptionExtension({
-      encryptionKey: process.env.PRISMA_ENCRYPTION_KEY,
+      encryptionKey: env.PRISMA_ENCRYPTION_KEY,
     }),
   ) as PrismaClient;
 };
@@ -20,4 +22,4 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
