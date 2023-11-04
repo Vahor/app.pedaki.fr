@@ -1,17 +1,15 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
-import fastifySwagger from '@fastify/swagger';
-import fastifySwaggerUi from '@fastify/swagger-ui';
 import { prisma } from '@pedaki/db';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
+import { openApiDocument } from '~/openapi.ts';
 import { seedDatabase } from '~/seeds/seeds.ts';
 import fastify from 'fastify';
 import fastifyRawBody from 'fastify-raw-body';
 import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
 import { env } from './env.ts';
-import { openApiDocument } from './openapi.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
 
@@ -22,21 +20,6 @@ export function createServer() {
     logger: false,
   });
 
-  const setupSwagger = async () => {
-    // Server Swagger UI
-    await server.register(fastifySwagger, {
-      mode: 'static',
-      specification: { document: openApiDocument },
-    });
-
-    await server.register(fastifySwaggerUi, {
-      routePrefix: '/docs',
-    });
-
-    server.swagger();
-    console.log(`Swagger UI available on http://localhost:${port}/docs`);
-  };
-
   const init = async () => {
     await server.register(cors, {
       allowedHeaders: ['Content-Type', 'Authorization'],
@@ -45,6 +28,7 @@ export function createServer() {
         // Allow all origins
         return callback(null, true);
       },
+      hideOptionsRoute: true,
     });
     await server.register(cookie, {
       parseOptions: {},
@@ -78,6 +62,17 @@ export function createServer() {
         void res.send({ status: 'ok' });
       },
     });
+
+    if (env.NODE_ENV === 'development') {
+      // Serve openapi.json
+      server.route({
+        method: 'GET',
+        url: '/openapi.json',
+        handler: (req, res) => {
+          void res.send(openApiDocument);
+        },
+      });
+    }
   };
 
   const stop = async () => {
@@ -85,14 +80,13 @@ export function createServer() {
   };
   const start = async () => {
     try {
-      await setupSwagger();
       await init();
       await server.listen({ port, host: '0.0.0.0' });
       await seedDatabase();
       console.log(`Server listening on http://localhost:${port}`);
       console.log(`Will use docker image: ${DOCKER_IMAGE}`);
     } catch (err) {
-      server.log.error(err);
+      console.error(err);
       throw err;
     } finally {
       await prisma.$disconnect();
