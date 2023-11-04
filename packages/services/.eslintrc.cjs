@@ -3,4 +3,7 @@ module.exports = {
     parserOptions: {
         project: true,
     },
+    rules: {
+        'node/no-unpublished-import': 'off',
+    }
 };
