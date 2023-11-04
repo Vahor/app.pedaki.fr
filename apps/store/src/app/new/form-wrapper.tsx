@@ -57,7 +57,7 @@ const FormWrapper = () => {
       errorProps: error => {
         const title =
           error.message === 'ALREADY_EXISTS'
-            ? 'Un compte existe déjà avec cette adresse email'
+            ? 'Un compte existe déjà avec cet URL de workspace'
             : 'Une erreur est survenue lors de la création du compte';
         return {
           title,
