@@ -1,7 +1,7 @@
 import { prisma } from '@pedaki/db';
 import { CreateWorkspaceInvitationInput } from '@pedaki/schema/invitation.model.js';
+import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
-import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -14,7 +14,7 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      await workspaceService.addPendingInvite(workspaceId, input.email);
+      await invitationService.addPendingInvite(workspaceId, input.email);
     }),
 
   delete: publicProcedure
