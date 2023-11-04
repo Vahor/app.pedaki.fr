@@ -10,12 +10,12 @@ export const env = createEnv({
 
     GITHUB_ACCESS_TOKEN: z.string(),
 
-    DOCKER_HOST: z.string(),
-    DOCKER_ORGANISATION: z.string(),
-    DOCKER_PACKAGE_NAME: z.string(),
-    DOCKER_IMAGE_VERSION: z.string(),
-    DOCKER_USERNAME: z.string(),
-    DOCKER_PASSWORD: z.string(),
+    APP_DOCKER_HOST: z.string(),
+    APP_DOCKER_ORGANISATION: z.string(),
+    APP_DOCKER_PACKAGE_NAME: z.string(),
+    APP_DOCKER_IMAGE_VERSION: z.string(),
+    APP_DOCKER_USERNAME: z.string(),
+    APP_DOCKER_PASSWORD: z.string(),
 
     PULUMI_ACCESS_TOKEN: z.string(),
   },
