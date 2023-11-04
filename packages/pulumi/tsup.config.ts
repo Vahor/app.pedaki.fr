@@ -4,11 +4,12 @@ import { execaCommand } from 'execa';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 
+
 export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
   entry: ['src/**/*.(tsx|ts|cjs)'],
-  format: ['esm'],
+  format: process.env.DTS_ONLY ? [] : ['esm'],
   dts: process.env.NODE_ENV !== 'production',
   sourcemap: false,
   minify: true,
