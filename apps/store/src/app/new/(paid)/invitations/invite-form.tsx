@@ -54,16 +54,16 @@ export function InviteForm({ rawToken }: InviteFormProps) {
         ),
       {
         loadingProps: {
-          title: '...',
+          title: "Création de l'invitation en cours",
         },
         successProps: {
-          title: '🎉',
+          title: '🎉 Invitation créée avec succès',
         },
         errorProps: error => {
           const title =
             error.message === 'ALREADY_EXISTS'
-              ? 'Un compte existe déjà avec cette adresse email'
-              : 'Une erreur est survenue lors de la création du compte';
+              ? 'Une invitation existe déjà avec cette adresse email'
+              : "Une erreur est survenue lors de la création de l'invitation";
           return {
             title,
           };
