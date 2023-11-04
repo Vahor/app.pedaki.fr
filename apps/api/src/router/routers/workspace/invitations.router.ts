@@ -23,22 +23,12 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      try {
-        await prisma.pendingWorkspaceInvite.deleteMany({
-          where: {
-            email: input.email,
-            workspaceId: workspaceId,
-          },
-        });
-      } catch (error) {
-        if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'ALREADY_EXISTS',
-          });
-        }
-        throw error;
-      }
+      await prisma.pendingWorkspaceInvite.deleteMany({
+        where: {
+          email: input.email,
+          workspaceId: workspaceId,
+        },
+      });
     }),
 
   getMany: publicProcedure

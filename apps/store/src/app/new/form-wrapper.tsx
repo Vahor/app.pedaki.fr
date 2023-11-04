@@ -49,16 +49,16 @@ const FormWrapper = () => {
   function onSubmit(values: CreateWorkspaceFormValues) {
     return wrapWithLoading(() => wait(createReservationMutation.mutateAsync(values), 500), {
       loadingProps: {
-        title: '...',
+        title: 'Création de la page de paiement en cours',
       },
       successProps: {
-        title: '🎉',
+        title: '🎉 Redirection vers la page de paiement en cours',
       },
       errorProps: error => {
         const title =
           error.message === 'ALREADY_EXISTS'
-            ? 'Un compte existe déjà avec cette adresse email'
-            : 'Une erreur est survenue lors de la création du compte';
+            ? 'Un workspace existe déjà avec cet URL de workspace'
+            : 'Une erreur est survenue lors de la création de la page de paiement';
         return {
           title,
         };

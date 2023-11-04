@@ -96,7 +96,6 @@ const RemoveInvitedEmailButton = ({ email, token }: { email: string; token: stri
 
   const handleRemoveEmail = async (email: string) => {
     setIsSubmitting(true);
-    // TODO: messages
     return wrapWithLoading(
       () =>
         wait(
@@ -109,13 +108,10 @@ const RemoveInvitedEmailButton = ({ email, token }: { email: string; token: stri
       {
         loadingProps: null,
         successProps: {
-          title: '🎉',
+          title: '🎉 Invitation supprimée avec succès',
         },
-        errorProps: error => {
-          const title =
-            error.message === 'ALREADY_EXISTS'
-              ? 'Un compte existe déjà avec cette adresse email'
-              : 'Une erreur est survenue lors de la création du compte';
+        errorProps: _error => {
+          const title = "Une erreur est survenue lors de la suppression de l'invitation";
           return {
             title,
           };
