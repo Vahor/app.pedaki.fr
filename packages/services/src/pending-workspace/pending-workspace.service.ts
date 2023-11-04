@@ -2,7 +2,7 @@ import { decrypt, encrypt } from '@pedaki/common/utils/hash.js';
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
 import { TRPCError } from '@trpc/server';
-import { env } from '~/env';
+import { env } from '~/env.ts';
 import type { PendingWorkspace } from '~/pending-workspace/pending-workspace.model.ts';
 import { workspaceService } from '~/workspace/workspace.service.ts';
 import z from 'zod';

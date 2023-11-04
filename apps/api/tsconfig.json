@@ -35,9 +35,7 @@
       "~/*": [
         "src/*"
       ],
-      "@trpc/server/*": [
-        "../../node_modules/@trpc/server/*"
-      ]
+      "@trpc/server/*": ["../../node_modules/@trpc/server/*"]
     }
   },
   "include": [
