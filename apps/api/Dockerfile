@@ -17,6 +17,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/schema/package.json ./packages/schema/
+COPY packages/services/package.json ./packages/services/
 COPY packages/pulumi/package.json ./packages/pulumi/
 
 # TODO: remove no-frozen-lockfile
@@ -53,6 +54,7 @@ ENV PATH="/root/.pulumi/bin:$PATH"
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/packages/schema/dist ./node_modules/@pedaki/schema
+COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
 COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 

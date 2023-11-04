@@ -1,17 +1,18 @@
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
-import { CreateWorkspaceResponse } from '@pedaki/schema/workspace.model.js';
 import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
+import { CreateWorkspaceResponse } from '@pedaki/schema/workspace.model.js';
+import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { workspaceMembersRouter } from '~/router/routers/workspace/members.router.ts';
 import { workspaceResourcesRouter } from '~/router/routers/workspace/resources.router.ts';
 import { assertQuota } from '~/services/quotas/quotas.ts';
-import { getCustomerFromPayment } from '~/services/stripe/get-customer-from-payment.ts';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 import { workspaceInvitationRouter } from './invitations.router.ts';
 import { workspaceReservationRouter } from './reservations.router.ts';
+
 
 export const workspaceRouter = router({
   resource: workspaceResourcesRouter,
@@ -46,7 +47,7 @@ export const workspaceRouter = router({
         });
       }
 
-      const customerId = await getCustomerFromPayment(pending.stripePaymentId);
+      const customerId = await stripeService.getCustomerFromPayment(pending.stripePaymentId);
 
       const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
 

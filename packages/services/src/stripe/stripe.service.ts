@@ -23,6 +23,10 @@ class StripeService {
     return payment.customer as string;
   }
 
+  constructEvent(body: string | Buffer, signature: string, secret: string) {
+    return this.stripe.webhooks.constructEvent(body, signature, secret);
+  }
+
   async createPayment({
     metadata,
     product,

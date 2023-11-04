@@ -15,6 +15,7 @@ import { openApiDocument } from './openapi.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
 
+
 export function createServer() {
   const port = env.PORT;
 
@@ -63,7 +64,6 @@ export function createServer() {
       routes: ['/api/*'],
     });
 
-    // @ts-expect-error: type is buggy
     await server.register(fastifyTRPCOpenApiPlugin, {
       basePath: '/api',
       router: appRouter,
