@@ -45,9 +45,17 @@ export function createServer() {
         if (env.NODE_ENV === 'development') {
           return callback(null, true);
         }
-        if (!origin || !new URL(origin).host.endsWith('pedaki.fr')) {
+        const url = origin ? new URL(origin) : null;
+        if (!url) return callback(new Error('Origin not allowed'), false);
+
+        // allow /_health route
+        if (url.pathname === '/_health') return callback(null, true);
+
+        // Disallow all other origins
+        if (!url.host.endsWith('pedaki.fr')) {
           return callback(new Error('Origin not allowed'), false);
         }
+
         return callback(null, true);
       },
     });
