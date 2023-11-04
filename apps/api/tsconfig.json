@@ -32,8 +32,7 @@
     "experimentalDecorators": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "~/*": ["src/*"],
-      "@trpc/server/*": ["../../node_modules/@trpc/server/*"]
+      "~/*": ["src/*"]
     }
   },
   "include": [

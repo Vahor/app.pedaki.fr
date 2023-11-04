@@ -63,6 +63,7 @@ export function createServer() {
       routes: ['/api/*'],
     });
 
+    // @ts-expect-error: type is buggy
     await server.register(fastifyTRPCOpenApiPlugin, {
       basePath: '/api',
       router: appRouter,

@@ -8,9 +8,9 @@
   "scripts": {
     "build": "tsup",
     "build:watch": "tsup --watch",
-    "lint": "eslint . --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "lint": "eslint .",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,mdx}\"",
     "typecheck": "tsc --noEmit --declaration"
   },
   "publishConfig": {
@@ -22,6 +22,7 @@
   "dependencies": {
     "@pedaki/schema": "workspace:*",
     "@pedaki/db": "workspace:*",
+    "@pedaki/common": "0.4.2-beta.7",
     "stripe": "^14.3.0",
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
