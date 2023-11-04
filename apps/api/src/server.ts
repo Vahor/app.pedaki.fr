@@ -46,7 +46,7 @@ export function createServer() {
           return callback(null, true);
         }
         const url = origin ? new URL(origin) : null;
-        if (!url) return callback(new Error('Origin not allowed'), false);
+        if (!url) return callback(new Error('Origin missing'), false);
 
         // allow /_health route
         if (url.pathname === '/_health') return callback(null, true);
