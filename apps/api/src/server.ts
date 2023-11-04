@@ -42,20 +42,7 @@ export function createServer() {
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true,
       origin: (origin, callback) => {
-        if (env.NODE_ENV === 'development') {
-          return callback(null, true);
-        }
-        const url = origin ? new URL(origin) : null;
-        if (!url) return callback(new Error('Origin missing'), false);
-
-        // allow /_health route
-        if (url.pathname === '/_health') return callback(null, true);
-
-        // Disallow all other origins
-        if (!url.host.endsWith('pedaki.fr')) {
-          return callback(new Error('Origin not allowed'), false);
-        }
-
+        // Allow all origins
         return callback(null, true);
       },
     });
