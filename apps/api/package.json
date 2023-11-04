@@ -26,8 +26,6 @@
     "@auth/prisma-adapter": "^1.0.5",
     "@fastify/cookie": "^9.1.0",
     "@fastify/cors": "^8.4.1",
-    "@fastify/swagger": "^8.12.0",
-    "@fastify/swagger-ui": "^1.10.1",
     "@pedaki/db": "workspace:*",
     "@pedaki/mailer": "^0.0.8",
     "@pedaki/schema": "workspace:*",
