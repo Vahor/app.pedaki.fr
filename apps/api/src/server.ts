@@ -74,6 +74,15 @@ export function createServer() {
       useWSS: false,
       trpcOptions: { router: appRouter, createContext },
     });
+
+    // Add _health route
+    server.route({
+      method: 'GET',
+      url: '/_health',
+      handler: (req, res) => {
+        void res.send({ status: 'ok' });
+      },
+    });
   };
 
   const stop = async () => {

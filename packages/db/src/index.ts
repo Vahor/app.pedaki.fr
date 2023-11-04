@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { fieldEncryptionExtension } from 'prisma-field-encryption';
 import { env } from './env.ts';
 
-
 const prismaClientSingleton = () => {
   const client = new PrismaClient({
     log: env.NODE_ENV === 'development' ? ['query', 'error', 'warn', 'info'] : ['error'],
