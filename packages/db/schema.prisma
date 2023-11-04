@@ -35,8 +35,6 @@ model Workspace {
   members WorkspaceMember[]
 
   subscriptions  WorkspaceSubscription[]
-  quotas         CustomQuotas[]
-  settings       WorkspaceSetting[]
   token          WorkspaceToken?
   pendingInvites PendingWorkspaceInvite[]
 
