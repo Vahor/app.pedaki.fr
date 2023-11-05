@@ -1,23 +1,23 @@
-import type { Provider } from '@pedaki/schema/region.model.ts';
+import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
+import type { ServerRegion } from '@pedaki/models/resource/server-region.model.js';
 
-export const Region = {
-  AWS: ['us-east-2', 'eu-west-3'] as const,
-  test: ['us-east-2', 'eu-west-2'] as const,
-} satisfies Record<Provider, readonly string[]>;
-
-export type Region<T> = T extends Provider ? (typeof Region)[T][number] : never;
-
-export interface WorkspaceInstance<P extends Provider = Provider> {
+export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
   workspaceId: string;
-  provider: P;
-  machinePublicIp: string;
-  region: Region<P>;
+  server: {
+    provider: SP;
+    machinePublicIp: string;
+    region: ServerRegion<SP>;
+  };
 }
 
-export interface StackParameters<P extends Provider = Provider> {
+export interface StackParameters<SP extends ServerProvider = ServerProvider> {
   workspaceId: string;
-  region: Region<P>;
+  region: ServerRegion<SP>;
   size: 'small';
+  server: {
+    region: ServerRegion<SP>;
+    provider: ServerProvider;
+  };
 }
 
 export interface StackOutputs {
@@ -25,17 +25,17 @@ export interface StackOutputs {
   publicHostName: string;
 }
 
-export interface ServerProvider<P extends Provider = Provider> {
+export interface StackProvider<SP extends ServerProvider = ServerProvider> {
   /**
    * Create a stack
    * @param params stack parameters
    * @returns stack outputs
    * @throws if stack creation fails
    */
-  create: (params: StackParameters<P>) => Promise<StackOutputs>;
+  create: (params: StackParameters<SP>) => Promise<StackOutputs>;
   /**
    * Delete a stack
    * @param workspaceId the workspace id
    */
-  delete: (params: StackParameters<P>) => Promise<void>;
+  delete: (params: StackParameters<SP>) => Promise<void>;
 }

@@ -7,7 +7,7 @@ export interface VpcArgs {
   instanceTenancy?: string;
   enableDnsHostnames?: boolean;
   enableDnsSupport?: boolean;
-  stackParameters: StackParameters<'AWS'>;
+  stackParameters: StackParameters<'aws'>;
   tags: Record<string, string>;
 }
 

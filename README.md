@@ -29,3 +29,6 @@ pnpm build --filter="./packages/*"
 pnpm dev
 stripe listen --forward-to http://localhost:8080/api/stripe/webhook
 ```
+
+## Build site:
+- `API_DTS_ONLY`

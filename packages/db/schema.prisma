@@ -103,6 +103,7 @@ model WorkspaceSubscription {
   // and in our code we map it to a stripe product
   type String
 
+  // Null if it's a free subscription (not linked to stripe)
   stripeSubscriptionId String? @unique @map("stripe_subscription_id")
 
   paidUntil DateTime            @map("paid_until")
@@ -136,11 +137,12 @@ model WorkspaceResource {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  region   String @db.VarChar(25)
-  provider String @db.VarChar(25)
-  type     String @db.VarChar(25)
+  region   String? @db.VarChar(25) // Null if it's a global resource
 
-  identifier String // aws arm etc
+  provider String @db.VarChar(25) // aws, cloudflare, etc
+  type     String @db.VarChar(25) // server, dns, database etc
+
+  identifier String
 
   data Json // As we can't know the structure of the data, we'll just store it as a json blob. We'll have to parse it knowing the type,region,provider etc
 

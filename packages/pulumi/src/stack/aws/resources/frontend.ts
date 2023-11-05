@@ -14,7 +14,7 @@ export interface WebServiceArgs {
   subnetIds: pulumi.Output<string>[];
   securityGroupIds: pulumi.Output<string>[];
   tags: Record<string, string>;
-  stackParameters: StackParameters<'AWS'>;
+  stackParameters: StackParameters<'aws'>;
 }
 
 export class WebService extends pulumi.ComponentResource {
@@ -76,7 +76,7 @@ export class WebService extends pulumi.ComponentResource {
         `;
   };
 
-  private ec2InstanceType = (size: StackParameters<'AWS'>['size']) => {
+  private ec2InstanceType = (size: StackParameters<'aws'>['size']) => {
     switch (size) {
       case 'small':
         return 't3a.micro';

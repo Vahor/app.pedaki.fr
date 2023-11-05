@@ -6,7 +6,7 @@ import { wrapWithLoading } from '@pedaki/common/utils/wrap-with-loading';
 import { Button } from '@pedaki/design/ui/button';
 import { Form } from '@pedaki/design/ui/form';
 import { IconSpinner } from '@pedaki/design/ui/icons';
-import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
+import { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model';
 import { BaseFormInformation } from '~/app/new/base-form-information.tsx';
 import { PlanFormInformation } from '~/app/new/plan-form-information.tsx';
 import { PlanForm } from '~/app/new/plan-form.tsx';
@@ -33,8 +33,10 @@ const FormWrapper = () => {
     mode: 'onChange',
     defaultValues: {
       cgu: false,
-      provider: 'AWS',
       subscriptionInterval: 'yearly',
+      server: {
+        provider: 'aws',
+      },
       // TODO: remove this
       email: 'test@email.com',
       identifier: 'mewo',

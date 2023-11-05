@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@pedaki/common": "^0.1.4",
-    "@pedaki/schema": "workspace:*",
+    "@pedaki/models": "workspace:*",
     "@pulumi/aws": "^6.7.0",
     "@pulumi/pulumi": "^3.92.0",
     "@pulumi/random": "^4.14.0",

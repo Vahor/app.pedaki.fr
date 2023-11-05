@@ -1,5 +1,5 @@
 import { prisma } from '@pedaki/db';
-import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
+import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import type { PaymentMetadata } from '@pedaki/services/stripe/stripe.model.js';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';

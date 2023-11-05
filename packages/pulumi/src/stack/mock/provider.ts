@@ -1,30 +1,32 @@
-import type { ServerProvider, StackOutputs, StackParameters, WorkspaceInstance } from '~/type.ts';
+import type { StackOutputs, StackParameters, StackProvider, WorkspaceInstance } from '~/type.ts';
 
-export class TestServerProvider implements ServerProvider<'test'> {
+export class TestServerProvider implements StackProvider<'test'> {
   stacks: WorkspaceInstance[] = [];
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async create(params: StackParameters<'test'>): Promise<StackOutputs> {
     const newStack: WorkspaceInstance = {
       workspaceId: params.workspaceId,
-      provider: 'test',
-      region: 'us-east-2',
-      machinePublicIp:
-        Math.floor(Math.random() * 255) +
-        1 +
-        '.' +
-        Math.floor(Math.random() * 255) +
-        '.' +
-        Math.floor(Math.random() * 255) +
-        '.' +
-        Math.floor(Math.random() * 255) +
-        1,
+      server: {
+        provider: 'test',
+        region: 'us-east-2',
+        machinePublicIp:
+          Math.floor(Math.random() * 255) +
+          1 +
+          '.' +
+          Math.floor(Math.random() * 255) +
+          '.' +
+          Math.floor(Math.random() * 255) +
+          '.' +
+          Math.floor(Math.random() * 255) +
+          1,
+      },
     };
 
     this.stacks.push(newStack);
 
     return {
-      machinePublicIp: newStack.machinePublicIp,
+      machinePublicIp: newStack.server.machinePublicIp,
       publicHostName: 'test',
     };
   }
