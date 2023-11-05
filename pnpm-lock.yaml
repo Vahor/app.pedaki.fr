@@ -249,6 +249,29 @@ importers:
         version: 3.14.0
     publishDirectory: dist
 
+  cron/demo-community:
+    dependencies:
+      '@pedaki/pulumi':
+        specifier: workspace:*
+        version: link:../../packages/pulumi/dist
+      '@pedaki/services':
+        specifier: workspace:*
+        version: link:../../packages/services/dist
+      '@t3-oss/env-core':
+        specifier: ^0.7.1
+        version: 0.7.1(typescript@5.2.2)(zod@3.22.4)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@types/node':
+        specifier: ^18.18
+        version: 18.18.0
+      tsx:
+        specifier: ^3.14.0
+        version: 3.14.0
+    publishDirectory: dist
+
   packages/db:
     dependencies:
       '@prisma/client':

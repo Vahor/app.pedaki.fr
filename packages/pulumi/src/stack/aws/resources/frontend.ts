@@ -40,7 +40,7 @@ export class WebService extends pulumi.ComponentResource {
     const ec2 = new aws.ec2.Instance(
       ec2Name,
       {
-        instanceType: this.ec2InstanceType(args.stackParameters.size),
+        instanceType: this.instanceType(args.stackParameters.server.size),
         vpcSecurityGroupIds: args.securityGroupIds,
         subnetId: args.subnetIds[0],
         ami: amiId,
@@ -76,7 +76,7 @@ export class WebService extends pulumi.ComponentResource {
         `;
   };
 
-  private ec2InstanceType = (size: StackParameters<'aws'>['size']) => {
+  private instanceType = (size: StackParameters<'aws'>['server']['size']) => {
     switch (size) {
       case 'small':
         return 't3a.micro';

@@ -1,8 +1,12 @@
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
+import type {
+  DatabaseResourceInput,
+  ServerResourceInput,
+} from '@pedaki/models/resource/resource.model.js';
 import type { ServerRegion } from '@pedaki/models/resource/server-region.model.js';
 
 export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
-  workspaceId: string;
+  identifier: string;
   server: {
     provider: SP;
     machinePublicIp: string;
@@ -10,14 +14,12 @@ export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
   };
 }
 
-export interface StackParameters<SP extends ServerProvider = ServerProvider> {
-  workspaceId: string;
+export interface StackParameters<SP extends ServerProvider> {
+  identifier: string;
   region: ServerRegion<SP>;
-  size: 'small';
-  server: {
-    region: ServerRegion<SP>;
-    provider: ServerProvider;
-  };
+  server: ServerResourceInput;
+  database: DatabaseResourceInput;
+  dns: null;
 }
 
 export interface StackOutputs {
@@ -25,7 +27,7 @@ export interface StackOutputs {
   publicHostName: string;
 }
 
-export interface StackProvider<SP extends ServerProvider = ServerProvider> {
+export interface StackProvider<SP extends ServerProvider> {
   /**
    * Create a stack
    * @param params stack parameters

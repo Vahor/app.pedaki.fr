@@ -49,7 +49,7 @@ export class Db extends pulumi.ComponentResource {
         allocatedStorage: 20,
         engine: 'mysql',
         engineVersion: '8.0',
-        instanceClass: 'db.t2.micro', // TODO: make this configurable
+        instanceClass: this.instanceClass(args.stackParameters.database.size),
         storageType: 'gp2',
         skipFinalSnapshot: true,
         publiclyAccessible: false,
@@ -74,4 +74,11 @@ export class Db extends pulumi.ComponentResource {
 
     this.registerOutputs({});
   }
+
+  private instanceClass = (size: StackParameters<'aws'>['database']['size']) => {
+    switch (size) {
+      case 'small':
+        return 'db.t2.micro';
+    }
+  };
 }

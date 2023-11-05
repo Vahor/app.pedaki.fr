@@ -42,7 +42,16 @@ export class PulumiUtils {
   }
 
   public static async deleteStack(name: string, program: PulumiFn) {
-    const stack = await this.selectStack(name, program);
+    console.log(`Deleting stack ${name}`);
+    let stack;
+    try {
+      stack = await this.selectStack(name, program);
+    } catch (error) {
+      console.error(`Stack ${name} not found`);
+      return;
+    }
+
+    await stack.refresh({ onOutput: console.info });
     await stack.destroy({ onOutput: console.info });
     await stack.workspace.removeStack(stack.name);
     return stack;

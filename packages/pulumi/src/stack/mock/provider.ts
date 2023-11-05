@@ -6,7 +6,7 @@ export class TestServerProvider implements StackProvider<'test'> {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async create(params: StackParameters<'test'>): Promise<StackOutputs> {
     const newStack: WorkspaceInstance = {
-      workspaceId: params.workspaceId,
+      identifier: params.identifier,
       server: {
         provider: 'test',
         region: 'us-east-2',
@@ -32,7 +32,7 @@ export class TestServerProvider implements StackProvider<'test'> {
   }
 
   public delete(params: StackParameters<'test'>): Promise<void> {
-    this.stacks = this.stacks.filter(stack => stack.workspaceId !== params.workspaceId);
+    this.stacks = this.stacks.filter(stack => stack.identifier !== params.identifier);
     return Promise.resolve(undefined);
   }
 }

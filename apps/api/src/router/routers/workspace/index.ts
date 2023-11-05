@@ -4,7 +4,6 @@ import { router } from '../../trpc.ts';
 import { workspaceInvitationRouter } from './invitations.router.ts';
 import { workspaceReservationRouter } from './reservations.router.ts';
 
-
 export const workspaceRouter = router({
   resource: workspaceResourcesRouter,
   member: workspaceMembersRouter,
