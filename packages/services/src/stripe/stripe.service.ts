@@ -44,9 +44,14 @@ class StripeService {
         // TODO: do we need this?
         enabled: false,
       },
+
       customer: customer.id,
       customer_email: customer.email,
       customer_creation: isSubscription ? undefined : 'if_required',
+      customer_update: {
+        address: 'auto',
+      },
+
       // 30 min expiration
       expires_at: Math.floor(Date.now() / 1000) + 60 * 30,
       mode: isSubscription ? 'subscription' : 'payment',
@@ -56,8 +61,7 @@ class StripeService {
             // Invoices are automatically created for subscription
             enabled: true,
           },
-      metadata: metadata,
-      //
+
       success_url: `${env.STORE_URL}/new/pending?token=${metadata.pendingId}`,
       cancel_url: `${env.STORE_URL}/new`,
       payment_intent_data: isSubscription
@@ -68,6 +72,8 @@ class StripeService {
             receipt_email: customer.email,
             statement_descriptor: `pedaki`,
           },
+
+      metadata: metadata,
     });
 
     return {

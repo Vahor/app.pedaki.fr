@@ -1,7 +1,10 @@
 import type { Product } from '~/stripe/products.ts';
 
 export interface CreatePaymentInput {
-  product: Product;
+  product: {
+    payment_type: Product['payment_type'];
+    priceId: string;
+  };
   metadata: PaymentMetadata;
   customer?: {
     id?: string;

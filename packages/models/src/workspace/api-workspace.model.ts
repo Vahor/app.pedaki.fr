@@ -43,6 +43,7 @@ export const CreateWorkspaceInput = z.object({
     },
   ),
 });
+export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInput>;
 
 export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInput>;
 

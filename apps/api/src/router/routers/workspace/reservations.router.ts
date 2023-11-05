@@ -22,12 +22,16 @@ export const workspaceReservationRouter = router({
       try {
         const pendingId = await pendingWorkspaceService.create(input);
         const payment = await stripeService.createPayment({
-          product: products.hosted,
+          product: {
+            payment_type: products.hosted.payment_type,
+            priceId: products.hosted.priceId[input.subscriptionInterval],
+          },
           metadata: {
             workspaceName: input.name,
             pendingId,
           },
           customer: {
+            // TODO: try to get customer id if we already have one ?
             email: input.email,
           },
         });
