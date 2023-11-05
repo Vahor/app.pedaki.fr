@@ -28,10 +28,10 @@ const stackParameters = (subscriptionId: string) => {
 const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
   console.log(`This will use the ${DOCKER_IMAGE} docker image`);
-  await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
-  const previousSubscriptionId =
-    await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
-  await resourceService.deleteStack(stackParameters(previousSubscriptionId));
+  // await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
+  // const previousSubscriptionId =
+  //   await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
+  // await resourceService.deleteStack(stackParameters(previousSubscriptionId));
 
   const { subscriptionId } = await workspaceService.createWorkspace({
     workspace: {

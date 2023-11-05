@@ -2,7 +2,8 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
-import { DOCKER_IMAGE } from '~/utils/docker.ts';
+import {CADDY_DOCKER_IMAGE, DOCKER_IMAGE} from '~/utils/docker.ts';
+
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -61,18 +62,66 @@ export class WebService extends pulumi.ComponentResource {
   }
 
   private startScript = (args: WebServiceArgs) => {
+
+    const dockerComposeContent = pulumi.interpolate`
+version: '3.8'
+name: pedaki
+services:
+  web:
+    image: "${DOCKER_IMAGE}"
+  environment:
+    - NEXT_PUBLIC_TESTVALUE="${args.dbHost}"
+    - SECRET_PRIVATE_VARIABLE="${args.dbName}"
+
+  caddy:
+    image: "${CADDY_DOCKER_IMAGE}"
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - web
+`;
+
+    const domain = args.stackParameters.identifier + '.pedaki.fr';
+
+    const caddyFileContent = pulumi.interpolate`
+
+${domain}, :80, :443 {
+    reverse_proxy http://web:8000
+    
+    tls {
+        dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
+        resolvers 1.1.1.1
+    }
+}
+`;
+
+
+
     return pulumi.interpolate`#!/bin/bash
-        sudo yum update -y
-        sudo yum install docker -y
-        sudo service docker start
-        sudo systemctl enable docker
-        
-        sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
-        sudo docker pull ${DOCKER_IMAGE}
-        sudo docker run -d -p 80:80 --restart=always \
-            -e NEXT_PUBLIC_TESTVALUE="${args.dbHost}" \
-            -e SECRET_PRIVATE_VARIABLE="${args.dbName}" \
-            ${DOCKER_IMAGE}
+sudo yum update -y
+sudo yum install docker -y
+
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+sudo service docker start
+sudo systemctl enable docker
+
+sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
+
+sudo mkdir /app
+sudo chown ec2-user:ec2-user /app
+cd /app
+
+echo "${caddyFileContent}" > Caddyfile
+echo "${dockerComposeContent}" > docker-compose.yml
+
+sudo docker-compose pull
+sudo docker-compose up -d
         `;
   };
 

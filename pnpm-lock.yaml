@@ -304,6 +304,9 @@ importers:
       '@pulumi/aws':
         specifier: ^6.7.0
         version: 6.7.0
+      '@pulumi/cloudflare':
+        specifier: ^5.13.1
+        version: 5.13.1
       '@pulumi/pulumi':
         specifier: ^3.92.0
         version: 3.92.0
@@ -1924,6 +1927,14 @@ packages:
       mime: 2.6.0
       read-package-tree: 5.3.1
       resolve: 1.22.6
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@pulumi/cloudflare@5.13.1:
+    resolution: {integrity: sha512-8Sk5N1sYe1QXhhi/uYU1/YD1PdeOGceyV9ssm1LTK4Ebf+aazlukMcBBl8OFM4RY5H/E311J96KE3uq49M1hQw==}
+    dependencies:
+      '@pulumi/pulumi': 3.92.0
     transitivePeerDependencies:
       - supports-color
     dev: false

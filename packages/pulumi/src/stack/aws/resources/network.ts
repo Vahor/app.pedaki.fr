@@ -16,7 +16,7 @@ export class Vpc extends pulumi.ComponentResource {
   public readonly subnetIds: pulumi.Output<string>[];
   public readonly rdsSecurityGroupIds: pulumi.Output<string>[];
   public readonly feSecurityGroupIds: pulumi.Output<string>[];
-  public readonly ports: { http: number; mysql: number };
+  public readonly ports: { http: 80; https: 443; mysql: number };
   public readonly subnetGroup: aws.rds.SubnetGroup;
 
   constructor(name: string, args: VpcArgs, opts?: pulumi.ComponentResourceOptions) {
@@ -29,6 +29,7 @@ export class Vpc extends pulumi.ComponentResource {
 
     this.ports = {
       http: 80,
+      https: 443,
       mysql: 3306,
     };
 
@@ -132,20 +133,27 @@ export class Vpc extends pulumi.ComponentResource {
       ec2SgName,
       {
         vpcId: vpc.id,
-        description: 'Allow HTTP access',
+        description: 'Allow HTTPS/HTTP access',
         tags: {
           ...args.tags,
           Name: ec2SgName,
         },
         revokeRulesOnDelete: true,
         ingress: [
-          { protocol: 'tcp', fromPort: 22, toPort: 22, cidrBlocks: ['0.0.0.0/0'] }, // SSH
+          {
+            protocol: 'tcp',
+            fromPort: this.ports.https,
+            toPort: this.ports.https,
+            cidrBlocks: ['0.0.0.0/0'],
+            description: 'HTTPS',
+          }, // HTTPS
           {
             protocol: 'tcp',
             fromPort: this.ports.http,
             toPort: this.ports.http,
             cidrBlocks: ['0.0.0.0/0'],
-          }, // HTTP
+            description: 'HTTP',
+          }, // HTTPS
         ],
         egress: [
           { protocol: '-1', fromPort: 0, toPort: 0, cidrBlocks: ['0.0.0.0/0'] }, // All
