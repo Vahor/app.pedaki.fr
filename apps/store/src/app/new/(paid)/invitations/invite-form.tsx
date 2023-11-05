@@ -14,12 +14,12 @@ import {
 } from '@pedaki/design/ui/form';
 import IconSpinner from '@pedaki/design/ui/icons/IconSpinner';
 import { Input } from '@pedaki/design/ui/input';
-import { CreateWorkspaceInvitationInput } from '@pedaki/schema/invitation.model.js';
+import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model';
 import { api } from '~/server/api/clients/client.ts';
 import { useWorkspaceInvitationStore } from '~/store/workspace-invitation.store.ts';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 interface InviteFormProps {
   rawToken: string;

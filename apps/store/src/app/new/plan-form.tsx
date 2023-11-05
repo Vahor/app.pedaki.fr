@@ -25,7 +25,7 @@ export function PlanForm({ form }: Readonly<{ form: FormType }>) {
     <div className="grid gap-8">
       <FormField
         control={form.control}
-        name="region"
+        name="server.region"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Region</FormLabel>
@@ -36,11 +36,13 @@ export function PlanForm({ form }: Readonly<{ form: FormType }>) {
                   <SelectValue placeholder="Select a region" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(RegionMap[form.getValues().provider]).map(([region, label]) => (
-                    <SelectItem value={region} key={region}>
-                      {label}
-                    </SelectItem>
-                  ))}
+                  {Object.entries(RegionMap[form.getValues().server.provider]).map(
+                    ([region, label]) => (
+                      <SelectItem value={region} key={region}>
+                        {label}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
             </FormControl>

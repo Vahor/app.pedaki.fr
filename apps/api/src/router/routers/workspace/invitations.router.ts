@@ -1,9 +1,7 @@
 import { prisma } from '@pedaki/db';
-import { CreateWorkspaceInvitationInput } from '@pedaki/schema/invitation.model.js';
+import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
-import type { Prisma } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 

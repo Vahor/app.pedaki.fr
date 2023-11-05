@@ -12,15 +12,14 @@ class ResourceService {
   }
 
   // async createStack(
-  //   provider: Provider,
+  //     subscriptionId: string,
   //   {
-  //     subscriptionId,
   //     workspaceId,
   //     stackParameters,
   //   }: {
   //     subscriptionId: string;
   //     workspaceId: string;
-  //     stackParameters: Pick<Resource, 'size' | 'region'>;
+  //     stackParameters: Pick<ServerResource, 'd' | 'region'>;
   //   },
   // ) {
   //   const providerInstance = this.getProvider(provider);

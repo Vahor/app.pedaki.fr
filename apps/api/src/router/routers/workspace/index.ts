@@ -1,7 +1,7 @@
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
-import type { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
-import { CreateWorkspaceResponse } from '@pedaki/schema/workspace.model.js';
+import { CreateWorkspaceResponse } from '@pedaki/models/workspace/api-workspace.model.js';
+import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';

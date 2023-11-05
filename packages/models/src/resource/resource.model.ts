@@ -1,21 +1,29 @@
 import { ServerProviderModel } from '~/resource/provider.model.ts';
-import { isValidServerRegion } from '~/resource/server-region.model.ts';
 import z from 'zod';
 
-export const ResourceSchema = z.object({
-  server: z
-    .object({
+export const StackSize = z.enum(['small', 'medium', 'large']);
+
+const ResourceSchema = z
+  .object({
+    type: z.enum(['server', 'database']),
+    data: z.any(),
+  })
+  .merge(
+    z.object({
       region: z.string(),
       provider: ServerProviderModel,
-    })
-    .refine(
-      value => {
-        return isValidServerRegion(value.provider, value.region);
-      },
-      {
-        message: 'INVALID_REGION',
-      },
-    ),
-});
+      identifier: z.string(),
+    }),
+  );
 
-export type Resource = z.infer<typeof ResourceSchema>;
+/// Server
+export const ServerResourceSchema = ResourceSchema.merge(
+  z.object({
+    type: z.enum(['server']),
+    data: z.object({}),
+  }),
+);
+export type ServerResource = z.infer<typeof ServerResourceSchema>;
+
+/// Database
+export const DatabaseResourceSchema = z;
