@@ -1,5 +1,5 @@
+import { ResourceSchema } from '~/resource/resource.model';
 import { z } from 'zod';
-import { isValidRegion, ProviderModel } from './region.model.ts';
 
 export const restrictedIdentifiers = ['api', 'admin', 'app', 'docs'];
 export const WorkspaceId = z.string().cuid();
@@ -19,19 +19,10 @@ export const CreateWorkspaceInput = z
           message: 'RESTRICTED_IDENTIFIER',
         },
       ),
-    provider: ProviderModel,
-    region: z.string(),
     email: z.string().email(),
     subscriptionInterval: z.enum(['monthly', 'yearly']),
   })
-  .refine(
-    value => {
-      return isValidRegion(value.provider, value.region);
-    },
-    {
-      message: 'INVALID_REGION',
-    },
-  );
+  .merge(ResourceSchema.pick({ server: true }));
 
 export const CreateWorkspaceResponse = z.object({
   id: WorkspaceId,

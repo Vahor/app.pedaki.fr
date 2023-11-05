@@ -28,7 +28,6 @@
     "@fastify/cors": "^8.4.1",
     "@pedaki/db": "workspace:*",
     "@pedaki/mailer": "^0.0.8",
-    "@pedaki/schema": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
     "@trpc/server": "10.43.1",
     "fastify": "^4.24.3",
@@ -38,6 +37,7 @@
     "trpc-openapi": "^1.2.0",
     "@pedaki/common": "^0.1.4",
     "@pedaki/services": "workspace:*",
+    "@pedaki/models": "workspace:*",
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
   },

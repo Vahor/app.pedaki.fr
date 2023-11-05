@@ -16,11 +16,11 @@ import {
   SelectValue,
 } from '@pedaki/design/ui/select.js';
 import { Switch } from '@pedaki/design/ui/switch';
-import { RegionMap } from '@pedaki/schema/region.model.js';
+import { RegionMap } from '@pedaki/models/resource/server-region.model.js';
 import type { FormType } from '~/app/new/form-wrapper.tsx';
 import React from 'react';
 
-export function PlanForm({ form }: { form: FormType }) {
+export function PlanForm({ form }: Readonly<{ form: FormType }>) {
   return (
     <div className="grid gap-8">
       <FormField

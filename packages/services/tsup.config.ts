@@ -4,10 +4,13 @@ import { execaCommand } from 'execa';
 import type { Options } from 'tsup';
 import { defineConfig } from 'tsup';
 
+const IS_DTS_ONLY = process.env.SERVICES_DTS_ONLY === 'true';
+const entry = IS_DTS_ONLY ? ['src/**/*.model.ts'] : ['src/**/*.(tsx|ts|cjs)'];
+
 export default defineConfig((options: Options) => ({
   treeshake: true,
   splitting: true,
-  entry: ['src/**/*.(tsx|ts|cjs)'],
+  entry: entry,
   format: ['esm'], // ESM only as .js files are needed for build
   dts: process.env.NODE_ENV !== 'production',
   sourcemap: false,

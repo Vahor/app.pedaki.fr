@@ -1,12 +1,12 @@
 import * as pulumi from '@pulumi/pulumi';
 import * as random from '@pulumi/random';
-import type { ServerProvider, StackOutputs, StackParameters } from '~/type.ts';
+import type { StackOutputs, StackParameters, StackProvider } from '~/type.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
 import * as frontend from './resources/frontend.ts';
 import * as network from './resources/network.ts';
 
-export class AwsServerProvider implements ServerProvider<'AWS'> {
+export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters): Promise<StackOutputs> {
     const stack = await PulumiUtils.createOrSelectStack(params.workspaceId, this.program(params));
     const upRes = await stack.up({ onOutput: console.info });
@@ -23,7 +23,7 @@ export class AwsServerProvider implements ServerProvider<'AWS'> {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  private program = (params: StackParameters<'AWS'>) => async () => {
+  private program = (params: StackParameters<'aws'>) => async () => {
     const tags = this.tags(params);
 
     // Create vpc for the whole stack
@@ -78,7 +78,7 @@ export class AwsServerProvider implements ServerProvider<'AWS'> {
     };
   };
 
-  private tags = (params: StackParameters<'AWS'>) => ({
+  private tags = (params: StackParameters<'aws'>) => ({
     WorkspaceId: params.workspaceId,
     Size: params.size,
     Region: params.region,

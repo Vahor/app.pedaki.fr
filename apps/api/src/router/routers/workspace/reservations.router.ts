@@ -1,5 +1,5 @@
 import { prisma } from '@pedaki/db';
-import { CreateWorkspaceInput } from '@pedaki/schema/workspace.model.js';
+import { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { products } from '@pedaki/services/stripe/products.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';

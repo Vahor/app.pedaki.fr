@@ -10,7 +10,7 @@ export interface DbArgs {
   subnetIds: pulumi.Output<string>[];
   securityGroupIds: pulumi.Output<string>[];
   tags: Record<string, string>;
-  stackParameters: StackParameters<'AWS'>;
+  stackParameters: StackParameters<'aws'>;
 }
 
 export class Db extends pulumi.ComponentResource {
