@@ -59,6 +59,11 @@ export const stripeRouter = router({
 
           const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
 
+          // create workspace
+          // create server
+          // att qu'il soit up
+          // send mail
+
           // TODO move into a flow file
           const workspace = await prisma.workspace.create({
             data: {
@@ -86,8 +91,15 @@ export const stripeRouter = router({
             },
             select: {
               id: true,
+              subscriptions: {
+                select: {
+                  id: true,
+                },
+              }
             },
           });
+
+          const id = workspace.subscriptions[0]!.id;
 
           await prisma.pendingWorkspaceCreation.update({
             where: {

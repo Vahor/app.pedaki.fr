@@ -1,8 +1,21 @@
-import { ServerResourceSchema, StackSize } from '~/resource/resource.model';
+import { ServerResourceSchema, StackSize } from '~/resource/resource.model.js';
 import { isValidServerRegion } from '~/resource/server-region.model.ts';
 import { z } from 'zod';
 
-export const restrictedIdentifiers = ['api', 'admin', 'app', 'docs'];
+
+const restrictedIdentifiers = [
+  'api',
+  'admin',
+  'store',
+  'auth',
+  'app',
+  'login',
+  'static',
+  'assets',
+  'files',
+  'docs',
+];
+
 export const WorkspaceId = z.string().cuid();
 
 export const CreateWorkspaceInput = z.object({
