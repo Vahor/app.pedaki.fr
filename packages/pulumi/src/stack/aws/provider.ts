@@ -3,6 +3,7 @@ import * as random from '@pulumi/random';
 import type { StackOutputs, StackParameters, StackProvider } from '~/type.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
+import * as dns from './resources/dns.ts';
 import * as frontend from './resources/frontend.ts';
 import * as network from './resources/network.ts';
 
@@ -62,6 +63,13 @@ export class AwsServerProvider implements StackProvider<'aws'> {
       vpcId: vpc.vpcId,
       subnetIds: vpc.subnetIds,
       securityGroupIds: vpc.feSecurityGroupIds,
+      stackParameters: params,
+      tags,
+    });
+
+    // Add cloudflare dns
+    new dns.Dns(`${params.identifier}-dns`, {
+      publicIp: server.publicIp,
       stackParameters: params,
       tags,
     });

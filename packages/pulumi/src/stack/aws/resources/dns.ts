@@ -22,7 +22,7 @@ export class Dns extends pulumi.ComponentResource {
             value: args.publicIp,
             zoneId: env.CLOUDFLARE_ZONE_ID,
             proxied: true,
-            ttl: 3600
+            ttl: 1 // TTL must be set to 1 when proxied is true
         });
     }
 

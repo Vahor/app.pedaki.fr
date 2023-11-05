@@ -55,6 +55,8 @@ export class WebService extends pulumi.ComponentResource {
       { parent: this },
     );
 
+    this.startScript(args).apply(console.log);
+
     this.dnsName = ec2.publicDns;
     this.publicIp = ec2.publicIp;
 
@@ -88,7 +90,9 @@ services:
     const domain = args.stackParameters.identifier + '.pedaki.fr';
 
     const caddyFileContent = pulumi.interpolate`
-
+{
+    acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
+}
 ${domain}, :80, :443 {
     reverse_proxy http://web:8000
     
@@ -121,7 +125,7 @@ echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
 
 sudo docker-compose pull
-sudo docker-compose up -d
+sudo docker-compose up
         `;
   };
 
