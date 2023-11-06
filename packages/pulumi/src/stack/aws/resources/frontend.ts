@@ -2,8 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
-import {CADDY_DOCKER_IMAGE, DOCKER_IMAGE} from '~/utils/docker.ts';
-
+import { CADDY_DOCKER_IMAGE, DOCKER_IMAGE } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -55,8 +54,6 @@ export class WebService extends pulumi.ComponentResource {
       { parent: this },
     );
 
-    this.startScript(args).apply(console.log);
-
     this.dnsName = ec2.publicDns;
     this.publicIp = ec2.publicIp;
 
@@ -64,27 +61,26 @@ export class WebService extends pulumi.ComponentResource {
   }
 
   private startScript = (args: WebServiceArgs) => {
-
     const dockerComposeContent = pulumi.interpolate`
 version: '3.8'
 name: pedaki
 services:
-  web:
-    image: "${DOCKER_IMAGE}"
-  environment:
-    - NEXT_PUBLIC_TESTVALUE="${args.dbHost}"
-    - SECRET_PRIVATE_VARIABLE="${args.dbName}"
+    web:
+        image: '${DOCKER_IMAGE}'
+        environment:
+            NEXT_PUBLIC_TESTVALUE: '${args.dbHost}'
+            SECRET_PRIVATE_VARIABLE: '${args.dbName}'
 
-  caddy:
-    image: "${CADDY_DOCKER_IMAGE}"
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-    depends_on:
-      - web
+    caddy:
+        image: '${CADDY_DOCKER_IMAGE}'
+        restart: unless-stopped
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+        depends_on:
+            - web
 `;
 
     const domain = args.stackParameters.identifier + '.pedaki.fr';
@@ -93,7 +89,7 @@ services:
 {
     acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
 }
-${domain}, :80, :443 {
+https://${domain}, :80, :443 {
     reverse_proxy http://web:8000
     
     tls {
@@ -102,8 +98,6 @@ ${domain}, :80, :443 {
     }
 }
 `;
-
-
 
     return pulumi.interpolate`#!/bin/bash
 sudo yum update -y
@@ -124,15 +118,15 @@ cd /app
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
 
-sudo docker-compose pull
-sudo docker-compose up
-        `;
+sudo /usr/local/bin/docker-compose pull
+sudo /usr/local/bin/docker-compose up -d
+`;
   };
 
   private instanceType = (size: StackParameters<'aws'>['server']['size']) => {
     switch (size) {
       case 'small':
-        return 't3a.micro';
+        return 't2.micro'; // free tier
     }
   };
 }
