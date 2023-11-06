@@ -36,7 +36,7 @@ const main = async () => {
   const { subscriptionId } = await workspaceService.createWorkspace({
     workspace: {
       identifier: 'demo',
-      email: 'demo@pedaki.fr',
+      email: 'developers@pedaki.fr',
       name: 'Demo',
     },
     subscription: {

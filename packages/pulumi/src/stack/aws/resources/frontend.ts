@@ -85,10 +85,9 @@ services:
 
     const domain = args.stackParameters.identifier + '.pedaki.fr';
 
-    // TODO: change tls email
     const caddyFileContent = pulumi.interpolate`
 {
-    email contact@pedaki.fr
+    email developers@pedaki.fr
     acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
 }
 https://${domain}, :80, :443 {
