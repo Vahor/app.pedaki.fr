@@ -4,7 +4,7 @@ import { workspaceService } from '@pedaki/services/workspace/workspace.service.j
 
 const WORKSPACE_IDENTIFIER = 'demo';
 
-const stackParameters = (subscriptionId: string) => {
+const stackParameters = (subscriptionId: number) => {
   return {
     identifier: WORKSPACE_IDENTIFIER,
     vpc: {
@@ -17,7 +17,9 @@ const stackParameters = (subscriptionId: string) => {
     database: {
       size: 'small',
     },
-    dns: null,
+    dns: {
+      subdomain: 'demo',
+    },
     workspace: {
       identifier: WORKSPACE_IDENTIFIER,
       subscriptionId,
@@ -28,9 +30,10 @@ const stackParameters = (subscriptionId: string) => {
 const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
   console.log(`This will use the ${DOCKER_IMAGE} docker image`);
-  // await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
-  // const previousSubscriptionId =
-  //   await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
+  await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
+  const previousSubscriptionId =
+    await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
+  console.log({ previousSubscriptionId })
   // await resourceService.deleteStack(stackParameters(previousSubscriptionId));
 
   const { subscriptionId } = await workspaceService.createWorkspace({

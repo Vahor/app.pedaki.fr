@@ -18,8 +18,8 @@ export interface WebServiceArgs {
 }
 
 export class WebService extends pulumi.ComponentResource {
-  public readonly dnsName: pulumi.Output<string>;
   public readonly publicIp: pulumi.Output<string>;
+  public readonly arn: pulumi.Output<string>;
 
   constructor(name: string, args: WebServiceArgs, opts?: pulumi.ComponentResourceOptions) {
     super('custom:resource:WebService', name, args, opts);
@@ -54,8 +54,8 @@ export class WebService extends pulumi.ComponentResource {
       { parent: this },
     );
 
-    this.dnsName = ec2.publicDns;
     this.publicIp = ec2.publicIp;
+    this.arn = ec2.arn;
 
     this.registerOutputs({});
   }

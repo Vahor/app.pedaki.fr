@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx src/index",
     "dev:watch": "tsx watch src/index",
-    "build": "tsup",
+    "build": "tsup --clean",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\"",

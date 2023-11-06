@@ -133,7 +133,6 @@ model WorkspaceMember {
 
 // AKA Server / Database etc
 model WorkspaceResource {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
@@ -142,7 +141,7 @@ model WorkspaceResource {
   provider String @db.VarChar(25) // aws, cloudflare, etc
   type     String @db.VarChar(25) // server, dns, database etc
 
-  identifier String
+  id String @unique @db.VarChar(255) // The identifier of the resource (server id, database id etc)
 
   data Json // As we can't know the structure of the data, we'll just store it as a json blob. We'll have to parse it knowing the type,region,provider etc
 
@@ -150,5 +149,6 @@ model WorkspaceResource {
   subscriptionId Int?
 
   @@index([subscriptionId])
+  @@index([id])
   @@map("workspace_resources")
 }

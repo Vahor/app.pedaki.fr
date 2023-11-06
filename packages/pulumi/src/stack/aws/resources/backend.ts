@@ -14,11 +14,12 @@ export interface DbArgs {
 }
 
 export class Db extends pulumi.ComponentResource {
-  public readonly dbHost: pulumi.Output<string>;
-  public readonly dbName: pulumi.Output<string>;
-  public readonly dbUser: pulumi.Output<string>;
-  public readonly dbPassword: pulumi.Output<string | undefined>;
-  public readonly dbPort: pulumi.Output<number>;
+  public readonly host: pulumi.Output<string>;
+  public readonly name: pulumi.Output<string>;
+  public readonly user: pulumi.Output<string>;
+  public readonly password: pulumi.Output<string | undefined>;
+  public readonly port: pulumi.Output<number>;
+  public readonly arn: pulumi.Output<string>;
 
   constructor(name: string, args: DbArgs, opts?: pulumi.ComponentResourceOptions) {
     super('custom:resource:DB', name, args, opts);
@@ -66,11 +67,12 @@ export class Db extends pulumi.ComponentResource {
       { parent: this },
     );
 
-    this.dbHost = db.address;
-    this.dbName = db.dbName;
-    this.dbUser = db.username;
-    this.dbPassword = db.password;
-    this.dbPort = db.port;
+    this.host = db.address;
+    this.name = db.dbName;
+    this.user = db.username;
+    this.password = db.password;
+    this.port = db.port;
+    this.arn = db.arn;
 
     this.registerOutputs({});
   }

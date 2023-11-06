@@ -1,9 +1,11 @@
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type {
   DatabaseResourceInput,
+  DnsResourceInput,
   ServerResourceInput,
 } from '@pedaki/models/resource/resource.model.js';
 import type { ServerRegion } from '@pedaki/models/resource/server-region.model.js';
+import type { StackOutputs } from '~/output.ts';
 
 export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
   identifier: string;
@@ -19,12 +21,7 @@ export interface StackParameters<SP extends ServerProvider> {
   region: ServerRegion<SP>;
   server: ServerResourceInput;
   database: DatabaseResourceInput;
-  dns: null;
-}
-
-export interface StackOutputs {
-  machinePublicIp: string;
-  publicHostName: string;
+  dns: DnsResourceInput;
 }
 
 export interface StackProvider<SP extends ServerProvider> {

@@ -12,6 +12,7 @@ export interface VpcArgs {
 }
 
 export class Vpc extends pulumi.ComponentResource {
+  public readonly arn: pulumi.Output<string>;
   public readonly vpcId: pulumi.Output<string>;
   public readonly subnetIds: pulumi.Output<string>[];
   public readonly rdsSecurityGroupIds: pulumi.Output<string>[];
@@ -190,6 +191,7 @@ export class Vpc extends pulumi.ComponentResource {
       },
     });
 
+    this.arn = vpc.arn;
     this.vpcId = vpc.id;
     this.subnetIds = subnetsIds;
     this.subnetGroup = subnetGroup;

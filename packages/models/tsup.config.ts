@@ -15,7 +15,6 @@ export default defineConfig((options: Options) => ({
   minifyWhitespace: true,
   platform: 'node',
   keepNames: true,
-  clean: true,
   bundle: false,
   tsconfig: 'tsconfig.json',
   plugins: [esbuildPluginFilePathExtensions({ esmExtension: 'js' })],

@@ -1,4 +1,5 @@
-import type { StackOutputs, StackParameters, StackProvider, WorkspaceInstance } from '~/type.ts';
+import type { StackOutputs } from '~/output.ts';
+import type { StackParameters, StackProvider, WorkspaceInstance } from '~/type.ts';
 
 export class TestServerProvider implements StackProvider<'test'> {
   stacks: WorkspaceInstance[] = [];
@@ -25,10 +26,15 @@ export class TestServerProvider implements StackProvider<'test'> {
 
     this.stacks.push(newStack);
 
-    return {
-      machinePublicIp: newStack.server.machinePublicIp,
-      publicHostName: 'test',
-    };
+    return [
+      {
+        type: 'server',
+        provider: 'test',
+        region: newStack.server.region,
+        id: newStack.identifier,
+        size: params.server.size,
+      },
+    ];
   }
 
   public delete(params: StackParameters<'test'>): Promise<void> {

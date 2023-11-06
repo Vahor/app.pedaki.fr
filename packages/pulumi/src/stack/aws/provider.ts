@@ -1,9 +1,10 @@
-import * as pulumi from '@pulumi/pulumi';
 import * as random from '@pulumi/random';
-import type { StackOutputs, StackParameters, StackProvider } from '~/type.ts';
+import type { StackOutputs, StackOutputsLike } from '~/output.ts';
+import { StackOutputsSchema } from '~/output.ts';
+import type { StackParameters, StackProvider } from '~/type.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
-import * as dns from './resources/dns.ts';
+import * as domain from './resources/domain.ts';
 import * as frontend from './resources/frontend.ts';
 import * as network from './resources/network.ts';
 
@@ -11,15 +12,17 @@ export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
     const stack = await PulumiUtils.createOrSelectStack(params.identifier, this.program(params));
     const tags = this.tags(params);
-    Object.entries(tags).forEach(([key, value]) => stack.setTag(key, value));
+    await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
     const upRes = await stack.up({ onOutput: console.info });
 
-    // TODO: throw error if the output are not valid (use zod ?)
-    return {
-      machinePublicIp: upRes.outputs.machinePublicIp!.value as string,
-      publicHostName: upRes.outputs.publicHostName!.value as string,
-    };
+    // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
+    const formattedOutputs = Object.values(upRes.outputs).reduce((acc, output) => {
+      acc.push(output.value);
+      return acc;
+    }, [] as unknown[]);
+
+    return StackOutputsSchema.parse(formattedOutputs);
   }
 
   public async delete(params: StackParameters<'aws'>): Promise<void> {
@@ -27,7 +30,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  private program = (params: StackParameters<'aws'>) => async () => {
+  private program = (params: StackParameters<'aws'>) => async (): Promise<StackOutputsLike> => {
     const tags = this.tags(params);
 
     // Create vpc for the whole stack
@@ -55,11 +58,11 @@ export class AwsServerProvider implements StackProvider<'aws'> {
 
     // Create an EC2 instance
     const server = new frontend.WebService(`${params.identifier}-frontend`, {
-      dbHost: db.dbHost,
-      dbPort: db.dbPort,
-      dbName: db.dbName,
-      dbUser: db.dbUser,
-      dbPassword: db.dbPassword,
+      dbHost: db.host,
+      dbPort: db.port,
+      dbName: db.name,
+      dbUser: db.user,
+      dbPassword: db.password,
       vpcId: vpc.vpcId,
       subnetIds: vpc.subnetIds,
       securityGroupIds: vpc.feSecurityGroupIds,
@@ -68,20 +71,36 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     });
 
     // Add cloudflare dns
-    new dns.Dns(`${params.identifier}-dns`, {
+    const dns = new domain.Domain(`${params.identifier}-dns`, {
       publicIp: server.publicIp,
       stackParameters: params,
       tags,
     });
 
-    // TODO: change variable names
-    return {
-      machinePublicIp: server.publicIp,
-      publicHostName: pulumi.interpolate`http://${server.dnsName}`,
-      dbHost: db.dbHost,
-      dbPort: db.dbPort,
-      ...tags,
-    };
+    return [
+      {
+        type: 'server',
+        provider: 'aws',
+        id: server.arn,
+        region: params.region,
+        size: params.server.size,
+      },
+      {
+        type: 'database',
+        provider: 'aws',
+        id: db.arn,
+        region: params.region,
+        size: params.database.size,
+      },
+      {
+        type: 'dns',
+        provider: 'cloudflare',
+        id: dns.id,
+        region: null,
+        subdomain: params.dns.subdomain,
+        value: dns.value,
+      },
+    ];
   };
 
   private tags = (params: StackParameters<'aws'>) => ({

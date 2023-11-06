@@ -36,7 +36,7 @@ export const CreateWorkspaceInput = z.object({
 
   server: ServerResourceSchema.pick({ region: true, provider: true, size: true }).refine(
     value => {
-      return isValidServerRegion(value.provider, value.region);
+      return value.region && isValidServerRegion(value.provider, value.region);
     },
     {
       message: 'INVALID_REGION',
