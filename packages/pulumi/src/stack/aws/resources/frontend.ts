@@ -85,12 +85,21 @@ services:
 
     const domain = args.stackParameters.identifier + '.pedaki.fr';
 
+    // TODO: change tls email
     const caddyFileContent = pulumi.interpolate`
 {
+    email contact@pedaki.fr
     acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
 }
 https://${domain}, :80, :443 {
     reverse_proxy http://web:8000
+    encode zstd gzip
+    
+    # HSTS (63072000 seconds)
+    header / Strict-Transport-Security "max-age=63072000"
+    
+    # hidden server name
+    header -Server
     
     tls {
         dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
@@ -117,6 +126,10 @@ cd /app
 
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
+
+# Increase the maximum number of file descriptors
+# https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose up -d
