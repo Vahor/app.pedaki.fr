@@ -63,33 +63,44 @@ class WorkspaceService {
     subscription: {
       customerId: string;
       subscriptionId: string;
+      paidUntil: Date;
     };
-  }): Promise<{ subscriptionId: number }> {
-    // TODO: this is a temporary code
-    const result = await prisma.workspace.create({
+  }): Promise<{ worskpaceId: string; subscriptionId: number }> {
+    const { id, subscriptions } = await prisma.workspace.create({
+      data: {
+        name: workspace.name,
+        identifier: workspace.identifier,
+        mainEmail: workspace.email,
+        stripeCustomerId: subscription.customerId,
+        members: {
+          create: {
+            email: workspace.email,
+          },
+        },
+        subscriptions: {
+          create: [
+            {
+              // TODO: type (create an enum for this)
+              //  We can reuse the type from products.ts
+              type: 'hosting',
+              stripeSubscriptionId: subscription.subscriptionId,
+              // expires_at
+              paidUntil: subscription.paidUntil,
+            },
+          ],
+        },
+      },
       select: {
+        id: true,
         subscriptions: {
           select: {
             id: true,
           },
         },
       },
-      data: {
-        identifier: workspace.identifier,
-        name: workspace.name,
-        mainEmail: workspace.email,
-        stripeCustomerId: subscription?.customerId,
-        subscriptions: {
-          create: {
-            type: 'host',
-            paidUntil: new Date(),
-          },
-        },
-      },
     });
-    return {
-      subscriptionId: result.subscriptions[0]!.id,
-    };
+
+    return { worskpaceId: id, subscriptionId: subscriptions[0]!.id };
   }
 }
 

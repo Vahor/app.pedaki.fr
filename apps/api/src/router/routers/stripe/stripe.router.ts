@@ -1,6 +1,7 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import type { PaymentMetadata } from '@pedaki/services/stripe/stripe.model.js';
+import { workspaceService } from '@pedaki/services/workspace/workspace.service';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { router, stripeProcedure } from '../../trpc.ts';
@@ -57,56 +58,28 @@ export const stripeRouter = router({
             });
           }
 
+          // Create workspace
           const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
-
-          // create workspace
-          // create server
-          // att qu'il soit up
-          // send mail
-
-          // TODO move into a flow file
-          const workspace = await prisma.workspace.create({
-            data: {
+          const { workspaceId, subscriptionId } = await workspaceService.createWorkspace({
+            workspace: {
               name: pendingData.name,
               identifier: pendingData.identifier,
-              mainEmail: pendingData.email,
-              stripeCustomerId: data.customer,
-              members: {
-                create: {
-                  email: pendingData.email,
-                },
-              },
-              subscriptions: {
-                create: [
-                  {
-                    // TODO: type (create an enum for this)
-                    //  We can reuse the type from products.ts
-                    type: 'hosting',
-                    stripeSubscriptionId: data.subscription,
-                    // expires_at
-                    paidUntil: new Date(data.expires_at * 1000),
-                  },
-                ],
-              },
+              email: pendingData.email,
             },
-            select: {
-              id: true,
-              subscriptions: {
-                select: {
-                  id: true,
-                },
-              },
+            subscription: {
+              customerId: data.customer,
+              subscriptionId: data.subscription,
+              paidUntil: new Date(data.expires_at * 1000),
             },
           });
 
-          const id = workspace.subscriptions[0]!.id;
-
+          // Update the pending workspace creation
           await prisma.pendingWorkspaceCreation.update({
             where: {
               id: pendingId,
             },
             data: {
-              workspaceId: workspace.id,
+              workspaceId: workspaceId,
               paidAt: new Date(),
             },
           });
