@@ -31,7 +31,6 @@ export const workspaceReservationRouter = router({
             pendingId,
           },
           customer: {
-            // TODO: try to get customer id if we already have one ?
             email: input.email,
           },
         });
