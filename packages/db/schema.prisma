@@ -92,16 +92,19 @@ model PendingWorkspaceInvite {
   @@map("pending_workspace_invite")
 }
 
+// Type can be "extra_support", "scaler" etc.
+// This type should map to a stripe product in our code
+enum ProductType {
+  HOSTING
+}
+
 // To get the current subscription, we can just get the one with the latest paidUntil date
 model WorkspaceSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  // Type can be "extra_support", "scaler" etc.
-  // This type should map to a product on our code
-  // and in our code we map it to a stripe product
-  type String
+  type ProductType
 
   // Null if it's a free subscription (not linked to stripe)
   stripeSubscriptionId String? @unique @map("stripe_subscription_id")
@@ -136,7 +139,7 @@ model WorkspaceResource {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  region   String? @db.VarChar(25) // Null if it's a global resource
+  region String? @db.VarChar(25) // Null if it's a global resource
 
   provider String @db.VarChar(25) // aws, cloudflare, etc
   type     String @db.VarChar(25) // server, dns, database etc

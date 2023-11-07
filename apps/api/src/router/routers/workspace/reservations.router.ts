@@ -5,6 +5,7 @@ import { products } from '@pedaki/services/stripe/products.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import type { Prisma } from '@prisma/client';
+import { ProductType } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
@@ -23,8 +24,8 @@ export const workspaceReservationRouter = router({
         const pendingId = await pendingWorkspaceService.create(input);
         const payment = await stripeService.createPayment({
           product: {
-            payment_type: products.hosted.payment_type,
-            priceId: products.hosted.priceId[input.subscriptionInterval],
+            payment_type: products[ProductType.HOSTING].payment_type,
+            priceId: products[ProductType.HOSTING].priceId[input.subscriptionInterval],
           },
           metadata: {
             workspaceName: input.name,

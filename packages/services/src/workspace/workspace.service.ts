@@ -1,5 +1,6 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
+import { ProductType } from '@prisma/client';
 
 class WorkspaceService {
   getHealthStatusUrl(identifier: string) {
@@ -80,9 +81,7 @@ class WorkspaceService {
         subscriptions: {
           create: [
             {
-              // TODO: type (create an enum for this)
-              //  We can reuse the type from products.ts
-              type: 'hosting',
+              type: ProductType.HOSTING,
               stripeSubscriptionId: subscription.subscriptionId,
               // expires_at
               paidUntil: subscription.paidUntil,

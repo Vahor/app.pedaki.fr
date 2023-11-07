@@ -1,3 +1,4 @@
+import { ProductType } from '@prisma/client';
 import { env } from '~/env.ts';
 
 export interface Product {
@@ -7,7 +8,7 @@ export interface Product {
 }
 
 export const products = {
-  hosted: {
+  [ProductType.HOSTING]: {
     type: 'plan',
     payment_type: 'subscription',
     priceId: {
@@ -15,4 +16,4 @@ export const products = {
       yearly: env.STRIPE_PRODUCT_HOSTED_YEARLY_PRICE_ID,
     },
   },
-} satisfies Record<string, Product>;
+} satisfies Record<ProductType, Product>;
