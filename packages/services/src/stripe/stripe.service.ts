@@ -48,9 +48,6 @@ class StripeService {
       customer: customer.id,
       customer_email: customer.email,
       customer_creation: isSubscription ? undefined : 'if_required',
-      customer_update: {
-        address: 'auto',
-      },
 
       // 30 min expiration
       expires_at: Math.floor(Date.now() / 1000) + 60 * 30,
