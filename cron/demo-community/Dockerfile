@@ -20,7 +20,7 @@ COPY packages/pulumi/package.json ./packages/pulumi/
 COPY packages/models/package.json ./packages/models/
 COPY cron/demo-community/package.json ./cron/demo-community/
 
-RUN --mount=type=cache,id=s/0eb7c8d5-3796-4b22-b0dc-988ca0084b57-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=s/abdf597f-fa85-4c66-a7e0-b512707bd711-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY cron/demo-community ./cron/demo-community
 COPY packages ./packages
@@ -35,7 +35,7 @@ RUN cp -r node_modules/.prisma tmp/.prisma
 
 # Delete node_modules and reinstall only production dependencies
 RUN npx rimraf --glob ./**/node_modules
-RUN --mount=type=cache,id=s/0eb7c8d5-3796-4b22-b0dc-988ca0084b57-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-demo-community
+RUN --mount=type=cache,id=s/abdf597f-fa85-4c66-a7e0-b512707bd711-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-demo-community
 
 # Copy back node_modules/.prisma
 RUN cp -r tmp/.prisma node_modules
