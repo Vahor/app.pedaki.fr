@@ -36,8 +36,9 @@ const main = async () => {
   await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
   const previousSubscriptionId =
     await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
-  console.log({ previousSubscriptionId });
-  // await resourceService.deleteStack(stackParameters(previousSubscriptionId));
+
+  if (previousSubscriptionId)
+    await resourceService.deleteStack(stackParameters(previousSubscriptionId));
 
   const { subscriptionId } = await workspaceService.createWorkspace({
     workspace: {
