@@ -1,5 +1,6 @@
 import type { StackOutputs } from '~/output.ts';
 import type { StackParameters, StackProvider, WorkspaceInstance } from '~/type.ts';
+import { redacted } from '~/utils/redacted.ts';
 
 export class TestServerProvider implements StackProvider<'test'> {
   stacks: WorkspaceInstance[] = [];
@@ -33,7 +34,7 @@ export class TestServerProvider implements StackProvider<'test'> {
         region: newStack.server.region,
         id: newStack.identifier,
         size: params.server.size,
-        environment_variables: params.server.environment_variables,
+        environment_variables: redacted(params.server.environment_variables),
       },
     ];
   }
