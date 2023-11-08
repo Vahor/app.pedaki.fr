@@ -2,6 +2,7 @@ import * as random from '@pulumi/random';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
 import { StackOutputsSchema } from '~/output.ts';
 import type { StackParameters, StackProvider } from '~/type.ts';
+import { redacted } from '~/utils/redacted.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
 import * as domain from './resources/domain.ts';
@@ -14,7 +15,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     const tags = this.tags(params);
     await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
-    const upRes = await stack.up({ onOutput: console.info });
+    const upRes = await stack.up();
 
     // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
     const formattedOutputs = Object.values(upRes.outputs).reduce((acc, output) => {
@@ -84,6 +85,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
         id: server.arn,
         region: params.region,
         size: params.server.size,
+        environment_variables: redacted(params.server.environment_variables),
       },
       {
         type: 'database',

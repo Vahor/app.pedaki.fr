@@ -13,6 +13,9 @@ const stackParameters = (subscriptionId: number) => {
     },
     server: {
       size: 'small',
+      environment_variables: {
+        IS_DEMO: 'true',
+      },
     },
     database: {
       size: 'small',
@@ -33,7 +36,7 @@ const main = async () => {
   await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
   const previousSubscriptionId =
     await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
-  console.log({ previousSubscriptionId })
+  console.log({ previousSubscriptionId });
   // await resourceService.deleteStack(stackParameters(previousSubscriptionId));
 
   const { subscriptionId } = await workspaceService.createWorkspace({

@@ -3,8 +3,8 @@ import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type {
   DatabaseResourceInput,
   DnsResourceInput,
-  ResourceInput,
   ServerResourceInput,
+  VpcResourceInput,
 } from '@pedaki/models/resource/resource.model.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
@@ -29,12 +29,12 @@ class ResourceService {
       identifier: string;
       subscriptionId: number;
     };
-    vpc: ResourceInput;
+    vpc: VpcResourceInput;
     server: ServerResourceInput;
     database: DatabaseResourceInput;
     dns: DnsResourceInput;
   }) {
-    console.log(`Deleting stack for workspace '${workspace.identifier}'`);
+    console.log(`Deleting stack for workspace '${workspace.identifier}'...`);
     const provider = this.getProvider(vpc.provider);
 
     await provider.delete({
@@ -44,6 +44,16 @@ class ResourceService {
       database,
       dns,
     });
+
+    console.log(`Stack deleted (provider) for workspace '${workspace.identifier}'`);
+
+    console.log(`Deleting database resources for workspace '${workspace.identifier}'...`);
+    await prisma.workspaceResource.deleteMany({
+      where: {
+        subscriptionId: workspace.subscriptionId,
+      },
+    });
+    console.log(`Database resources deleted for workspace '${workspace.identifier}'`);
 
     return null;
   }
@@ -73,12 +83,12 @@ class ResourceService {
       identifier: string;
       subscriptionId: number;
     };
-    vpc: ResourceInput;
+    vpc: VpcResourceInput;
     server: ServerResourceInput;
     database: DatabaseResourceInput;
     dns: DnsResourceInput;
   }) {
-    console.log(`Upserting stack for workspace '${workspace.identifier}'`);
+    console.log(`Upserting stack for workspace '${workspace.identifier}'...`);
     const provider = this.getProvider(vpc.provider);
 
     const outputs = await provider.create({
@@ -92,6 +102,7 @@ class ResourceService {
     console.log(`Stack upserted (provider) for workspace '${workspace.identifier}'`, outputs);
 
     // Upsert resource in prisma
+    console.log(`Upserting database resources for workspace '${workspace.identifier}'...`);
 
     await prisma.$transaction([
       ...outputs.map(resource => {
@@ -102,6 +113,11 @@ class ResourceService {
           provider: provider,
           type: type,
           data: data,
+          subscription: {
+            connect: {
+              id: workspace.subscriptionId,
+            },
+          },
         };
 
         return prisma.workspaceResource.upsert({
@@ -111,11 +127,6 @@ class ResourceService {
           create: {
             id: id,
             ...upsertData,
-            subscription: {
-              connect: {
-                id: workspace.subscriptionId,
-              },
-            },
           },
           update: upsertData,
         });

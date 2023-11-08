@@ -33,6 +33,7 @@ export class TestServerProvider implements StackProvider<'test'> {
         region: newStack.server.region,
         id: newStack.identifier,
         size: params.server.size,
+        environment_variables: params.server.environment_variables,
       },
     ];
   }

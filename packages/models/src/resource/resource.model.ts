@@ -16,10 +16,11 @@ export const ServerResourceSchema = ResourceSchema.merge(
     provider: ServerProviderModel,
     type: z.enum(['server']),
     size: z.enum(['small']),
+    environment_variables: z.record(z.string()),
   }),
 );
 export type ServerResource = z.infer<typeof ServerResourceSchema>;
-export type ServerResourceInput = Pick<ServerResource, 'size'>;
+export type ServerResourceInput = Pick<ServerResource, 'size' | 'environment_variables'>;
 
 /// Database
 export const DatabaseResourceSchema = ResourceSchema.merge(
@@ -39,9 +40,19 @@ export const DnsResourceSchema = ResourceSchema.merge(
     type: z.enum(['dns']),
     region: z.null(),
     subdomain: z.string(),
-    value: z.string()
+    value: z.string(),
   }),
 );
 
 export type DnsResource = z.infer<typeof DnsResourceSchema>;
 export type DnsResourceInput = Pick<DnsResource, 'subdomain'>;
+
+/// Dns
+export const VpcResourceSchema = ResourceSchema.merge(
+  z.object({
+    provider: ServerProviderModel,
+  }),
+);
+
+export type VpcResource = z.infer<typeof VpcResourceSchema>;
+export type VpcResourceInput = Pick<VpcResource, 'provider' | 'region'>;

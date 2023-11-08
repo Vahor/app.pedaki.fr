@@ -36,5 +36,8 @@
     "npm": "use-pnpm"
   },
   "packageManager": "pnpm@8.7.6",
-  "prettier": "@pedaki/prettier-config"
+  "prettier": "@pedaki/prettier-config",
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.5.1"
+  }
 }

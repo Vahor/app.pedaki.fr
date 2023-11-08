@@ -61,15 +61,28 @@ export class WebService extends pulumi.ComponentResource {
   }
 
   private startScript = (args: WebServiceArgs) => {
+    let rawEnvFileContent = '';
+    for (const [key, value] of Object.entries(args.stackParameters.server.environment_variables)) {
+      rawEnvFileContent += `export ${key}='${value}'\n`;
+    }
+
+    const envFileContent = pulumi.interpolate`
+${rawEnvFileContent}
+export NEXT_PUBLIC_TESTVALUE='${args.dbHost}'
+export SECRET_PRIVATE_VARIABLE='${args.dbName} - ${
+      args.stackParameters.server.environment_variables.IS_DEMO ? 'demo' : 'not demo'
+    }'
+`;
+
     const dockerComposeContent = pulumi.interpolate`
 version: '3.8'
 name: pedaki
 services:
     web:
         image: '${DOCKER_IMAGE}'
-        environment:
-            NEXT_PUBLIC_TESTVALUE: '${args.dbHost}'
-            SECRET_PRIVATE_VARIABLE: '${args.dbName}'
+        env_file:
+            - web-variables.env
+        restart: unless-stopped
 
     caddy:
         image: '${CADDY_DOCKER_IMAGE}'
@@ -125,6 +138,7 @@ cd /app
 
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
+echo "${envFileContent}" > web-variables.env
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
