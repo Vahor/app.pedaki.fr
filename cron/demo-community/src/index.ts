@@ -41,27 +41,34 @@ const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
   await prisma.$connect();
   console.log(`This will use the ${DOCKER_IMAGE} docker image`);
-  await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
+
   const previousSubscriptionId =
     await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
 
-  if (previousSubscriptionId)
-    await resourceService.deleteStack(stackParameters(previousSubscriptionId));
+  let subscriptionId: number;
 
-  const { subscriptionId } = await workspaceService.createWorkspace({
-    workspace: {
-      creationData: BASE_PARAMETERS,
-      identifier: 'demo',
-      email: 'developers@pedaki.fr',
-      name: 'Demo',
-    },
-    subscription: {
-      subscriptionId: 'sub_00000000000000',
-      customerId: 'cus_00000000000000',
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
-    },
-  });
+  if (previousSubscriptionId) {
+    await resourceService.deleteStack(stackParameters(previousSubscriptionId));
+    subscriptionId = previousSubscriptionId;
+
+    // TODO: renew subscription
+  } else {
+    const { subscriptionId: newSubscriptionId } = await workspaceService.createWorkspace({
+      workspace: {
+        creationData: BASE_PARAMETERS,
+        identifier: 'demo',
+        email: 'developers@pedaki.fr',
+        name: 'Demo',
+      },
+      subscription: {
+        subscriptionId: 'sub_00000000000000',
+        customerId: 'cus_00000000000000',
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+      },
+    });
+    subscriptionId = newSubscriptionId;
+  }
 
   await resourceService.upsertStack(stackParameters(subscriptionId));
 
