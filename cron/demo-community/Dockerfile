@@ -43,6 +43,10 @@ RUN cp -r tmp/.prisma node_modules
 FROM base AS runner
 WORKDIR /app
 
+# Install pulumi
+RUN curl -fsSL https://get.pulumi.com | sh
+ENV PATH="/root/.pulumi/bin:$PATH"
+
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
