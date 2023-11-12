@@ -1,6 +1,9 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
-import type { PaymentMetadata } from '@pedaki/services/stripe/stripe.model.js';
+import {
+  CheckoutSessionCompletedSchema,
+  CustomerSubscriptionSchema,
+} from '@pedaki/services/stripe/stripe.model.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service';
 import { TRPCError } from '@trpc/server';
@@ -15,7 +18,6 @@ export const stripeRouter = router({
     .mutation(async ({ ctx }) => {
       const event = ctx.stripeEvent;
       console.log(event.type);
-      // TODO: move each event into a separate function (in stripe service folder ?)
       switch (event.type) {
         // Not necessary? Already handled in checkout.session.completed
         // case 'customer.subscription.created':
@@ -24,16 +26,7 @@ export const stripeRouter = router({
         case 'customer.subscription.deleted':
           {
             // Update subscription info
-            // TODO: use zod to make sure the data is valid
-            // TODO: fix type
-            const data = event.data.object as unknown as {
-              id: string;
-              ended_at: number | null;
-              cancel_at: number | null;
-              canceled_at: number | null;
-              current_period_start: number;
-              current_period_end: number;
-            };
+            const data = CustomerSubscriptionSchema.parse(event.data.object);
 
             // Get our subscription id from stripe subscription id
             const subscription = await prisma.workspaceSubscription.findUnique({
@@ -69,15 +62,7 @@ export const stripeRouter = router({
             // --
             // 	Sent when a customer clicks the Pay or Subscribe button in Checkout, informing you of a new purchase.
 
-            // TODO: use zod to make sure the data is valid
-            // TODO: fix type
-            const data = event.data.object as unknown as {
-              metadata: PaymentMetadata;
-              status: string;
-              customer: string;
-              subscription: string;
-              expires_at: number;
-            };
+            const data = CheckoutSessionCompletedSchema.parse(event.data.object);
 
             const status = data.status;
             const pendingId = data.metadata.pendingId;
