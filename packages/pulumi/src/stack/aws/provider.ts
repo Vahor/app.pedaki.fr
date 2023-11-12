@@ -1,4 +1,5 @@
 import * as random from '@pulumi/random';
+import { env } from '~/env.ts';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
 import { StackOutputsSchema } from '~/output.ts';
 import type { StackParameters, StackProvider } from '~/type.ts';
@@ -12,10 +13,12 @@ import * as network from './resources/network.ts';
 export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
     const stack = await PulumiUtils.createOrSelectStack(params.identifier, this.program(params));
+    await stack.setConfig('pulumi:organizationName', { value: env.PULUMI_ORGANIZATION });
+
     const tags = this.tags(params);
     await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
-    console.log(`Creating/updating stack '${params.identifier}'...`)
+    console.log(`Creating/updating stack '${params.identifier}'...`);
     const upRes = await stack.up();
 
     // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
