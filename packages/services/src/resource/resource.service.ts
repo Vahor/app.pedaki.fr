@@ -10,6 +10,7 @@ class ResourceService {
     if (!provider) {
       throw new TRPCError({ code: 'NOT_FOUND', message: `Provider ${providerName} not found` });
     }
+    console.log(`Using provider ${providerName}`);
     return provider;
   }
 
