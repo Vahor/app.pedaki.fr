@@ -5,7 +5,7 @@ import type {
   VpcResourceInput,
 } from '~/resource/resource.model';
 
-export type WorkspaceData = {
+export interface WorkspaceData {
   workspace: {
     identifier: string;
     subscriptionId: number;
@@ -14,4 +14,4 @@ export type WorkspaceData = {
   server: ServerResourceInput;
   database: DatabaseResourceInput;
   dns: DnsResourceInput;
-};
+}

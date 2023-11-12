@@ -4,31 +4,36 @@ import { workspaceService } from '@pedaki/services/workspace/workspace.service.j
 
 const WORKSPACE_IDENTIFIER = 'demo';
 
-const stackParameters = (subscriptionId: number) => {
-  return {
+const BASE_PARAMETERS = {
+  identifier: WORKSPACE_IDENTIFIER,
+  vpc: {
+    provider: 'aws',
+    region: 'eu-west-3',
+  },
+  server: {
+    size: 'small',
+    environment_variables: {
+      IS_DEMO: 'true',
+    },
+  },
+  database: {
+    size: 'small',
+  },
+  dns: {
+    subdomain: 'demo',
+  },
+  workspace: {
     identifier: WORKSPACE_IDENTIFIER,
-    vpc: {
-      provider: 'aws',
-      region: 'eu-west-3',
-    },
-    server: {
-      size: 'small',
-      environment_variables: {
-        IS_DEMO: 'true',
-      },
-    },
-    database: {
-      size: 'small',
-    },
-    dns: {
-      subdomain: 'demo',
-    },
-    workspace: {
-      identifier: WORKSPACE_IDENTIFIER,
-      subscriptionId,
-    },
-  } as const;
-};
+  },
+} as const;
+
+const stackParameters = (subscriptionId: number) => ({
+  ...BASE_PARAMETERS,
+  workspace: {
+    ...BASE_PARAMETERS.workspace,
+    subscriptionId,
+  },
+});
 
 const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
@@ -42,6 +47,7 @@ const main = async () => {
 
   const { subscriptionId } = await workspaceService.createWorkspace({
     workspace: {
+      creationData: BASE_PARAMETERS,
       identifier: 'demo',
       email: 'developers@pedaki.fr',
       name: 'Demo',
@@ -49,6 +55,8 @@ const main = async () => {
     subscription: {
       subscriptionId: 'sub_00000000000000',
       customerId: 'cus_00000000000000',
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
     },
   });
 
