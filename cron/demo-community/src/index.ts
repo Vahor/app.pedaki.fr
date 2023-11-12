@@ -3,7 +3,6 @@ import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 
-
 const WORKSPACE_IDENTIFIER = 'demo';
 
 const BASE_PARAMETERS = {
@@ -48,13 +47,13 @@ const main = async () => {
   let subscriptionId: number;
 
   if (previousSubscriptionId) {
-    console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`)
+    console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
     await resourceService.deleteStack(stackParameters(previousSubscriptionId));
     subscriptionId = previousSubscriptionId;
 
     // TODO: renew subscription
   } else {
-    console.log('No previous subscription found, creating a new one')
+    console.log('No previous subscription found, creating a new one');
     const { subscriptionId: newSubscriptionId } = await workspaceService.createWorkspace({
       workspace: {
         creationData: BASE_PARAMETERS,

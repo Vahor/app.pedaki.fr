@@ -58,7 +58,7 @@ class WorkspaceService {
         id: true,
       },
     });
-    console.log("DEBUG: subscription", subscription)
+    console.log('DEBUG: subscription', subscription);
     return subscription?.id ?? null;
   }
 
