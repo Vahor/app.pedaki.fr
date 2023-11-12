@@ -65,6 +65,15 @@ export const stripeRouter = router({
 
             const data = CheckoutSessionCompletedSchema.parse(event.data.object);
 
+            // TODO: I don't want to be poor
+            const count = await prisma.workspace.count();
+            if (count >= 2) {
+              throw new TRPCError({
+                code: 'BAD_REQUEST',
+                message: 'TOO_MANY_WORKSPACES',
+              });
+            }
+
             const status = data.status;
             const pendingId = data.metadata.pendingId;
             if (status !== 'complete') {
@@ -137,15 +146,6 @@ export const stripeRouter = router({
                 paidAt: new Date(),
               },
             });
-
-            // TODO: I don't want to be poor
-            const count = await prisma.workspace.count();
-            if (count >= 2) {
-              throw new TRPCError({
-                code: 'BAD_REQUEST',
-                message: 'TOO_MANY_WORKSPACES',
-              });
-            }
 
             resourceService
               .upsertStack({
