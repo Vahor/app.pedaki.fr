@@ -1,6 +1,7 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { ProductType } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 class WorkspaceService {
   getHealthStatusUrl(identifier: string) {
@@ -60,13 +61,16 @@ class WorkspaceService {
     workspace,
     subscription,
   }: {
-    workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier' | 'email'>;
+    workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier' | 'email'> & {
+      creationMetadata: Record<string, unknown>;
+    };
     subscription: {
       customerId: string;
       subscriptionId: string;
-      paidUntil: Date;
+      currentPeriodStart: Date;
+      currentPeriodEnd: Date;
     };
-  }): Promise<{ worskpaceId: string; subscriptionId: number }> {
+  }): Promise<{ workspaceId: string; subscriptionId: number }> {
     const { id, subscriptions } = await prisma.workspace.create({
       data: {
         name: workspace.name,
@@ -83,8 +87,12 @@ class WorkspaceService {
             {
               type: ProductType.HOSTING,
               stripeSubscriptionId: subscription.subscriptionId,
-              // expires_at
-              paidUntil: subscription.paidUntil,
+              currentPeriodStart: subscription.currentPeriodStart,
+              currentPeriodEnd: subscription.currentPeriodEnd,
+              workspaceCreationMetadata: {
+                version: 1,
+                ...workspace.creationMetadata,
+              } as Prisma.JsonObject,
             },
           ],
         },
@@ -99,7 +107,36 @@ class WorkspaceService {
       },
     });
 
-    return { worskpaceId: id, subscriptionId: subscriptions[0]!.id };
+    return { workspaceId: id, subscriptionId: subscriptions[0]!.id };
+  }
+
+  async updateWorkspaceSubscriptionStripeData({
+    subscriptionId,
+    currentPeriodStart,
+    currentPeriodEnd,
+    endedAt,
+    cancelAt,
+    canceledAt,
+  }: {
+    subscriptionId: number;
+    currentPeriodStart: Date;
+    currentPeriodEnd: Date;
+    endedAt?: Date;
+    cancelAt?: Date;
+    canceledAt?: Date;
+  }) {
+    await prisma.workspaceSubscription.update({
+      where: {
+        id: subscriptionId,
+      },
+      data: {
+        currentPeriodStart,
+        currentPeriodEnd,
+        endedAt,
+        cancelAt,
+        canceledAt,
+      },
+    });
   }
 }
 

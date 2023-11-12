@@ -109,11 +109,22 @@ model WorkspaceSubscription {
   // Null if it's a free subscription (not linked to stripe)
   stripeSubscriptionId String? @unique @map("stripe_subscription_id")
 
-  paidUntil DateTime            @map("paid_until")
+  // Start of the current period that the subscription has been invoiced for. Null if it's a free subscription.
+  currentPeriodStart DateTime? @map("current_period_start")
+  // End of the current period that the subscription has been invoiced for. At the end of this period, a new invoice will be created. Null if it's a free subscription.
+  currentPeriodEnd   DateTime? @map("current_period_end")
+  // If the subscription has ended, the date the subscription ended.
+  endedAt            DateTime? @map("ended_at")
+  // A date in the future at which the subscription will automatically get canceled.
+  cancelAt           DateTime? @map("cancel_at")
+  // If the subscription has been canceled, the date of that cancellation. If the subscription was canceled with cancel_at_period_end, canceled_at will reflect the time of the most recent update request, not the end of the subscription period when the subscription is automatically moved to a canceled state.
+  canceledAt         DateTime? @map("canceled_at")
+
   resources WorkspaceResource[]
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String    @db.VarChar(25)
+  workspace                 Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId               String    @db.VarChar(25)
+  workspaceCreationMetadata Json      @map("workspace_creation_metadata")
 
   @@index([workspaceId])
   @@map("workspace_subscriptions")

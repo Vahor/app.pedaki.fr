@@ -12,6 +12,14 @@ class StripeService {
     });
   }
 
+  async getSubscriptionInfo(subscriptionId: string) {
+    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ['default_payment_method'],
+    });
+
+    return subscription;
+  }
+
   async getCustomerFromPayment(paymentId: string) {
     const payment = await this.stripe.paymentIntents.retrieve(paymentId, {
       expand: ['customer'],
