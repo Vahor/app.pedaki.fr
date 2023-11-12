@@ -14,6 +14,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
     const stack = await PulumiUtils.createOrSelectStack(params.identifier, this.program(params));
     await stack.setConfig('pulumi:organizationName', { value: env.PULUMI_ORGANIZATION });
+    await stack.setConfig('aws:region', { value: params.region });
 
     const tags = this.tags(params);
     await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));

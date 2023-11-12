@@ -47,7 +47,7 @@ export class PulumiUtils {
     try {
       stack = await this.selectStack(name, program);
     } catch (error) {
-      console.error(`Stack ${name} not found`, error);
+      console.error(`Stack ${name} not found`);
       return;
     }
 
