@@ -39,8 +39,8 @@ const stackParameters = (subscriptionId: number) => ({
 
 const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
-  await prisma.$connect();
   console.log(`This will use the ${DOCKER_IMAGE} docker image`);
+  await prisma.$connect();
 
   const previousSubscriptionId =
     await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
@@ -48,15 +48,17 @@ const main = async () => {
   let subscriptionId: number;
 
   if (previousSubscriptionId) {
+    console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`)
     await resourceService.deleteStack(stackParameters(previousSubscriptionId));
     subscriptionId = previousSubscriptionId;
 
     // TODO: renew subscription
   } else {
+    console.log('No previous subscription found, creating a new one')
     const { subscriptionId: newSubscriptionId } = await workspaceService.createWorkspace({
       workspace: {
         creationData: BASE_PARAMETERS,
-        identifier: 'demo',
+        identifier: WORKSPACE_IDENTIFIER,
         email: 'developers@pedaki.fr',
         name: 'Demo',
       },

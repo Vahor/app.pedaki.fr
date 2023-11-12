@@ -48,6 +48,7 @@ class WorkspaceService {
       where: {
         workspace: {
           identifier,
+          deletedAt: null,
         },
       },
       orderBy: {
@@ -57,6 +58,7 @@ class WorkspaceService {
         id: true,
       },
     });
+    console.log("DEBUG: subscription", subscription)
     return subscription?.id ?? null;
   }
 
