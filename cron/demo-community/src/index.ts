@@ -1,7 +1,8 @@
+import { prisma } from '@pedaki/db';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
-import {prisma } from '@pedaki/db';
+
 
 const WORKSPACE_IDENTIFIER = 'demo';
 
@@ -66,4 +67,9 @@ const main = async () => {
 
   console.log("Finished cron 'cron-demo-community'");
 };
-main().catch(console.error).finally(() => void prisma.$disconnect());
+void main()
+  .catch(console.error)
+  .finally(() => void prisma.$disconnect())
+  .then(() => {
+    console.log("Exiting cron 'cron-demo-community'");
+  });
