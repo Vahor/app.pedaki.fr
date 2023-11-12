@@ -21,6 +21,7 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
+    "@pedaki/db": "workspace:*",
     "@pedaki/services": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
     "@t3-oss/env-core": "^0.7.1",

@@ -54,9 +54,6 @@ COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
 COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
 COPY --from=builder /app/cron/demo-community/dist ./dist
 
-## Load env vars
-ARG PORT=8000
-
 ARG DATABASE_URL
 ARG PRISMA_ENCRYPTION_KEY
 
@@ -76,7 +73,6 @@ ARG APP_DOCKER_USERNAME
 ARG APP_DOCKER_PASSWORD
 
 
-ENV PORT=$PORT
 ENV NODE_ENV=production
 
 ENV DATABASE_URL=$DATABASE_URL
@@ -96,7 +92,5 @@ ENV APP_DOCKER_PACKAGE_NAME=$APP_DOCKER_PACKAGE_NAME
 ENV APP_DOCKER_IMAGE_VERSION=$APP_DOCKER_IMAGE_VERSION
 ENV APP_DOCKER_USERNAME=$APP_DOCKER_USERNAME
 ENV APP_DOCKER_PASSWORD=$APP_DOCKER_PASSWORD
-
-EXPOSE $PORT
 
 CMD ["node", "dist/index.js"]

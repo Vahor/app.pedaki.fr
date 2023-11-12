@@ -251,6 +251,9 @@ importers:
 
   cron/demo-community:
     dependencies:
+      '@pedaki/db':
+        specifier: workspace:*
+        version: link:../../packages/db/dist
       '@pedaki/pulumi':
         specifier: workspace:*
         version: link:../../packages/pulumi/dist

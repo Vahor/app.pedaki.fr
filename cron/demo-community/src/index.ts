@@ -1,6 +1,7 @@
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
+import {prisma } from '@pedaki/db';
 
 const WORKSPACE_IDENTIFIER = 'demo';
 
@@ -37,6 +38,7 @@ const stackParameters = (subscriptionId: number) => ({
 
 const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
+  await prisma.$connect();
   console.log(`This will use the ${DOCKER_IMAGE} docker image`);
   await workspaceService.deleteWorkspaceByIdentifier(WORKSPACE_IDENTIFIER);
   const previousSubscriptionId =
@@ -64,4 +66,4 @@ const main = async () => {
 
   console.log("Finished cron 'cron-demo-community'");
 };
-main().catch(console.error);
+main().catch(console.error).finally(() => void prisma.$disconnect());
