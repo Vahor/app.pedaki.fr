@@ -51,7 +51,7 @@ const main = async () => {
     await resourceService.deleteStack(stackParameters(previousSubscriptionId));
     subscriptionId = previousSubscriptionId;
 
-    // TODO: renew subscription
+    // TODO: renew subscription and update resources
   } else {
     console.log('No previous subscription found, creating a new one');
     const { subscriptionId: newSubscriptionId } = await workspaceService.createWorkspace({
