@@ -83,4 +83,6 @@ ENV SKIP_SERVER_ENV_CHECK=true
 
 EXPOSE $PORT
 
+RUN pulumi org set-default pedaki
+
 CMD ["node", "dist/index.js"]
