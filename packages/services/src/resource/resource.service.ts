@@ -1,11 +1,6 @@
 import { prisma } from '@pedaki/db';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
-import type {
-  DatabaseResourceInput,
-  DnsResourceInput,
-  ServerResourceInput,
-  VpcResourceInput,
-} from '@pedaki/models/resource/resource.model.js';
+import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
 
@@ -18,22 +13,7 @@ class ResourceService {
     return provider;
   }
 
-  async deleteStack({
-    workspace,
-    vpc,
-    server,
-    dns,
-    database,
-  }: {
-    workspace: {
-      identifier: string;
-      subscriptionId: number;
-    };
-    vpc: VpcResourceInput;
-    server: ServerResourceInput;
-    database: DatabaseResourceInput;
-    dns: DnsResourceInput;
-  }) {
+  async deleteStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
     console.log(`Deleting stack for workspace '${workspace.identifier}'...`);
     const provider = this.getProvider(vpc.provider);
 
@@ -72,22 +52,7 @@ class ResourceService {
    * @param dns Customization for the DNS (subdomain, etc.)
    * @param database Customization for the database (size, etc.)
    */
-  async upsertStack({
-    workspace,
-    vpc,
-    server,
-    dns,
-    database,
-  }: {
-    workspace: {
-      identifier: string;
-      subscriptionId: number;
-    };
-    vpc: VpcResourceInput;
-    server: ServerResourceInput;
-    database: DatabaseResourceInput;
-    dns: DnsResourceInput;
-  }) {
+  async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
     console.log(`Upserting stack for workspace '${workspace.identifier}'...`);
     const provider = this.getProvider(vpc.provider);
 

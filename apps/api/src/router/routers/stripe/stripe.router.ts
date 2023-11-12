@@ -120,12 +120,13 @@ export const stripeRouter = router({
                   },
                   server: {
                     size: pendingData.server.size,
+                    environment_variables: {},
                   },
                   database: {
                     size: pendingData.server.size,
                   },
                   dns: {
-                    identifier: pendingData.identifier,
+                    subdomain: pendingData.identifier,
                   },
                 },
               },

@@ -1,5 +1,6 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
+import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { ProductType } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
 
@@ -64,14 +65,7 @@ class WorkspaceService {
     subscription,
   }: {
     workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier' | 'email'> & {
-      // TODO: fix type after PR #23 is merged
-      creationData: Record<string, unknown>;
-      // creationData: {
-      //   vpc: VpcResourceInput;
-      //   server: ServerResourceInput;
-      //   database: DatabaseResourceInput;
-      //   dns: DnsResourceInput;
-      // };
+      creationData: Omit<WorkspaceData, 'workspace'>;
     };
     subscription: {
       customerId: string;
