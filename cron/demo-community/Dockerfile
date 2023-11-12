@@ -47,8 +47,6 @@ WORKDIR /app
 RUN curl -fsSL https://get.pulumi.com | sh
 ENV PATH="/root/.pulumi/bin:$PATH"
 
-RUN pulumi org set-default pedaki
-
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
@@ -94,5 +92,7 @@ ENV APP_DOCKER_PACKAGE_NAME=$APP_DOCKER_PACKAGE_NAME
 ENV APP_DOCKER_IMAGE_VERSION=$APP_DOCKER_IMAGE_VERSION
 ENV APP_DOCKER_USERNAME=$APP_DOCKER_USERNAME
 ENV APP_DOCKER_PASSWORD=$APP_DOCKER_PASSWORD
+
+RUN pulumi org set-default pedaki
 
 CMD ["node", "dist/index.js"]
