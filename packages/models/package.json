@@ -6,7 +6,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "tsup",
+    "build": "tsup --clean",
     "build:watch": "tsup --watch",
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\"",

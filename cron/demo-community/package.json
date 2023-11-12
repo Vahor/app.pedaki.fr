@@ -1,16 +1,17 @@
 {
-  "name": "@pedaki/pulumi",
+  "name": "@pedaki/cron-demo-community",
   "version": "1.0.0",
   "description": "",
-  "private": true,
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "tsx src/index",
+    "dev:watch": "tsx watch src/index",
     "build": "tsup --clean",
-    "build:watch": "tsup --watch",
-    "lint": "eslint . --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
+    "start": "node dist/index.js",
+    "lint": "eslint .",
+    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,mdx}\"",
     "typecheck": "tsc --noEmit --declaration"
   },
   "publishConfig": {
@@ -20,17 +21,14 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@pedaki/common": "^0.1.4",
-    "@pedaki/models": "workspace:*",
-    "@pulumi/aws": "^6.8.0",
-    "@pulumi/cloudflare": "^5.14.0",
-    "@pulumi/pulumi": "^3.92.0",
-    "@pulumi/random": "^4.14.0",
+    "@pedaki/services": "workspace:*",
+    "@pedaki/pulumi": "workspace:*",
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@total-typescript/ts-reset": "^0.5.1"
+    "@types/node": "^18.18",
+    "tsx": "^3.14.0"
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0",

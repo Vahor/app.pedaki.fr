@@ -1,4 +1,6 @@
-import type { StackOutputs, StackParameters, StackProvider, WorkspaceInstance } from '~/type.ts';
+import type { StackOutputs } from '~/output.ts';
+import type { StackParameters, StackProvider, WorkspaceInstance } from '~/type.ts';
+import { redacted } from '~/utils/redacted.ts';
 
 export class TestServerProvider implements StackProvider<'test'> {
   stacks: WorkspaceInstance[] = [];
@@ -6,7 +8,7 @@ export class TestServerProvider implements StackProvider<'test'> {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async create(params: StackParameters<'test'>): Promise<StackOutputs> {
     const newStack: WorkspaceInstance = {
-      workspaceId: params.workspaceId,
+      identifier: params.identifier,
       server: {
         provider: 'test',
         region: 'us-east-2',
@@ -25,14 +27,20 @@ export class TestServerProvider implements StackProvider<'test'> {
 
     this.stacks.push(newStack);
 
-    return {
-      machinePublicIp: newStack.server.machinePublicIp,
-      publicHostName: 'test',
-    };
+    return [
+      {
+        type: 'server',
+        provider: 'test',
+        region: newStack.server.region,
+        id: newStack.identifier,
+        size: params.server.size,
+        environment_variables: redacted(params.server.environment_variables),
+      },
+    ];
   }
 
   public delete(params: StackParameters<'test'>): Promise<void> {
-    this.stacks = this.stacks.filter(stack => stack.workspaceId !== params.workspaceId);
+    this.stacks = this.stacks.filter(stack => stack.identifier !== params.identifier);
     return Promise.resolve(undefined);
   }
 }

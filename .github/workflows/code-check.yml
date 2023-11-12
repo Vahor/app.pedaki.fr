@@ -39,6 +39,7 @@ jobs:
         run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build (packages)
+        if: always()
         run: pnpm build --filter="./packages/*"
 
 #      - name: Build api
@@ -50,10 +51,13 @@ jobs:
 #        run: pnpm build --filter www
 
       - name: Run eslint (packages)
+        if: always()
         run: pnpm lint --filter="./packages/*"
 
       - name: Run prettier
+        if: always()
         run: pnpm format:check
 
       - name: Run typecheck (packages)
+        if: always()
         run: pnpm typecheck  --filter="./packages/*"

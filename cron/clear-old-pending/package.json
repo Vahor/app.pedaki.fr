@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index",
-    "build": "tsup",
+    "build": "tsup --clean",
     "start": "node dist/index.js",
     "lint": "eslint . --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",

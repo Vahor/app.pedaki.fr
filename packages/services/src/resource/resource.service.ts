@@ -1,4 +1,11 @@
+import { prisma } from '@pedaki/db';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
+import type {
+  DatabaseResourceInput,
+  DnsResourceInput,
+  ServerResourceInput,
+  VpcResourceInput,
+} from '@pedaki/models/resource/resource.model.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
 
@@ -11,27 +18,123 @@ class ResourceService {
     return provider;
   }
 
-  // async createStack(
-  //     subscriptionId: string,
-  //   {
-  //     workspaceId,
-  //     stackParameters,
-  //   }: {
-  //     subscriptionId: string;
-  //     workspaceId: string;
-  //     stackParameters: Pick<ServerResource, 'd' | 'region'>;
-  //   },
-  // ) {
-  //   const providerInstance = this.getProvider(provider);
-  //
-  //   const outputs = await provider.create({
-  //     workspaceId: workspaceId,
-  //     region: stackParameters.region,
-  //     size: stackParameters.size,
-  //   });
-  //
-  //   return null;
-  // }
+  async deleteStack({
+    workspace,
+    vpc,
+    server,
+    dns,
+    database,
+  }: {
+    workspace: {
+      identifier: string;
+      subscriptionId: number;
+    };
+    vpc: VpcResourceInput;
+    server: ServerResourceInput;
+    database: DatabaseResourceInput;
+    dns: DnsResourceInput;
+  }) {
+    console.log(`Deleting stack for workspace '${workspace.identifier}'...`);
+    const provider = this.getProvider(vpc.provider);
+
+    await provider.delete({
+      identifier: workspace.identifier,
+      region: vpc.region,
+      server,
+      database,
+      dns,
+    });
+
+    console.log(`Stack deleted (provider) for workspace '${workspace.identifier}'`);
+
+    console.log(`Deleting database resources for workspace '${workspace.identifier}'...`);
+    await prisma.workspaceResource.deleteMany({
+      where: {
+        subscriptionId: workspace.subscriptionId,
+      },
+    });
+    console.log(`Database resources deleted for workspace '${workspace.identifier}'`);
+
+    return null;
+  }
+
+  /**
+   * The upsertStack function is responsible for creating a new stack in the cloud provider.
+   * Or updating it if it already exists.
+   *
+   * This will also update the corresponding resource on our database.
+   *
+   * @param workspace Identify the workspace that is being created
+   *  Used to link the resources in our database and the cloud provider
+   *  The identifier is used as a prefix for the resources and as the subdomain for the DNS
+   * @param vpc Customization for the VPC (region, provider, etc.)
+   * @param server Customization for the servers (size, etc.)
+   * @param dns Customization for the DNS (subdomain, etc.)
+   * @param database Customization for the database (size, etc.)
+   */
+  async upsertStack({
+    workspace,
+    vpc,
+    server,
+    dns,
+    database,
+  }: {
+    workspace: {
+      identifier: string;
+      subscriptionId: number;
+    };
+    vpc: VpcResourceInput;
+    server: ServerResourceInput;
+    database: DatabaseResourceInput;
+    dns: DnsResourceInput;
+  }) {
+    console.log(`Upserting stack for workspace '${workspace.identifier}'...`);
+    const provider = this.getProvider(vpc.provider);
+
+    const outputs = await provider.create({
+      identifier: workspace.identifier,
+      region: vpc.region,
+      server,
+      database,
+      dns,
+    });
+
+    console.log(`Stack upserted (provider) for workspace '${workspace.identifier}'`, outputs);
+
+    // Upsert resource in prisma
+    console.log(`Upserting database resources for workspace '${workspace.identifier}'...`);
+
+    await prisma.$transaction([
+      ...outputs.map(resource => {
+        const { id, type, region, provider, ...data } = resource;
+
+        const upsertData = {
+          region: region,
+          provider: provider,
+          type: type,
+          data: data,
+          subscription: {
+            connect: {
+              id: workspace.subscriptionId,
+            },
+          },
+        };
+
+        return prisma.workspaceResource.upsert({
+          where: {
+            id: id,
+          },
+          create: {
+            id: id,
+            ...upsertData,
+          },
+          update: upsertData,
+        });
+      }),
+    ]);
+
+    return null;
+  }
 }
 
 const resourceService = new ResourceService();

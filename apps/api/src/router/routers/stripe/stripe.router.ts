@@ -95,7 +95,7 @@ export const stripeRouter = router({
                 select: {
                   id: true,
                 },
-              }
+              },
             },
           });
 

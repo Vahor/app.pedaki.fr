@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index",
-    "build": "tsup",
+    "build": "tsup --clean",
     "build:dts": "cross-env API_DTS_ONLY=true pnpm build",
     "start": "node dist/index.js",
     "seed": "tsx src/seeds/index.ts",

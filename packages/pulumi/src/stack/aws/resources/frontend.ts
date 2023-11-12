@@ -2,7 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
-import { DOCKER_IMAGE } from '~/utils/docker.ts';
+import { CADDY_DOCKER_IMAGE, DOCKER_IMAGE } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -18,8 +18,8 @@ export interface WebServiceArgs {
 }
 
 export class WebService extends pulumi.ComponentResource {
-  public readonly dnsName: pulumi.Output<string>;
   public readonly publicIp: pulumi.Output<string>;
+  public readonly arn: pulumi.Output<string>;
 
   constructor(name: string, args: WebServiceArgs, opts?: pulumi.ComponentResourceOptions) {
     super('custom:resource:WebService', name, args, opts);
@@ -40,7 +40,7 @@ export class WebService extends pulumi.ComponentResource {
     const ec2 = new aws.ec2.Instance(
       ec2Name,
       {
-        instanceType: this.ec2InstanceType(args.stackParameters.size),
+        instanceType: this.instanceType(args.stackParameters.server.size),
         vpcSecurityGroupIds: args.securityGroupIds,
         subnetId: args.subnetIds[0],
         ami: amiId,
@@ -54,32 +54,105 @@ export class WebService extends pulumi.ComponentResource {
       { parent: this },
     );
 
-    this.dnsName = ec2.publicDns;
     this.publicIp = ec2.publicIp;
+    this.arn = ec2.arn;
 
     this.registerOutputs({});
   }
 
   private startScript = (args: WebServiceArgs) => {
+    let rawEnvFileContent = '';
+    for (const [key, value] of Object.entries(args.stackParameters.server.environment_variables)) {
+      rawEnvFileContent += `export ${key}='${value}'\n`;
+    }
+
+    const envFileContent = pulumi.interpolate`
+${rawEnvFileContent}
+export NEXT_PUBLIC_TESTVALUE='${args.dbHost}'
+export SECRET_PRIVATE_VARIABLE='${args.dbName} - ${
+      args.stackParameters.server.environment_variables.IS_DEMO ? 'demo' : 'not demo'
+    }'
+`;
+
+    const dockerComposeContent = pulumi.interpolate`
+version: '3.8'
+name: pedaki
+services:
+    web:
+        image: '${DOCKER_IMAGE}'
+        env_file:
+            - web-variables.env
+        restart: unless-stopped
+
+    caddy:
+        image: '${CADDY_DOCKER_IMAGE}'
+        restart: unless-stopped
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+        depends_on:
+            - web
+`;
+
+    const domain = args.stackParameters.identifier + '.pedaki.fr';
+
+    const caddyFileContent = pulumi.interpolate`
+{
+    email developers@pedaki.fr
+    acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
+}
+https://${domain}, :80, :443 {
+    reverse_proxy http://web:8000
+    encode zstd gzip
+    
+    # HSTS (63072000 seconds)
+    header / Strict-Transport-Security "max-age=63072000"
+    
+    # hidden server name
+    header -Server
+    
+    tls {
+        dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
+        resolvers 1.1.1.1
+    }
+}
+`;
+
     return pulumi.interpolate`#!/bin/bash
-        sudo yum update -y
-        sudo yum install docker -y
-        sudo service docker start
-        sudo systemctl enable docker
-        
-        sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
-        sudo docker pull ${DOCKER_IMAGE}
-        sudo docker run -d -p 80:80 --restart=always \
-            -e NEXT_PUBLIC_TESTVALUE="${args.dbHost}" \
-            -e SECRET_PRIVATE_VARIABLE="${args.dbName}" \
-            ${DOCKER_IMAGE}
-        `;
+sudo yum update -y
+sudo yum install docker -y
+
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+sudo service docker start
+sudo systemctl enable docker
+
+sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
+
+sudo mkdir /app
+sudo chown ec2-user:ec2-user /app
+cd /app
+
+echo "${caddyFileContent}" > Caddyfile
+echo "${dockerComposeContent}" > docker-compose.yml
+echo "${envFileContent}" > web-variables.env
+
+# Increase the maximum number of file descriptors
+# https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+sysctl -w net.core.rmem_max=2500000
+
+sudo /usr/local/bin/docker-compose pull
+sudo /usr/local/bin/docker-compose up -d
+`;
   };
 
-  private ec2InstanceType = (size: StackParameters<'aws'>['size']) => {
+  private instanceType = (size: StackParameters<'aws'>['server']['size']) => {
     switch (size) {
       case 'small':
-        return 't3a.micro';
+        return 't2.micro'; // free tier
     }
   };
 }
