@@ -6,6 +6,7 @@ const restrictedIdentifiers = [
   'api',
   'admin',
   'demo',
+  'test',
   'store',
   'auth',
   'app',

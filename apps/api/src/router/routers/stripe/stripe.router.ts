@@ -1,5 +1,6 @@
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
+import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
   CheckoutSessionCompletedSchema,
   CustomerSubscriptionSchema,
@@ -93,27 +94,30 @@ export const stripeRouter = router({
             // Create workspace
             const subscription = await stripeService.getSubscriptionInfo(data.subscription);
             const pendingData = JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
+
+            const workspaceCreationData = {
+              vpc: {
+                provider: pendingData.server.provider,
+                region: pendingData.server.region,
+              },
+              server: {
+                size: pendingData.server.size,
+                environment_variables: {},
+              },
+              database: {
+                size: pendingData.server.size,
+              },
+              dns: {
+                subdomain: pendingData.identifier,
+              },
+            };
+
             const { workspaceId, subscriptionId } = await workspaceService.createWorkspace({
               workspace: {
                 name: pendingData.name,
                 identifier: pendingData.identifier,
                 email: pendingData.email,
-                creationData: {
-                  vpc: {
-                    provider: pendingData.server.provider,
-                    region: pendingData.server.region,
-                  },
-                  server: {
-                    size: pendingData.server.size,
-                    environment_variables: {},
-                  },
-                  database: {
-                    size: pendingData.server.size,
-                  },
-                  dns: {
-                    subdomain: pendingData.identifier,
-                  },
-                },
+                creationData: workspaceCreationData,
               },
               subscription: {
                 customerId: data.customer,
@@ -134,7 +138,32 @@ export const stripeRouter = router({
               },
             });
 
-            // TODO: create server
+            // TODO: I don't want to be poor
+            const count = await prisma.workspace.count();
+            if (count >= 2) {
+              throw new TRPCError({
+                code: 'BAD_REQUEST',
+                message: 'TOO_MANY_WORKSPACES',
+              });
+            }
+
+            resourceService
+              .upsertStack({
+                ...workspaceCreationData,
+                workspace: {
+                  identifier: pendingData.identifier,
+                  subscriptionId,
+                },
+              })
+              .then(() => {
+                // TODO: handle success
+                console.log('Stack created');
+              })
+              .catch(err => {
+                // TODO: handle error
+                console.log('Stack creation failed');
+                console.log(err);
+              });
           }
           break;
         case 'invoice.paid':
