@@ -6,7 +6,7 @@ import type {
 import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
 import { env } from '~/env.ts';
 
-export const projectName = `premium-${env.NODE_ENV}`;
+export const projectName = `pedaki/premium-${env.NODE_ENV}`;
 
 const stackName = (name: string) => `${name}`;
 
