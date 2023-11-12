@@ -122,9 +122,9 @@ model WorkspaceSubscription {
 
   resources WorkspaceResource[]
 
-  workspace                 Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId               String    @db.VarChar(25)
-  workspaceCreationMetadata Json      @map("workspace_creation_metadata")
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId           String    @db.VarChar(25)
+  workspaceCreationData Json      @map("workspace_creation_data")
 
   @@index([workspaceId])
   @@map("workspace_subscriptions")

@@ -3,6 +3,8 @@ import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspac
 import { ProductType } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
 
+const WORKSPACE_CREATION_METADATA_VERSION = 1;
+
 class WorkspaceService {
   getHealthStatusUrl(identifier: string) {
     return `https://${identifier}.pedaki.fr/api/_health`;
@@ -62,7 +64,14 @@ class WorkspaceService {
     subscription,
   }: {
     workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier' | 'email'> & {
-      creationMetadata: Record<string, unknown>;
+      // TODO: fix type after PR #23 is merged
+      creationData: Record<string, unknown>;
+      // creationData: {
+      //   vpc: VpcResourceInput;
+      //   server: ServerResourceInput;
+      //   database: DatabaseResourceInput;
+      //   dns: DnsResourceInput;
+      // };
     };
     subscription: {
       customerId: string;
@@ -89,9 +98,9 @@ class WorkspaceService {
               stripeSubscriptionId: subscription.subscriptionId,
               currentPeriodStart: subscription.currentPeriodStart,
               currentPeriodEnd: subscription.currentPeriodEnd,
-              workspaceCreationMetadata: {
-                version: 1,
-                ...workspace.creationMetadata,
+              workspaceCreationData: {
+                version: WORKSPACE_CREATION_METADATA_VERSION,
+                ...workspace.creationData,
               } as Prisma.JsonObject,
             },
           ],
@@ -106,8 +115,26 @@ class WorkspaceService {
         },
       },
     });
+    const subscriptionId = subscriptions[0]!.id;
 
-    return { workspaceId: id, subscriptionId: subscriptions[0]!.id };
+    // Now that we have our ids, we can update the workspace subscription with the complete creation data
+    await prisma.workspaceSubscription.update({
+      where: {
+        id: subscriptionId,
+      },
+      data: {
+        workspaceCreationData: {
+          version: WORKSPACE_CREATION_METADATA_VERSION,
+          ...workspace.creationData,
+          workspace: {
+            identifier: workspace.identifier,
+            subscriptionId,
+          },
+        } as Prisma.JsonObject,
+      },
+    });
+
+    return { workspaceId: id, subscriptionId };
   }
 
   async updateWorkspaceSubscriptionStripeData({

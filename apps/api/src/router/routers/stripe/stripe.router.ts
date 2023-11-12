@@ -113,7 +113,21 @@ export const stripeRouter = router({
                 name: pendingData.name,
                 identifier: pendingData.identifier,
                 email: pendingData.email,
-                creationMetadata: pendingData.server,
+                creationData: {
+                  vpc: {
+                    provider: pendingData.server.provider,
+                    region: pendingData.server.region,
+                  },
+                  server: {
+                    size: pendingData.server.size,
+                  },
+                  database: {
+                    size: pendingData.server.size,
+                  },
+                  dns: {
+                    identifier: pendingData.identifier,
+                  },
+                },
               },
               subscription: {
                 customerId: data.customer,
