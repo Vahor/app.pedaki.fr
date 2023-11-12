@@ -25,8 +25,8 @@
     "@pedaki/models": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
     "@t3-oss/env-core": "^0.7.1",
-    "@trpc/server": "10.43.1",
-    "stripe": "^14.3.0",
+    "@trpc/server": "10.43.3",
+    "stripe": "^14.4.0",
     "zod": "^3.22.4"
   },
   "engines": {
