@@ -5,6 +5,7 @@ import { z } from 'zod';
 const restrictedIdentifiers = [
   'api',
   'admin',
+  'demo',
   'store',
   'auth',
   'app',

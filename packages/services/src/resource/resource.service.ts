@@ -26,7 +26,9 @@ class ResourceService {
       dns,
     });
 
-    console.log(`Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.identifier}'`);
+    console.log(
+      `Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.identifier}'`,
+    );
 
     console.log(`Deleting database resources for workspace '${workspace.identifier}'...`);
     await prisma.workspaceResource.deleteMany({
