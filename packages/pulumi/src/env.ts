@@ -19,7 +19,6 @@ export const env = createEnv({
     CLOUDFLARE_ZONE_ID: z.string(),
 
     PULUMI_ACCESS_TOKEN: z.string(),
-    PULUMI_ORGANIZATION: z.string().default('pedaki'),
   },
   runtimeEnv: process.env,
 });

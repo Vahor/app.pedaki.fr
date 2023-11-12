@@ -1,5 +1,4 @@
 import * as random from '@pulumi/random';
-import { env } from '~/env.ts';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
 import { StackOutputsSchema } from '~/output.ts';
 import type { StackParameters, StackProvider } from '~/type.ts';
@@ -13,7 +12,6 @@ import * as network from './resources/network.ts';
 export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
     const stack = await PulumiUtils.createOrSelectStack(params.identifier, this.program(params));
-    await stack.setConfig('pulumi:organizationName', { value: env.PULUMI_ORGANIZATION });
     await stack.setConfig('aws:region', { value: params.region });
 
     const tags = this.tags(params);

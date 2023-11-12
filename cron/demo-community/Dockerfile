@@ -47,6 +47,8 @@ WORKDIR /app
 RUN curl -fsSL https://get.pulumi.com | sh
 ENV PATH="/root/.pulumi/bin:$PATH"
 
+RUN pulumi org set-default pedaki
+
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
