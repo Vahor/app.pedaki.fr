@@ -5,7 +5,7 @@ import {
   CustomerSubscriptionSchema,
 } from '@pedaki/services/stripe/stripe.model.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
-import { workspaceService } from '@pedaki/services/workspace/workspace.service';
+import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { router, stripeProcedure } from '../../trpc.ts';
