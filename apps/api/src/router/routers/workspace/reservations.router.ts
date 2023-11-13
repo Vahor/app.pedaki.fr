@@ -183,6 +183,7 @@ export const workspaceReservationRouter = router({
 
       const result = await fetch(healthUrl, {
         method: 'HEAD',
+        cache: 'no-cache',
       })
         .then(response => {
           // TODO: do more checks ?

@@ -21,7 +21,7 @@ export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ token, bas
         if (data?.ready) {
           return false;
         }
-        return 10_000;
+        return 40_000;
       },
     },
   );
