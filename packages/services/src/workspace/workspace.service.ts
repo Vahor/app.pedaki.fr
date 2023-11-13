@@ -15,6 +15,10 @@ class WorkspaceService {
     return `https://${identifier}.pedaki.fr`;
   }
 
+  getDomainName(identifier: string) {
+    return `${identifier}.pedaki.fr`;
+  }
+
   /**
    * Mark a workspace as deleted, this will not delete the workpace.
    * The column `deletedAt` will be set to the current date.

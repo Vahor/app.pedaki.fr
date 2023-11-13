@@ -159,7 +159,7 @@ class ResourceService {
       }),
     ]);
 
-    console.log(`Database resources upserted for workspace '${workspace.identifier}'`)
+    console.log(`Database resources upserted for workspace '${workspace.identifier}'`);
 
     return null;
   }

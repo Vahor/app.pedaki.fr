@@ -1,3 +1,4 @@
+import dns from 'dns/promises';
 import { prisma } from '@pedaki/db';
 import { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
@@ -179,31 +180,41 @@ export const workspaceReservationRouter = router({
     .output(z.object({ ready: z.boolean() }))
     .query(async ({ input }) => {
       const { identifier } = pendingWorkspaceService.decryptToken(input.token);
-      const healthUrl = workspaceService.getHealthStatusUrl(identifier);
-      console.log('DEBUG: healthUrl', healthUrl);
+      const domainName = workspaceService.getDomainName(identifier);
 
-      const result = await fetch(healthUrl, {
-        method: 'HEAD',
-        cache: 'no-cache',
-        credentials: 'omit',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-        },
-      })
-        .then(response => {
-          console.log('DEBUG: response', response);
-          // TODO: do more checks ?
-          return response.ok;
+      try {
+        const dnsResult = await dns.resolve(domainName, 'A');
+        console.log('DEBUG: dnsResult', dnsResult);
+        const healthUrl = workspaceService.getHealthStatusUrl(identifier);
+
+        const result = await fetch(healthUrl, {
+          method: 'HEAD',
+          cache: 'no-cache',
+          credentials: 'omit',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+          },
         })
-        .catch((err) => {
-          console.log('DEBUG: err', err)
-          // do nothing
-          return false;
-        });
+          .then(response => {
+            console.log('DEBUG: response', response);
+            // TODO: do more checks ?
+            return response.ok;
+          })
+          .catch((err: Error) => {
+            console.log('DEBUG: err', err);
+            // do nothing
+            return false;
+          });
 
-      return {
-        ready: result,
-      };
+        return {
+          ready: result,
+        };
+      } catch (err) {
+        console.log('DEBUG: dns err', err);
+        return {
+          ready: false,
+        };
+      }
     }),
 });
