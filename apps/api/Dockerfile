@@ -86,5 +86,6 @@ EXPOSE $PORT
 RUN pulumi org set-default pedaki
 RUN pulumi plugin install resource aws
 RUN pulumi plugin install resource random
+RUN pulumi plugin install resource cloudflare
 
 CMD ["node", "dist/index.js"]
