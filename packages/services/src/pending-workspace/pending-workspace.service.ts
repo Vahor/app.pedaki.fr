@@ -18,6 +18,33 @@ class PendingWorkspaceService {
   async create(input: z.infer<typeof CreateWorkspaceInput>): Promise<PendingWorkspace['id']> {
     const jsonData = JSON.stringify(input);
 
+    // Check that the identifier is not already taken
+    const existing = await prisma.$transaction([
+      prisma.workspace.count({
+        where: {
+          identifier: input.identifier,
+        },
+      }),
+      prisma.pendingWorkspaceCreation.count({
+        where: {
+          identifier: input.identifier,
+        },
+      }),
+    ]);
+
+    if (existing[0] > 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'workspace_already_exists',
+      });
+    }
+    if (existing[1] > 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'pending_already_exists',
+      });
+    }
+
     const pending = await prisma.pendingWorkspaceCreation.create({
       data: {
         data: jsonData,
