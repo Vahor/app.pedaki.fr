@@ -8,7 +8,7 @@ const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
 class WorkspaceService {
   getHealthStatusUrl(identifier: string) {
-    return `https://${identifier}.pedaki.fr/api/_health`;
+    return `https://${identifier}.pedaki.fr/api/health`;
   }
 
   getWorkspaceUrl(identifier: string) {
