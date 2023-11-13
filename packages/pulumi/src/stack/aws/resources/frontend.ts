@@ -147,6 +147,12 @@ sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose up -d
+
+sleep 30
+# If the service is not started, exit with an error
+if ! sudo /usr/local/bin/docker-compose ps | grep -q "Up"; then
+   sudo shutdown -r now
+fi
 `;
   };
 

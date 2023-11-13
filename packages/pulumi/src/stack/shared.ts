@@ -51,8 +51,8 @@ export class PulumiUtils {
       return;
     }
 
-    await stack.refresh();
-    await stack.destroy();
+    await stack.refresh({ onOutput: console.log });
+    await stack.destroy({ onOutput: console.log });
     await stack.workspace.removeStack(stack.name);
     return stack;
   }

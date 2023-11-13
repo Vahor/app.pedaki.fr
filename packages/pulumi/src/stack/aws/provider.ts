@@ -18,7 +18,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
     console.log(`Creating/updating stack '${params.identifier}'...`);
-    const upRes = await stack.up();
+    const upRes = await stack.up({ onOutput: console.log });
 
     // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
     const formattedOutputs = Object.values(upRes.outputs).reduce((acc, output) => {
