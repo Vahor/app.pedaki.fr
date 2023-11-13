@@ -110,7 +110,7 @@ export const workspaceReservationRouter = router({
       };
     }),
 
-  status: publicProcedure
+  paidStatus: publicProcedure
     .input(
       z.object({
         id: z.string().cuid(),
@@ -183,5 +183,29 @@ export const workspaceReservationRouter = router({
         identifier: pending.identifier,
         paidAt: pending.paidAt,
       });
+    }),
+
+  readyStatus: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .output(z.object({ ready: z.boolean() }))
+    .query(async ({ input }) => {
+      const { identifier } = pendingWorkspaceService.decryptToken(input.token);
+      const healthUrl = workspaceService.getHealthStatusUrl(identifier);
+
+      const result = await fetch(healthUrl, {
+        method: 'HEAD',
+      })
+        .then(response => {
+          // TODO: do more checks ?
+          return response.ok;
+        })
+        .catch(() => {
+          // do nothing
+          return false;
+        });
+
+      return {
+        ready: result,
+      };
     }),
 });

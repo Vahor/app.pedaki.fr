@@ -42,7 +42,7 @@ export class PulumiUtils {
   }
 
   public static async deleteStack(name: string, program: PulumiFn) {
-    console.log(`Deleting stack ${name}`);
+    console.log(`Deleting stack ${name}...`);
     let stack;
     try {
       stack = await this.selectStack(name, program);
@@ -51,8 +51,8 @@ export class PulumiUtils {
       return;
     }
 
-    await stack.refresh({ onOutput: console.log });
-    await stack.destroy({ onOutput: console.log });
+    await stack.refresh();
+    await stack.destroy();
     await stack.workspace.removeStack(stack.name);
     return stack;
   }

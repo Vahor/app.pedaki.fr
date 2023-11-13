@@ -9,9 +9,9 @@ import z from 'zod';
 
 class PendingWorkspaceService {
   tokenSchema = z.object({
+    identifier: z.string(),
     workspaceId: z.string(),
     expiresAt: z.coerce.date(),
-    workspaceHealthUrl: z.string(),
     workspaceUrl: z.string(),
   });
 
@@ -52,8 +52,8 @@ class PendingWorkspaceService {
     const expirationDate = new Date(pendingWorkspace.paidAt.getTime() + 1000 * 60 * 60 * 3);
 
     const raw: z.infer<typeof this.tokenSchema> = {
+      identifier: pendingWorkspace.identifier,
       workspaceId: pendingWorkspace.workspaceId,
-      workspaceHealthUrl: workspaceService.getHealthStatusUrl(pendingWorkspace.identifier),
       workspaceUrl: workspaceService.getWorkspaceUrl(pendingWorkspace.identifier),
       expiresAt: expirationDate,
     };
