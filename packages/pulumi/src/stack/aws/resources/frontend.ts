@@ -129,6 +129,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 sudo service docker start
 sudo systemctl enable docker
+sudo systemctl start docker
 
 sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
 
