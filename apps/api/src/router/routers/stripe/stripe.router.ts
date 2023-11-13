@@ -147,23 +147,13 @@ export const stripeRouter = router({
               },
             });
 
-            resourceService
-              .upsertStack({
-                ...workspaceCreationData,
-                workspace: {
-                  identifier: pendingData.identifier,
-                  subscriptionId,
-                },
-              })
-              .then(() => {
-                // TODO: handle success
-                console.log('Stack created');
-              })
-              .catch(err => {
-                // TODO: handle error
-                console.log('Stack creation failed');
-                console.log(err);
-              });
+            void resourceService.safeCreateStack({
+              ...workspaceCreationData,
+              workspace: {
+                identifier: pendingData.identifier,
+                subscriptionId,
+              },
+            });
           }
           break;
         case 'invoice.paid':

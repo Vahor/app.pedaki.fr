@@ -3,6 +3,7 @@ import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
+import { backOff } from 'exponential-backoff';
 
 class ResourceService {
   private getProvider(providerName: ServerProvider) {
@@ -31,14 +32,57 @@ class ResourceService {
     );
 
     console.log(`Deleting database resources for workspace '${workspace.identifier}'...`);
-    await prisma.workspaceResource.deleteMany({
+    const deleteResponse = await prisma.workspaceResource.deleteMany({
       where: {
         subscriptionId: workspace.subscriptionId,
       },
     });
-    console.log(`Database resources deleted for workspace '${workspace.identifier}'`);
+    console.log(
+      `Database resources deleted for workspace '${workspace.identifier}' (deleted: ${deleteResponse.count})`,
+    );
 
     return null;
+  }
+
+  /**
+   * Create a stack if it doesn't exist.
+   * And retry if it fails.
+   */
+  async safeCreateStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+    // First check that there is no resource with the same identifier
+    const existingResource = await prisma.workspaceResource.count({
+      where: {
+        subscriptionId: workspace.subscriptionId,
+      },
+    });
+
+    if (existingResource > 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'stack_already_exists',
+      });
+    }
+
+    await backOff(
+      async () => {
+        try {
+          await this.upsertStack({ workspace, vpc, server, dns, database });
+        } catch (error) {
+          await this.deleteStack({ workspace, vpc, server, dns, database });
+          throw error;
+        }
+      },
+      {
+        startingDelay: 60_000,
+        numOfAttempts: 3,
+        retry: (e, attempt) => {
+          // TODO: handle error and cancel retry if it's not a retryable error
+          console.error(e);
+          console.log(`Retrying (${attempt}/3)...`);
+          return true;
+        },
+      },
+    );
   }
 
   /**
