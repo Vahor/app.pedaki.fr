@@ -23,14 +23,14 @@ type ParseTokenOutput =
 
 export const parseToken = (token: unknown): ParseTokenOutput => {
   if (!token || typeof token !== 'string') {
-    return { paidStatus: 'invalid' };
+    return { status: 'invalid' };
   }
 
   try {
     const decoded = decrypt(token, env.API_ENCRYPTION_KEY);
     const parsed = schema.parse(JSON.parse(decoded));
     if (new Date(parsed.expiresAt) < new Date()) {
-      return { paidStatus: 'expired' };
+      return { status: 'expired' };
     }
 
     return {
@@ -38,9 +38,9 @@ export const parseToken = (token: unknown): ParseTokenOutput => {
       workspaceHealthUrl: parsed.workspaceHealthUrl,
       workspaceUrl: parsed.workspaceUrl,
       expiresAt: parsed.expiresAt,
-      paidStatus: 'valid',
+      status: 'valid',
     };
   } catch (e) {
-    return { paidStatus: 'invalid' };
+    return { status: 'invalid' };
   }
 };
