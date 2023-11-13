@@ -186,6 +186,7 @@ export const workspaceReservationRouter = router({
       const result = await fetch(healthUrl, {
         method: 'HEAD',
         cache: 'no-cache',
+        credentials: 'omit',
         headers: {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
