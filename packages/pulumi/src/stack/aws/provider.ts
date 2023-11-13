@@ -49,37 +49,55 @@ export class AwsServerProvider implements StackProvider<'aws'> {
       overrideSpecial: '_%',
     }).result;
 
-    const db = new backend.Db(`${params.identifier}-db`, {
-      dbName: 'pedaki',
-      dbUser: 'pedakiuser',
-      dbPassword: dbPassword,
-      subnetIds: vpc.subnetIds,
-      securityGroupIds: vpc.rdsSecurityGroupIds,
-      dbPort: vpc.ports.mysql,
-      stackParameters: params,
-      tags,
-    });
+    const db = new backend.Db(
+      `${params.identifier}-db`,
+      {
+        dbName: 'pedaki',
+        dbUser: 'pedakiuser',
+        dbPassword: dbPassword,
+        subnetIds: vpc.subnetIds,
+        securityGroupIds: vpc.rdsSecurityGroupIds,
+        dbPort: vpc.ports.mysql,
+        stackParameters: params,
+        tags,
+      },
+      {
+        dependsOn: [vpc],
+      },
+    );
 
     // Create an EC2 instance
-    const server = new frontend.WebService(`${params.identifier}-frontend`, {
-      dbHost: db.host,
-      dbPort: db.port,
-      dbName: db.name,
-      dbUser: db.user,
-      dbPassword: db.password,
-      vpcId: vpc.vpcId,
-      subnetIds: vpc.subnetIds,
-      securityGroupIds: vpc.feSecurityGroupIds,
-      stackParameters: params,
-      tags,
-    });
+    const server = new frontend.WebService(
+      `${params.identifier}-frontend`,
+      {
+        dbHost: db.host,
+        dbPort: db.port,
+        dbName: db.name,
+        dbUser: db.user,
+        dbPassword: db.password,
+        vpcId: vpc.vpcId,
+        subnetIds: vpc.subnetIds,
+        securityGroupIds: vpc.feSecurityGroupIds,
+        stackParameters: params,
+        tags,
+      },
+      {
+        dependsOn: [db],
+      },
+    );
 
     // Add cloudflare dns
-    const dns = new domain.Domain(`${params.identifier}-dns`, {
-      publicIp: server.publicIp,
-      stackParameters: params,
-      tags,
-    });
+    const dns = new domain.Domain(
+      `${params.identifier}-dns`,
+      {
+        publicIp: server.publicIp,
+        stackParameters: params,
+        tags,
+      },
+      {
+        dependsOn: [server],
+      },
+    );
 
     return [
       {

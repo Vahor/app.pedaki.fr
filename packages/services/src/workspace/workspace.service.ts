@@ -76,7 +76,7 @@ class WorkspaceService {
       currentPeriodEnd: Date;
     };
   }): Promise<{ workspaceId: string; subscriptionId: number }> {
-    console.log(`Creating workspace (database) '${workspace.identifier}'...`)
+    console.log(`Creating workspace (database) '${workspace.identifier}'...`);
     const { id, subscriptions } = await prisma.workspace.create({
       data: {
         name: workspace.name,
@@ -114,7 +114,7 @@ class WorkspaceService {
     });
     const subscriptionId = subscriptions[0]!.id;
 
-    console.log('Updating workspace creation data on subscription...')
+    console.log('Updating workspace creation data on subscription...');
 
     // Now that we have our ids, we can update the workspace subscription with the complete creation data
     await prisma.workspaceSubscription.update({
