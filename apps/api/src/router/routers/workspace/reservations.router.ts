@@ -196,7 +196,8 @@ export const workspaceReservationRouter = router({
           // TODO: do more checks ?
           return response.ok;
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log('DEBUG: err', err)
           // do nothing
           return false;
         });
