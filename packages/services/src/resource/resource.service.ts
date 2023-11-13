@@ -1,6 +1,7 @@
 import { prisma } from '@pedaki/db';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
+import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
 import { backOff } from 'exponential-backoff';
@@ -49,6 +50,7 @@ class ResourceService {
    * And retry if it fails.
    */
   async safeCreateStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+    console.log(`Creating stack for workspace '${workspace.identifier}'...`);
     // First check that there is no resource with the same identifier
     const existingResource = await prisma.workspaceResource.count({
       where: {
@@ -63,22 +65,34 @@ class ResourceService {
       });
     }
 
+    let shouldDeleteStack = false;
+
     await backOff(
       async () => {
-        try {
-          await this.upsertStack({ workspace, vpc, server, dns, database });
-        } catch (error) {
+        if (shouldDeleteStack) {
           await this.deleteStack({ workspace, vpc, server, dns, database });
-          throw error;
         }
+        await this.upsertStack({ workspace, vpc, server, dns, database });
       },
       {
         startingDelay: 60_000,
-        numOfAttempts: 3,
-        retry: (e, attempt) => {
+        numOfAttempts: 4,
+        retry: (e: Error, attempt) => {
+          shouldDeleteStack = false;
           // TODO: handle error and cancel retry if it's not a retryable error
-          console.error(e);
-          console.log(`Retrying (${attempt}/3)...`);
+          console.error({
+            error: e,
+            message: e.message,
+            code: e.name,
+          });
+          console.log(`Retrying (${attempt}/4)...`);
+
+          // ConcurrentUpdateError: code: -2
+          if (e.name === ConcurrentUpdateError) {
+            // There is already a stack being created, we just have to wait for it to finish
+            return false;
+          }
+          shouldDeleteStack = true;
           return true;
         },
       },

@@ -17,6 +17,8 @@ class StripeService {
       expand: ['default_payment_method'],
     });
 
+    console.log(`Subscription info for ${subscriptionId}`, subscription);
+
     return subscription;
   }
 
