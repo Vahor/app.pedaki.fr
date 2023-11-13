@@ -15,3 +15,11 @@ export const PendingWorkspaceSchema = z.object({
 });
 
 export type PendingWorkspace = z.infer<typeof PendingWorkspaceSchema>;
+
+export const PendingTokenSchema = z.object({
+  identifier: z.string(),
+  workspaceId: z.string(),
+  expiresAt: z.coerce.date(),
+  workspaceUrl: z.string(),
+});
+export type PendingToken = z.infer<typeof PendingTokenSchema>;
