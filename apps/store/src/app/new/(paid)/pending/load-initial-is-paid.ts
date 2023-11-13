@@ -13,7 +13,7 @@ export const loadInitialIsPaid = async (pendingId: unknown): Promise<LoadInitial
   }
 
   try {
-    const initialIsPaid = await api.workspace.reservation.status.query({ id: pendingId });
+    const initialIsPaid = await api.workspace.reservation.paidStatus.query({ id: pendingId });
     return { paidStatus: initialIsPaid.paid ? 'paid' : 'waiting' };
   } catch (e) {
     if ((e as Error).message === 'NOT_FOUND') {
