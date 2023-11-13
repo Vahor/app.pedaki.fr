@@ -9,20 +9,20 @@ interface LoadInitialIsPaidOutput {
 
 export const loadInitialIsPaid = async (pendingId: unknown): Promise<LoadInitialIsPaidOutput> => {
   if (!pendingId || typeof pendingId !== 'string') {
-    return { paidStatus: 'invalid' };
+    return { status: 'invalid' };
   }
 
   try {
     const initialIsPaid = await api.workspace.reservation.paidStatus.query({ id: pendingId });
-    return { paidStatus: initialIsPaid.paid ? 'paid' : 'waiting' };
+    return { status: initialIsPaid.paid ? 'paid' : 'waiting' };
   } catch (e) {
     if ((e as Error).message === 'NOT_FOUND') {
-      return { paidStatus: 'expired' };
+      return { status: 'expired' };
     }
     // Network error
     if (isNetworkError(e)) {
-      return { paidStatus: 'waiting' };
+      return { status: 'waiting' };
     }
-    return { paidStatus: 'invalid' };
+    return { status: 'invalid' };
   }
 };
