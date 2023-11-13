@@ -9,6 +9,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
+
 export const workspaceReservationRouter = router({
   create: publicProcedure
     .input(CreateWorkspaceInput)
@@ -180,12 +181,18 @@ export const workspaceReservationRouter = router({
     .query(async ({ input }) => {
       const { identifier } = pendingWorkspaceService.decryptToken(input.token);
       const healthUrl = workspaceService.getHealthStatusUrl(identifier);
+      console.log('DEBUG: healthUrl', healthUrl);
 
       const result = await fetch(healthUrl, {
         method: 'HEAD',
         cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+        },
       })
         .then(response => {
+          console.log('DEBUG: response', response);
           // TODO: do more checks ?
           return response.ok;
         })

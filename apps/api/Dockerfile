@@ -84,5 +84,7 @@ ENV SKIP_SERVER_ENV_CHECK=true
 EXPOSE $PORT
 
 RUN pulumi org set-default pedaki
+RUN pulumi plugin install resource aws
+RUN pulumi plugin install resource random
 
 CMD ["node", "dist/index.js"]
