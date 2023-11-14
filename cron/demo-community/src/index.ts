@@ -69,7 +69,7 @@ const main = async () => {
         id: true,
       },
     });
-    authToken = await workspaceService.updateWorkspaceToken({ workspaceId: id });
+    authToken = await workspaceService.registerNewWorkspaceToken({ workspaceId: id });
 
     // Update subscription
     await workspaceService.updateWorkspaceSubscriptionStripeData({

@@ -5,6 +5,7 @@ import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js'
 import type { Prisma } from '@prisma/client';
 import { ProductType } from '@prisma/client';
 
+
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
 class WorkspaceService {
@@ -123,7 +124,7 @@ class WorkspaceService {
 
     console.log('Updating workspace creation data on subscription and generating token...');
     // Create token for the workspace
-    const token = await this.updateWorkspaceToken({ workspaceId: id });
+    const token = await this.registerNewWorkspaceToken({ workspaceId: id });
 
     // Update subscription
     await prisma.workspaceSubscription.update({
@@ -145,26 +146,53 @@ class WorkspaceService {
     return { workspaceId: id, subscriptionId, authToken: token };
   }
 
-  async updateWorkspaceToken({ workspaceId }: { workspaceId: string }) {
-    console.log(`Updating workspace (database) token '${workspaceId}'...`);
+  async registerNewWorkspaceToken({ workspaceId }: { workspaceId: string }) {
+    console.log(`Registering new workspace token (database) '${workspaceId}'...`);
     const token = this.#generateAuthToken();
-    await prisma.workspaceToken.upsert({
-      where: {
-        workspaceId,
-      },
-      update: {
-        token,
-      },
-      create: {
+    await prisma.workspaceToken.create({
+      data: {
         token,
         workspace: {
           connect: {
             id: workspaceId,
           },
         },
-      }
+      },
     });
     return token;
+  }
+
+  async deleteOldWorkspaceTokens({ workspaceId }: { workspaceId: string }) {
+    // TODO: call this method once the server is up and running
+    console.log(`Deleting old workspace tokens (database) '${workspaceId}'...`);
+
+    const mostRecentToken = await prisma.workspaceToken.findFirst({
+      where: {
+        workspaceId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!mostRecentToken) {
+      console.log(`No token found for workspace '${workspaceId}'`);
+      return;
+    }
+
+    const response = await prisma.workspaceToken.deleteMany({
+      where: {
+        workspaceId,
+        NOT: {
+          id: mostRecentToken.id,
+        },
+      },
+    });
+
+    console.log(`Deleted ${response.count} old workspace tokens`);
   }
 
   async getWorkspaceId(identifier: string) {
