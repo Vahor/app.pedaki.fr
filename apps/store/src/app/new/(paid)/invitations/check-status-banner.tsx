@@ -6,19 +6,18 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 interface CheckStatusBannerProps {
-  token: string;
+  identifier: string;
   baseUrl: string;
 }
 
-export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ token, baseUrl }) => {
+export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ identifier, baseUrl }) => {
   const router = useRouter();
 
-  const { data } = api.workspace.reservation.readyStatus.useQuery(
-    { token: token },
+  const { data } = api.workspace.data.getStatus.useQuery(
+    { identifier: identifier },
     {
-      initialData: { ready: false },
       refetchInterval: data => {
-        if (data?.ready) {
+        if (data?.current === 'ACTIVE') {
           return false;
         }
         return 40_000;
@@ -27,7 +26,7 @@ export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ token, bas
   );
 
   useEffect(() => {
-    if (data?.ready) {
+    if (data?.current === 'ACTIVE') {
       router.push('/new/ready?url=' + encodeURIComponent(baseUrl));
     }
   }, [data, router, baseUrl]);

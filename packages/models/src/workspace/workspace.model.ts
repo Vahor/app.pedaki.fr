@@ -1,9 +1,11 @@
+import { Status } from '@prisma/client';
 import type {
   DatabaseResourceInput,
   DnsResourceInput,
   ServerResourceInput,
   VpcResourceInput,
 } from '~/resource/resource.model';
+import { z } from 'zod';
 
 export interface WorkspaceData {
   workspace: {
@@ -15,3 +17,5 @@ export interface WorkspaceData {
   database: DatabaseResourceInput;
   dns: DnsResourceInput;
 }
+
+export const WorkspaceStatusSchema = z.nativeEnum(Status);

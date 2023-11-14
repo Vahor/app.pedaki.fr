@@ -1,12 +1,11 @@
-import dns from 'dns/promises';
 import { prisma } from '@pedaki/db';
+import { NotPaidYetError, PendingNotFoundError } from '@pedaki/models/errors/index.js';
 import { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { products } from '@pedaki/services/stripe/products.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { ProductType } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
@@ -58,10 +57,7 @@ export const workspaceReservationRouter = router({
       });
 
       if (!pending) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       return JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
@@ -89,10 +85,7 @@ export const workspaceReservationRouter = router({
       });
 
       if (!pending) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       return {
@@ -123,10 +116,7 @@ export const workspaceReservationRouter = router({
       });
 
       if (!pending) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       return {
@@ -155,17 +145,11 @@ export const workspaceReservationRouter = router({
         },
       });
       if (!pending?.identifier || !pending.workspaceId) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       if (!pending.paidAt) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_PAID',
-        });
+        throw new NotPaidYetError();
       }
 
       return pendingWorkspaceService.generateToken({
@@ -173,48 +157,5 @@ export const workspaceReservationRouter = router({
         identifier: pending.identifier,
         paidAt: pending.paidAt,
       });
-    }),
-
-  readyStatus: publicProcedure
-    .input(z.object({ token: z.string() }))
-    .output(z.object({ ready: z.boolean() }))
-    .query(async ({ input }) => {
-      const { identifier } = pendingWorkspaceService.decryptToken(input.token);
-      const domainName = workspaceService.getDomainName(identifier);
-
-      try {
-        const dnsResult = await dns.resolve(domainName, 'A');
-        console.log('DEBUG: dnsResult', dnsResult);
-        const healthUrl = workspaceService.getHealthStatusUrl(identifier);
-
-        const result = await fetch(healthUrl, {
-          method: 'HEAD',
-          cache: 'no-cache',
-          credentials: 'omit',
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
-          },
-        })
-          .then(response => {
-            console.log('DEBUG: response', response);
-            // TODO: do more checks ?
-            return response.ok;
-          })
-          .catch((err: Error) => {
-            console.log('DEBUG: err', err);
-            // do nothing
-            return false;
-          });
-
-        return {
-          ready: result,
-        };
-      } catch (err) {
-        console.log('DEBUG: dns err', err);
-        return {
-          ready: false,
-        };
-      }
     }),
 });

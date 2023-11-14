@@ -49,7 +49,7 @@ export default async function InvitationPage({
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-4">
             <InviteForm rawToken={token!} />
-            <CheckStatusBanner token={token!} baseUrl={data.workspaceUrl} />
+            <CheckStatusBanner identifier={data.identifier} baseUrl={data.workspaceUrl} />
           </div>
           <div className="md:mt-8">
             <InvitedEmails initialEmails={initialEmails.emails} token={token!} />
