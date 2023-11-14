@@ -175,8 +175,9 @@ export const stripeRouter = router({
     }),
 
   getCustomerPortalUrl: workspaceProcedure
+    .input(z.object({ returnUrl: z.string() }))
     .output(z.object({ url: z.string().url() }))
-    .query(async ({ ctx }) => {
+    .query(async ({ input, ctx }) => {
       // Get workspace
       const workspace = await prisma.workspace.findUnique({
         where: { id: ctx.workspaceId },
@@ -192,7 +193,7 @@ export const stripeRouter = router({
 
       const { url } = await stripeService.createPortalSession({
         customerId: workspace.stripeCustomerId,
-        returnUrl: workspaceService.getBillingUrl(workspace.identifier),
+        returnUrl: input.returnUrl,
       });
 
       return { url };
