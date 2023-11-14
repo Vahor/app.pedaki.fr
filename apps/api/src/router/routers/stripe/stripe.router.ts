@@ -111,8 +111,7 @@ export const stripeRouter = router({
                 region: pendingData.server.region,
               },
               server: {
-                size: pendingData.server.size,
-                environment_variables: {},
+                size: pendingData.server.size
               },
               database: {
                 size: pendingData.server.size,
@@ -154,7 +153,6 @@ export const stripeRouter = router({
               server: {
                 ...workspaceCreationData.server,
                 environment_variables: {
-                  ...workspaceCreationData.server.environment_variables,
                   AUTH_TOKEN: authToken,
                 },
               },
