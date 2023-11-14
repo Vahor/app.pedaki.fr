@@ -175,7 +175,7 @@ export const stripeRouter = router({
     }),
 
   getCustomerPortalUrl: workspaceProcedure
-    .input(z.object({ returnUrl: z.string() }))
+    .input(z.object({ returnUrl: z.string().url() }))
     .output(z.object({ url: z.string().url() }))
     .query(async ({ input, ctx }) => {
       // Get workspace
