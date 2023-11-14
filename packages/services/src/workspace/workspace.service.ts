@@ -1,4 +1,4 @@
-import { generateToken } from '@pedaki/common/utils/random';
+import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';

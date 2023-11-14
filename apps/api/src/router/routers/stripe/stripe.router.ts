@@ -1,5 +1,5 @@
 import { prisma } from '@pedaki/db';
-import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError';
+import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
