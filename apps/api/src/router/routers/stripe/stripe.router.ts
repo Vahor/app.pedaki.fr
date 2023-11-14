@@ -9,7 +9,7 @@ import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { router, stripeProcedure } from '../../trpc.ts';
+import { router, stripeProcedure, workspaceProcedure } from '../../trpc.ts';
 
 export const stripeRouter = router({
   webhook: stripeProcedure
@@ -171,5 +171,32 @@ export const stripeRouter = router({
           // Sent each billing interval if there is an issue with your customer’s payment method.
           break;
       }
+    }),
+
+  getCustomerPortalUrl: workspaceProcedure
+    .output(z.object({ url: z.string().url() }))
+    .query(async ({ ctx }) => {
+      // Get workspace
+      const workspace = await prisma.workspace.findUnique({
+        where: { id: ctx.workspaceId },
+        select: {
+          identifier: true,
+          stripeCustomerId: true,
+        },
+      });
+
+      if (!workspace || !workspace.identifier) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'NOT_FOUND',
+        });
+      }
+
+      const { url } = await stripeService.createPortalSession({
+        customerId: workspace.stripeCustomerId,
+        returnUrl: workspaceService.getBillingUrl(workspace.identifier),
+      });
+
+      return { url };
     }),
 });
