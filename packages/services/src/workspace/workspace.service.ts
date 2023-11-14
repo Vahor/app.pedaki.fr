@@ -1,8 +1,10 @@
+import { generateToken } from '@pedaki/common/utils/random';
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
-import { ProductType } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
+import { ProductType } from '@prisma/client';
+
 
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
@@ -79,7 +81,7 @@ class WorkspaceService {
       currentPeriodStart: Date;
       currentPeriodEnd: Date;
     };
-  }): Promise<{ workspaceId: string; subscriptionId: number }> {
+  }): Promise<{ workspaceId: string; subscriptionId: number; authToken: string }> {
     console.log(`Creating workspace (database) '${workspace.identifier}'...`);
     const { id, subscriptions } = await prisma.workspace.create({
       data: {
@@ -118,26 +120,37 @@ class WorkspaceService {
     });
     const subscriptionId = subscriptions[0]!.id;
 
-    console.log('Updating workspace creation data on subscription...');
+    console.log('Updating workspace creation data on subscription and generating token...');
+    // Create token for the workspace
+    const token = generateToken();
 
-    // Now that we have our ids, we can update the workspace subscription with the complete creation data
-    await prisma.workspaceSubscription.update({
-      where: {
-        id: subscriptionId,
-      },
-      data: {
-        workspaceCreationData: {
-          version: WORKSPACE_CREATION_METADATA_VERSION,
-          ...workspace.creationData,
-          workspace: {
-            identifier: workspace.identifier,
-            subscriptionId,
-          },
-        } as Prisma.JsonObject,
-      },
-    });
+    await prisma.$transaction([
+      // Insert token
+      prisma.workspaceToken.create({
+        data: {
+          token,
+          workspaceId: id,
+        },
+      }),
+      // Update subscription
+      prisma.workspaceSubscription.update({
+        where: {
+          id: subscriptionId,
+        },
+        data: {
+          workspaceCreationData: {
+            version: WORKSPACE_CREATION_METADATA_VERSION,
+            ...workspace.creationData,
+            workspace: {
+              identifier: workspace.identifier,
+              subscriptionId,
+            },
+          } as Prisma.JsonObject,
+        },
+      }),
+    ]);
 
-    return { workspaceId: id, subscriptionId };
+    return { workspaceId: id, subscriptionId, authToken: token };
   }
 
   async updateWorkspaceSubscriptionStripeData({

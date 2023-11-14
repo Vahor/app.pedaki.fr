@@ -28,12 +28,19 @@ const BASE_PARAMETERS = {
   },
 } as const;
 
-const stackParameters = (subscriptionId: number) => ({
+const stackParameters = (subscriptionId: number, authToken: string) => ({
   ...BASE_PARAMETERS,
   workspace: {
     ...BASE_PARAMETERS.workspace,
     subscriptionId,
   },
+  server: {
+    ...BASE_PARAMETERS.server,
+    environment_variables: {
+      ...BASE_PARAMETERS.server.environment_variables,
+      AUTH_TOKEN: authToken,
+    },
+  }
 });
 
 const main = async () => {
@@ -45,16 +52,17 @@ const main = async () => {
     await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
 
   let subscriptionId: number;
+  let authToken = ""
 
   if (previousSubscriptionId) {
     console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
-    await resourceService.deleteStack(stackParameters(previousSubscriptionId));
+    await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
     subscriptionId = previousSubscriptionId;
 
     // TODO: renew subscription and update resources
   } else {
     console.log('No previous subscription found, creating a new one');
-    const { subscriptionId: newSubscriptionId } = await workspaceService.createWorkspace({
+    const { subscriptionId: newSubscriptionId, authToken: newAuthToken } = await workspaceService.createWorkspace({
       workspace: {
         creationData: BASE_PARAMETERS,
         identifier: WORKSPACE_IDENTIFIER,
@@ -69,9 +77,10 @@ const main = async () => {
       },
     });
     subscriptionId = newSubscriptionId;
+    authToken = newAuthToken;
   }
 
-  await resourceService.upsertStack(stackParameters(subscriptionId));
+  await resourceService.upsertStack(stackParameters(subscriptionId, authToken));
 
   console.log("Finished cron 'cron-demo-community'");
 };
