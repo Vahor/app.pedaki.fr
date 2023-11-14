@@ -61,3 +61,11 @@ jobs:
       - name: Run typecheck (packages)
         if: always()
         run: pnpm typecheck  --filter="./packages/*"
+
+      - name: Run tests
+        if: always()
+        run: pnpm test:coverage
+
+      - name: 'Report Coverage'
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2

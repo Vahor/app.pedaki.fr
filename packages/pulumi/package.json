@@ -11,7 +11,9 @@
     "lint": "eslint . --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "typecheck": "tsc --noEmit --declaration"
+    "typecheck": "tsc --noEmit --declaration",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "publishConfig": {
     "directory": "dist"
