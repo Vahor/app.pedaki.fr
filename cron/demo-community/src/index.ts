@@ -28,20 +28,21 @@ const BASE_PARAMETERS = {
   },
 } as const;
 
-const stackParameters = (subscriptionId: number, authToken: string) => ({
-  ...BASE_PARAMETERS,
-  workspace: {
-    ...BASE_PARAMETERS.workspace,
-    subscriptionId,
-  },
-  server: {
-    ...BASE_PARAMETERS.server,
-    environment_variables: {
-      ...BASE_PARAMETERS.server.environment_variables,
-      AUTH_TOKEN: authToken,
+const stackParameters = (subscriptionId: number, authToken: string) =>
+  ({
+    ...BASE_PARAMETERS,
+    workspace: {
+      ...BASE_PARAMETERS.workspace,
+      subscriptionId,
     },
-  }
-});
+    server: {
+      ...BASE_PARAMETERS.server,
+      environment_variables: {
+        ...BASE_PARAMETERS.server.environment_variables,
+        AUTH_TOKEN: authToken,
+      },
+    },
+  }) as const;
 
 const main = async () => {
   console.log("Starting cron 'cron-demo-community'");
@@ -52,7 +53,7 @@ const main = async () => {
     await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
 
   let subscriptionId: number;
-  let authToken = ""
+  let authToken = '';
 
   if (previousSubscriptionId) {
     console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
@@ -62,20 +63,21 @@ const main = async () => {
     // TODO: renew subscription and update resources
   } else {
     console.log('No previous subscription found, creating a new one');
-    const { subscriptionId: newSubscriptionId, authToken: newAuthToken } = await workspaceService.createWorkspace({
-      workspace: {
-        creationData: BASE_PARAMETERS,
-        identifier: WORKSPACE_IDENTIFIER,
-        email: 'developers@pedaki.fr',
-        name: 'Demo',
-      },
-      subscription: {
-        subscriptionId: 'sub_00000000000000',
-        customerId: 'cus_00000000000000',
-        currentPeriodStart: new Date(),
-        currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
-      },
-    });
+    const { subscriptionId: newSubscriptionId, authToken: newAuthToken } =
+      await workspaceService.createWorkspace({
+        workspace: {
+          creationData: BASE_PARAMETERS,
+          identifier: WORKSPACE_IDENTIFIER,
+          email: 'developers@pedaki.fr',
+          name: 'Demo',
+        },
+        subscription: {
+          subscriptionId: 'sub_00000000000000',
+          customerId: 'cus_00000000000000',
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+        },
+      });
     subscriptionId = newSubscriptionId;
     authToken = newAuthToken;
   }

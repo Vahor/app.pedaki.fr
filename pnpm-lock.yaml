@@ -45,6 +45,9 @@ importers:
       execa:
         specifier: ^8.0.1
         version: 8.0.1
+      expect-type:
+        specifier: ^0.17.3
+        version: 0.17.3
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
@@ -5271,6 +5274,11 @@ packages:
     resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
     engines: {node: '>=6'}
     dev: false
+
+  /expect-type@0.17.3:
+    resolution: {integrity: sha512-K0ZdZJ97jiAtaOwhEHHz/f0N6Xbj5reRz5g6+5BO7+OvqQ7PMQz0/c8bFSJs1zPotNJL5HJaC6t6lGPEAtGyOw==}
+    engines: {node: '>=12.0.0'}
+    dev: true
 
   /exponential-backoff@3.1.1:
     resolution: {integrity: sha512-dX7e/LHVJ6W3DE1MHWi9S1EYzDESENfLrYohG2G++ovZrYOkm4Knwa0mc1cn84xJOR4KEU0WSchhLbd0UklbHw==}

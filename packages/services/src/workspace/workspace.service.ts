@@ -5,7 +5,6 @@ import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js'
 import type { Prisma } from '@prisma/client';
 import { ProductType } from '@prisma/client';
 
-
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
 class WorkspaceService {
@@ -73,7 +72,9 @@ class WorkspaceService {
     subscription,
   }: {
     workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier' | 'email'> & {
-      creationData: Omit<WorkspaceData, 'workspace'>;
+      creationData: Omit<WorkspaceData, 'workspace' | 'server'> & {
+        server: Omit<WorkspaceData['server'], 'environment_variables'>;
+      };
     };
     subscription: {
       customerId: string;

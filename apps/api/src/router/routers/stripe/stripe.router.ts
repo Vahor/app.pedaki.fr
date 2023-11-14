@@ -122,20 +122,21 @@ export const stripeRouter = router({
               },
             };
 
-            const { workspaceId, subscriptionId } = await workspaceService.createWorkspace({
-              workspace: {
-                name: pendingData.name,
-                identifier: pendingData.identifier,
-                email: pendingData.email,
-                creationData: workspaceCreationData,
-              },
-              subscription: {
-                customerId: data.customer,
-                subscriptionId: data.subscription,
-                currentPeriodStart: new Date(subscription.current_period_start * 1000),
-                currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-              },
-            });
+            const { workspaceId, subscriptionId, authToken } =
+              await workspaceService.createWorkspace({
+                workspace: {
+                  name: pendingData.name,
+                  identifier: pendingData.identifier,
+                  email: pendingData.email,
+                  creationData: workspaceCreationData,
+                },
+                subscription: {
+                  customerId: data.customer,
+                  subscriptionId: data.subscription,
+                  currentPeriodStart: new Date(subscription.current_period_start * 1000),
+                  currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+                },
+              });
 
             // Update the pending workspace creation
             await prisma.pendingWorkspaceCreation.update({
@@ -150,6 +151,13 @@ export const stripeRouter = router({
 
             void resourceService.safeCreateStack({
               ...workspaceCreationData,
+              server: {
+                ...workspaceCreationData.server,
+                environment_variables: {
+                  ...workspaceCreationData.server.environment_variables,
+                  AUTH_TOKEN: authToken,
+                },
+              },
               workspace: {
                 identifier: pendingData.identifier,
                 subscriptionId,

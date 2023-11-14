@@ -16,7 +16,11 @@ export const ServerResourceSchema = ResourceSchema.merge(
     provider: ServerProviderModel,
     type: z.enum(['server']),
     size: z.enum(['small']),
-    environment_variables: z.record(z.string()),
+    environment_variables: z
+      .object({
+        AUTH_TOKEN: z.string(),
+      })
+      .catchall(z.string()),
   }),
 );
 export type ServerResource = z.infer<typeof ServerResourceSchema>;
