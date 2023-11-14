@@ -111,7 +111,7 @@ export const stripeRouter = router({
                 region: pendingData.server.region,
               },
               server: {
-                size: pendingData.server.size
+                size: pendingData.server.size,
               },
               database: {
                 size: pendingData.server.size,

@@ -67,6 +67,10 @@ class WorkspaceService {
     return subscription?.id ?? null;
   }
 
+  generateAuthToken() {
+    return generateToken();
+  }
+
   async createWorkspace({
     workspace,
     subscription,
@@ -123,7 +127,7 @@ class WorkspaceService {
 
     console.log('Updating workspace creation data on subscription and generating token...');
     // Create token for the workspace
-    const token = generateToken();
+    const token = this.generateAuthToken();
 
     await prisma.$transaction([
       // Insert token
@@ -169,6 +173,7 @@ class WorkspaceService {
     cancelAt?: Date;
     canceledAt?: Date;
   }) {
+    console.log(`Updating workspace subscription '${subscriptionId}'...`);
     await prisma.workspaceSubscription.update({
       where: {
         id: subscriptionId,

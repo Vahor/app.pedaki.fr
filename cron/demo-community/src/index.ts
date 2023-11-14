@@ -60,7 +60,14 @@ const main = async () => {
     await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
     subscriptionId = previousSubscriptionId;
 
-    // TODO: renew subscription and update resources
+    authToken = workspaceService.generateAuthToken();
+
+    // Update subscription
+    await workspaceService.updateWorkspaceSubscriptionStripeData({
+      subscriptionId,
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+    });
   } else {
     console.log('No previous subscription found, creating a new one');
     const { subscriptionId: newSubscriptionId, authToken: newAuthToken } =

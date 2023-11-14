@@ -1,6 +1,6 @@
+import { expectTypeOf } from 'expect-type';
 import { describe, expect, test } from 'vitest';
 import { redacted, REPLACEMENT } from './redacted.ts';
-import {expectTypeOf} from 'expect-type'
 
 describe('redacted', () => {
   test('ignore non sensitive data', () => {
@@ -14,5 +14,4 @@ describe('redacted', () => {
     expect(result).toEqual({ AUTH_TOKEN: REPLACEMENT });
     expectTypeOf(result).toEqualTypeOf<{ AUTH_TOKEN: string }>();
   });
-
 });

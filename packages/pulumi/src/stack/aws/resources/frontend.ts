@@ -68,7 +68,9 @@ export class WebService extends pulumi.ComponentResource {
 
     const envFileContent = pulumi.interpolate`
 ${rawEnvFileContent}
-export NEXT_PUBLIC_TESTVALUE='host: ${args.dbHost} - user: ${args.dbUser} - pass: ${args.dbPassword} - name: ${args.dbName} - ${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
+export NEXT_PUBLIC_TESTVALUE='host: ${args.dbHost} - user: ${args.dbUser} - pass: ${
+      args.dbPassword
+    } - name: ${args.dbName} - ${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
 export SECRET_PRIVATE_VARIABLE='${args.dbName} - ${
       args.stackParameters.server.environment_variables.IS_DEMO ? 'demo' : 'not demo'
     }'
