@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
@@ -186,10 +187,7 @@ export const stripeRouter = router({
       });
 
       if (!workspace || !workspace.identifier) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new WorkspaceNotFoundError();
       }
 
       const { url } = await stripeService.createPortalSession({
