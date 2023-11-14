@@ -60,7 +60,16 @@ const main = async () => {
     await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
     subscriptionId = previousSubscriptionId;
 
-    authToken = workspaceService.generateAuthToken();
+    // Update token
+    const { id } = await prisma.workspace.findUniqueOrThrow({
+      where: {
+        identifier: WORKSPACE_IDENTIFIER,
+      },
+      select: {
+        id: true,
+      },
+    });
+    authToken = await workspaceService.updateWorkspaceToken({ workspaceId: id });
 
     // Update subscription
     await workspaceService.updateWorkspaceSubscriptionStripeData({

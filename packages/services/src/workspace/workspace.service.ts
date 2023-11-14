@@ -67,10 +67,6 @@ class WorkspaceService {
     return subscription?.id ?? null;
   }
 
-  generateAuthToken() {
-    return generateToken();
-  }
-
   async createWorkspace({
     workspace,
     subscription,
@@ -127,35 +123,56 @@ class WorkspaceService {
 
     console.log('Updating workspace creation data on subscription and generating token...');
     // Create token for the workspace
-    const token = this.generateAuthToken();
+    const token = await this.updateWorkspaceToken({ workspaceId: id });
 
-    await prisma.$transaction([
-      // Insert token
-      prisma.workspaceToken.create({
-        data: {
-          token,
-          workspaceId: id,
-        },
-      }),
-      // Update subscription
-      prisma.workspaceSubscription.update({
-        where: {
-          id: subscriptionId,
-        },
-        data: {
-          workspaceCreationData: {
-            version: WORKSPACE_CREATION_METADATA_VERSION,
-            ...workspace.creationData,
-            workspace: {
-              identifier: workspace.identifier,
-              subscriptionId,
-            },
-          } as Prisma.JsonObject,
-        },
-      }),
-    ]);
+    // Update subscription
+    await prisma.workspaceSubscription.update({
+      where: {
+        id: subscriptionId,
+      },
+      data: {
+        workspaceCreationData: {
+          version: WORKSPACE_CREATION_METADATA_VERSION,
+          ...workspace.creationData,
+          workspace: {
+            identifier: workspace.identifier,
+            subscriptionId,
+          },
+        } as Prisma.JsonObject,
+      },
+    });
 
     return { workspaceId: id, subscriptionId, authToken: token };
+  }
+
+  async updateWorkspaceToken({ workspaceId }: { workspaceId: string }) {
+    console.log(`Updating workspace token '${workspaceId}'...`);
+    const token = this.#generateAuthToken();
+    await prisma.workspaceToken.update({
+      where: {
+        workspaceId,
+      },
+      data: {
+        token,
+      },
+    });
+    return token;
+  }
+
+  async getWorkspaceId(identifier: string) {
+    console.log(`Getting workspace id for workspace '${identifier}'`);
+    const workspace = await prisma.workspace.findUnique({
+      where: {
+        identifier,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!workspace) {
+      throw new Error(`Workspace '${identifier}' not found`);
+    }
+    return workspace.id;
   }
 
   async updateWorkspaceSubscriptionStripeData({
@@ -186,6 +203,10 @@ class WorkspaceService {
         canceledAt,
       },
     });
+  }
+
+  #generateAuthToken() {
+    return generateToken();
   }
 }
 
