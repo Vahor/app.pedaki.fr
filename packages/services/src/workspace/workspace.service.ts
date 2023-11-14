@@ -146,15 +146,23 @@ class WorkspaceService {
   }
 
   async updateWorkspaceToken({ workspaceId }: { workspaceId: string }) {
-    console.log(`Updating workspace token '${workspaceId}'...`);
+    console.log(`Updating workspace (database) token '${workspaceId}'...`);
     const token = this.#generateAuthToken();
-    await prisma.workspaceToken.update({
+    await prisma.workspaceToken.upsert({
       where: {
         workspaceId,
       },
-      data: {
+      update: {
         token,
       },
+      create: {
+        token,
+        workspace: {
+          connect: {
+            id: workspaceId,
+          },
+        },
+      }
     });
     return token;
   }
