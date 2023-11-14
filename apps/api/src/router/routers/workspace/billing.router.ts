@@ -15,6 +15,7 @@ export const workspaceBillingRouter = router({
     .input(z.object({ token: z.string() }))
     .output(z.object({ url: z.string().url() }))
     .query(async ({ input }) => {
+      // TODO: user rights
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
       // Get workspace
