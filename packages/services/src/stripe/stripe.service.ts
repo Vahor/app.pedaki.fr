@@ -88,6 +88,15 @@ class StripeService {
       id: session.id,
     };
   }
+
+  async createPortalSession({ customerId, returnUrl }: { customerId: string; returnUrl: string }) {
+    const session = await this.stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: returnUrl,
+    });
+
+    return session;
+  }
 }
 
 const stripeService = new StripeService();

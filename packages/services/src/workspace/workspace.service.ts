@@ -7,8 +7,12 @@ import type { Prisma } from '@prisma/client';
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
 class WorkspaceService {
+  getBillingUrl(identifier: string) {
+    return `${this.getWorkspaceUrl(identifier)}/billing`;
+  }
+
   getHealthStatusUrl(identifier: string) {
-    return `https://${identifier}.pedaki.fr/api/health`;
+    return `${this.getWorkspaceUrl(identifier)}/api/health`;
   }
 
   getWorkspaceUrl(identifier: string) {
