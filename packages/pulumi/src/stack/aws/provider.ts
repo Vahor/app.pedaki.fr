@@ -67,7 +67,10 @@ export class AwsServerProvider implements StackProvider<'aws'> {
       },
     );
 
-    const encryptionKey = new key.EncryptionKey(`${params.identifier}-encryption-key`, {}, {});
+    // Keys generation
+    const encryptionKey = new key.EncryptionKey(`${params.identifier}-encryption-key`);
+    const passwordSalt = new key.EncryptionKey(`${params.identifier}-password-salt`);
+    const authSecret = new key.EncryptionKey(`${params.identifier}-auth-secret`);
 
     // Create an EC2 instance
     const server = new frontend.WebService(
@@ -79,6 +82,8 @@ export class AwsServerProvider implements StackProvider<'aws'> {
         dbUser: db.user,
         dbPassword: db.password,
         dbEncryptionKey: encryptionKey.key,
+        passwordSalt: passwordSalt.key,
+        authSecret: authSecret.key,
         vpcId: vpc.vpcId,
         subnetIds: vpc.subnetIds,
         securityGroupIds: vpc.feSecurityGroupIds,
@@ -86,7 +91,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
         tags,
       },
       {
-        dependsOn: [db, encryptionKey],
+        dependsOn: [db, encryptionKey, passwordSalt, authSecret],
       },
     );
 

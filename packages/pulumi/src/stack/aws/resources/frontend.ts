@@ -11,6 +11,8 @@ export interface WebServiceArgs {
   dbPassword: pulumi.Output<string | undefined>;
   dbPort: pulumi.Output<number>;
   dbEncryptionKey: string;
+  passwordSalt: string;
+  authSecret: string;
   vpcId: pulumi.Output<string>;
   subnetIds: pulumi.Output<string>[];
   securityGroupIds: pulumi.Output<string>[];
@@ -72,6 +74,9 @@ ${rawEnvFileContent}
 
 export DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslaccept=strict'
 export PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
+
+export PASSWORD_SALT='${args.passwordSalt}'
+export NEXTAUTH_SECRET='${args.authSecret}'
 
 export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
 `;
