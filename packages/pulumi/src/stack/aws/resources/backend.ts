@@ -1,6 +1,7 @@
 import { rds } from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import type { StackParameters } from '~/type.ts';
+import { generateKey } from '@47ng/cloak'
 
 export interface DbArgs {
   dbName: string;
