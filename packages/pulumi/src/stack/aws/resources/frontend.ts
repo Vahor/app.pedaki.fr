@@ -68,7 +68,9 @@ export class WebService extends pulumi.ComponentResource {
 
     const envFileContent = pulumi.interpolate`
 ${rawEnvFileContent}
-export NEXT_PUBLIC_TESTVALUE='${args.dbHost}'
+export NEXT_PUBLIC_TESTVALUE='host: ${args.dbHost} - user: ${args.dbUser} - pass: ${
+      args.dbPassword
+    } - name: ${args.dbName} - ${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
 export SECRET_PRIVATE_VARIABLE='${args.dbName} - ${
       args.stackParameters.server.environment_variables.IS_DEMO ? 'demo' : 'not demo'
     }'
@@ -129,6 +131,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 sudo service docker start
 sudo systemctl enable docker
+sudo systemctl start docker
 
 sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
 
@@ -146,6 +149,12 @@ sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose up -d
+
+sleep 30
+# If the service is not started, exit with an error
+if ! sudo /usr/local/bin/docker-compose ps | grep -q "Up"; then
+   sudo shutdown -r now
+fi
 `;
   };
 

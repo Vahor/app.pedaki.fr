@@ -8,7 +8,7 @@ export default defineConfig((options: Options) => ({
   entry: ['src/**/*.(tsx|ts|cjs)'],
   format: ['esm'], // ESM only as .js files are needed for build
   dts: process.env.NODE_ENV !== 'production',
-  sourcemap: false,
+  sourcemap: process.env.NODE_ENV !== 'production',
   minify: true,
   minifyWhitespace: true,
   keepNames: true,

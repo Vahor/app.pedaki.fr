@@ -47,6 +47,7 @@ RUN cp -r tmp/.prisma node_modules
 FROM base  AS runner
 WORKDIR /app
 
+# Install pulumi
 RUN curl -fsSL https://get.pulumi.com | sh
 ENV PATH="/root/.pulumi/bin:$PATH"
 
@@ -81,5 +82,10 @@ ENV NODE_ENV=production
 ENV SKIP_SERVER_ENV_CHECK=true
 
 EXPOSE $PORT
+
+RUN pulumi org set-default pedaki
+RUN pulumi plugin install resource aws
+RUN pulumi plugin install resource random
+RUN pulumi plugin install resource cloudflare
 
 CMD ["node", "dist/index.js"]

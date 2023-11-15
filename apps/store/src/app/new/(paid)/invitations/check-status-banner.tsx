@@ -1,39 +1,35 @@
 'use client';
 
 import InfoCallout from '@pedaki/design/ui/callout/InfoCallout';
+import { api } from '~/server/api/clients/client.ts';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 interface CheckStatusBannerProps {
-  healthUrl: string;
+  identifier: string;
   baseUrl: string;
 }
 
-export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ healthUrl, baseUrl }) => {
+export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ identifier, baseUrl }) => {
   const router = useRouter();
 
-  useEffect(() => {
-    if (!healthUrl) return;
+  const { data } = api.workspace.data.getStatus.useQuery(
+    { identifier: identifier },
+    {
+      refetchInterval: data => {
+        if (data?.current === 'ACTIVE') {
+          return false;
+        }
+        return 40_000;
+      },
+    },
+  );
 
-    const interval = setInterval(async () => {
-      await fetch(healthUrl, {
-        method: 'HEAD',
-      })
-        .then(response => {
-          // TODO: do more checks ?
-          if (response.ok) {
-            clearInterval(interval);
-            router.push('/new/ready?url=' + encodeURIComponent(baseUrl));
-          }
-        })
-        .catch(() => {
-          // do nothing
-        });
-    }, 10_000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [baseUrl, healthUrl, router]);
+  useEffect(() => {
+    if (data?.current === 'ACTIVE') {
+      router.push('/new/ready?url=' + encodeURIComponent(baseUrl));
+    }
+  }, [data, router, baseUrl]);
 
   return (
     <InfoCallout>

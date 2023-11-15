@@ -1,11 +1,11 @@
 import { prisma } from '@pedaki/db';
+import { NotPaidYetError, PendingNotFoundError } from '@pedaki/models/errors/index.js';
 import { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { products } from '@pedaki/services/stripe/products.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
-import type { Prisma } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
+import { ProductType } from '@prisma/client';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
 
@@ -19,33 +19,26 @@ export const workspaceReservationRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      try {
-        const pendingId = await pendingWorkspaceService.create(input);
-        const payment = await stripeService.createPayment({
-          product: products.hosted,
-          metadata: {
-            workspaceName: input.name,
-            pendingId,
-          },
-          customer: {
-            email: input.email,
-          },
-        });
-        await pendingWorkspaceService.linkStripePayment(pendingId, payment.id);
+      const pendingId = await pendingWorkspaceService.create(input);
+      const payment = await stripeService.createPayment({
+        product: {
+          payment_type: products[ProductType.HOSTING].payment_type,
+          priceId: products[ProductType.HOSTING].priceId[input.subscriptionInterval],
+        },
+        metadata: {
+          workspaceName: input.name,
+          pendingId,
+        },
+        customer: {
+          email: input.email,
+        },
+      });
+      await pendingWorkspaceService.linkStripePayment(pendingId, payment.id);
 
-        return {
-          id: pendingId,
-          stripeUrl: payment.url,
-        };
-      } catch (error) {
-        if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'ALREADY_EXISTS',
-          });
-        }
-        throw error;
-      }
+      return {
+        id: pendingId,
+        stripeUrl: payment.url,
+      };
     }),
 
   getOne: publicProcedure
@@ -64,10 +57,7 @@ export const workspaceReservationRouter = router({
       });
 
       if (!pending) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       return JSON.parse(pending.data) as z.infer<typeof CreateWorkspaceInput>;
@@ -95,10 +85,7 @@ export const workspaceReservationRouter = router({
       });
 
       if (!pending) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       return {
@@ -106,7 +93,7 @@ export const workspaceReservationRouter = router({
       };
     }),
 
-  status: publicProcedure
+  paidStatus: publicProcedure
     .input(
       z.object({
         id: z.string().cuid(),
@@ -129,10 +116,7 @@ export const workspaceReservationRouter = router({
       });
 
       if (!pending) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       return {
@@ -161,17 +145,11 @@ export const workspaceReservationRouter = router({
         },
       });
       if (!pending?.identifier || !pending.workspaceId) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_FOUND',
-        });
+        throw new PendingNotFoundError();
       }
 
       if (!pending.paidAt) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NOT_PAID',
-        });
+        throw new NotPaidYetError();
       }
 
       return pendingWorkspaceService.generateToken({

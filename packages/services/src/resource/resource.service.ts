@@ -1,13 +1,10 @@
 import { prisma } from '@pedaki/db';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
-import type {
-  DatabaseResourceInput,
-  DnsResourceInput,
-  ServerResourceInput,
-  VpcResourceInput,
-} from '@pedaki/models/resource/resource.model.js';
+import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
+import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
+import { backOff } from 'exponential-backoff';
 
 class ResourceService {
   private getProvider(providerName: ServerProvider) {
@@ -15,25 +12,11 @@ class ResourceService {
     if (!provider) {
       throw new TRPCError({ code: 'NOT_FOUND', message: `Provider ${providerName} not found` });
     }
+    console.log(`Using provider ${providerName}`);
     return provider;
   }
 
-  async deleteStack({
-    workspace,
-    vpc,
-    server,
-    dns,
-    database,
-  }: {
-    workspace: {
-      identifier: string;
-      subscriptionId: number;
-    };
-    vpc: VpcResourceInput;
-    server: ServerResourceInput;
-    database: DatabaseResourceInput;
-    dns: DnsResourceInput;
-  }) {
+  async deleteStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
     console.log(`Deleting stack for workspace '${workspace.identifier}'...`);
     const provider = this.getProvider(vpc.provider);
 
@@ -45,17 +28,75 @@ class ResourceService {
       dns,
     });
 
-    console.log(`Stack deleted (provider) for workspace '${workspace.identifier}'`);
+    console.log(
+      `Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.identifier}'`,
+    );
 
     console.log(`Deleting database resources for workspace '${workspace.identifier}'...`);
-    await prisma.workspaceResource.deleteMany({
+    const deleteResponse = await prisma.workspaceResource.deleteMany({
       where: {
         subscriptionId: workspace.subscriptionId,
       },
     });
-    console.log(`Database resources deleted for workspace '${workspace.identifier}'`);
+    console.log(
+      `Database resources deleted for workspace '${workspace.identifier}' (deleted: ${deleteResponse.count})`,
+    );
 
     return null;
+  }
+
+  /**
+   * Create a stack if it doesn't exist.
+   * And retry if it fails.
+   */
+  async safeCreateStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+    console.log(`Creating stack for workspace '${workspace.identifier}'...`);
+    // First check that there is no resource with the same identifier
+    const existingResource = await prisma.workspaceResource.count({
+      where: {
+        subscriptionId: workspace.subscriptionId,
+      },
+    });
+
+    if (existingResource > 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'stack_already_exists',
+      });
+    }
+
+    let shouldDeleteStack = false;
+
+    await backOff(
+      async () => {
+        if (shouldDeleteStack) {
+          await this.deleteStack({ workspace, vpc, server, dns, database });
+        }
+        await this.upsertStack({ workspace, vpc, server, dns, database });
+      },
+      {
+        startingDelay: 60_000,
+        numOfAttempts: 4,
+        retry: (e: Error, attempt) => {
+          shouldDeleteStack = false;
+          // TODO: handle error and cancel retry if it's not a retryable error
+          console.error({
+            error: e,
+            message: e.message,
+            code: e.name,
+          });
+          console.log(`Retrying (${attempt}/4)...`);
+
+          // ConcurrentUpdateError: code: -2
+          if (e.name === ConcurrentUpdateError) {
+            // There is already a stack being created, we just have to wait for it to finish
+            return false;
+          }
+          shouldDeleteStack = true;
+          return true;
+        },
+      },
+    );
   }
 
   /**
@@ -72,22 +113,7 @@ class ResourceService {
    * @param dns Customization for the DNS (subdomain, etc.)
    * @param database Customization for the database (size, etc.)
    */
-  async upsertStack({
-    workspace,
-    vpc,
-    server,
-    dns,
-    database,
-  }: {
-    workspace: {
-      identifier: string;
-      subscriptionId: number;
-    };
-    vpc: VpcResourceInput;
-    server: ServerResourceInput;
-    database: DatabaseResourceInput;
-    dns: DnsResourceInput;
-  }) {
+  async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
     console.log(`Upserting stack for workspace '${workspace.identifier}'...`);
     const provider = this.getProvider(vpc.provider);
 
@@ -132,6 +158,8 @@ class ResourceService {
         });
       }),
     ]);
+
+    console.log(`Database resources upserted for workspace '${workspace.identifier}'`);
 
     return null;
   }

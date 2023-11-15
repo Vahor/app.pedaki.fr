@@ -36,6 +36,7 @@ const FormWrapper = () => {
       subscriptionInterval: 'yearly',
       server: {
         provider: 'aws',
+        size: 'small',
       },
       // TODO: remove this
       email: 'test@email.com',

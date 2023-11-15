@@ -5,6 +5,8 @@ import { z } from 'zod';
 const restrictedIdentifiers = [
   'api',
   'admin',
+  'demo',
+  'test',
   'store',
   'auth',
   'app',
@@ -43,7 +45,6 @@ export const CreateWorkspaceInput = z.object({
     },
   ),
 });
-
 export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInput>;
 
 export const CreateWorkspaceResponse = z.object({

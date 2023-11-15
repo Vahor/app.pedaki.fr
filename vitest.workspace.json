@@ -1,0 +1,4 @@
+[
+  "apps/*/vitest.config.js",
+  "packages/*/vitest.config.js"
+]

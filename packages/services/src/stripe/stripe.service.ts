@@ -12,6 +12,16 @@ class StripeService {
     });
   }
 
+  async getSubscriptionInfo(subscriptionId: string) {
+    const subscription = await this.stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ['default_payment_method'],
+    });
+
+    console.log(`Subscription info for ${subscriptionId}`, subscription);
+
+    return subscription;
+  }
+
   async getCustomerFromPayment(paymentId: string) {
     const payment = await this.stripe.paymentIntents.retrieve(paymentId, {
       expand: ['customer'],
@@ -44,9 +54,11 @@ class StripeService {
         // TODO: do we need this?
         enabled: false,
       },
+
       customer: customer.id,
       customer_email: customer.email,
       customer_creation: isSubscription ? undefined : 'if_required',
+
       // 30 min expiration
       expires_at: Math.floor(Date.now() / 1000) + 60 * 30,
       mode: isSubscription ? 'subscription' : 'payment',
@@ -56,8 +68,7 @@ class StripeService {
             // Invoices are automatically created for subscription
             enabled: true,
           },
-      metadata: metadata,
-      //
+
       success_url: `${env.STORE_URL}/new/pending?token=${metadata.pendingId}`,
       cancel_url: `${env.STORE_URL}/new`,
       payment_intent_data: isSubscription
@@ -68,12 +79,23 @@ class StripeService {
             receipt_email: customer.email,
             statement_descriptor: `pedaki`,
           },
+
+      metadata: metadata,
     });
 
     return {
       url: session.url!,
       id: session.id,
     };
+  }
+
+  async createPortalSession({ customerId, returnUrl }: { customerId: string; returnUrl: string }) {
+    const session = await this.stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: returnUrl,
+    });
+
+    return session;
   }
 }
 

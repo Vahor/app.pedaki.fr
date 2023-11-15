@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -10,6 +11,13 @@ datasource db {
   url      = env("DATABASE_URL")
 
   relationMode = "prisma"
+}
+
+enum Status {
+  UNDEFINED
+  CREATING
+  DELETING
+  ACTIVE
 }
 
 model Workspace {
@@ -31,6 +39,9 @@ model Workspace {
   // The user responsible for the workspace
   stripeCustomerId String @map("stripe_customer_id")
   mainEmail        String @map("main_email") @db.VarChar(255)
+
+  expectedStatus Status @default(UNDEFINED) @map("expected_status") // Changed by the backend
+  currentStatus  Status @default(UNDEFINED) @map("current_status") // Should be only changed with an information from the client
 
   members WorkspaceMember[]
 
@@ -92,25 +103,39 @@ model PendingWorkspaceInvite {
   @@map("pending_workspace_invite")
 }
 
+// Type can be "extra_support", "scaler" etc.
+// This type should map to a stripe product in our code
+enum ProductType {
+  HOSTING
+}
+
 // To get the current subscription, we can just get the one with the latest paidUntil date
 model WorkspaceSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  // Type can be "extra_support", "scaler" etc.
-  // This type should map to a product on our code
-  // and in our code we map it to a stripe product
-  type String
+  type ProductType
 
   // Null if it's a free subscription (not linked to stripe)
   stripeSubscriptionId String? @unique @map("stripe_subscription_id")
 
-  paidUntil DateTime            @map("paid_until")
+  // Start of the current period that the subscription has been invoiced for. Null if it's a free subscription.
+  currentPeriodStart DateTime? @map("current_period_start")
+  // End of the current period that the subscription has been invoiced for. At the end of this period, a new invoice will be created. Null if it's a free subscription.
+  currentPeriodEnd   DateTime? @map("current_period_end")
+  // If the subscription has ended, the date the subscription ended.
+  endedAt            DateTime? @map("ended_at")
+  // A date in the future at which the subscription will automatically get canceled.
+  cancelAt           DateTime? @map("cancel_at")
+  // If the subscription has been canceled, the date of that cancellation. If the subscription was canceled with cancel_at_period_end, canceled_at will reflect the time of the most recent update request, not the end of the subscription period when the subscription is automatically moved to a canceled state.
+  canceledAt         DateTime? @map("canceled_at")
+
   resources WorkspaceResource[]
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId String    @db.VarChar(25)
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId           String    @db.VarChar(25)
+  workspaceCreationData Json      @map("workspace_creation_data")
 
   @@index([workspaceId])
   @@map("workspace_subscriptions")
@@ -136,7 +161,7 @@ model WorkspaceResource {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  region   String? @db.VarChar(25) // Null if it's a global resource
+  region String? @db.VarChar(25) // Null if it's a global resource
 
   provider String @db.VarChar(25) // aws, cloudflare, etc
   type     String @db.VarChar(25) // server, dns, database etc

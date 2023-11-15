@@ -1,9 +1,14 @@
+import { connect } from '@planetscale/database';
+import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 import { PrismaClient } from '@prisma/client';
 import { fieldEncryptionExtension } from 'prisma-field-encryption';
 import { env } from './env.ts';
 
 const prismaClientSingleton = () => {
+  const connection = connect({ url: env.DATABASE_URL });
+  const adapter = new PrismaPlanetScale(connection);
   const client = new PrismaClient({
+    adapter,
     log: env.NODE_ENV === 'development' ? ['query', 'error', 'warn', 'info'] : ['error'],
   });
   return client.$extends(

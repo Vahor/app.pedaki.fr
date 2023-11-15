@@ -19,7 +19,7 @@ const WaitingForPayment: React.FC<PaymentPendingIndicatorProps> = ({ status, pen
 
   const setPaymentUrl = useWorkspaceFormStore(store => store.setPaymentUrl);
 
-  const { data } = api.workspace.reservation.status.useQuery(
+  const { data } = api.workspace.reservation.paidStatus.useQuery(
     { id: pendingId },
     {
       initialData: { paid: initialIsPaid },

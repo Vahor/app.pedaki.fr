@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
@@ -8,12 +9,11 @@ class InvitationService {
       where: { id: workspaceId },
       select: { mainEmail: true },
     });
+
     if (!workspace) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'NOT_FOUND',
-      });
+      throw new WorkspaceNotFoundError();
     }
+
     if (workspace.mainEmail === email) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
