@@ -4,7 +4,6 @@ import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { env } from '~/env.ts';
 
-
 const WORKSPACE_IDENTIFIER = 'demo';
 
 const BASE_PARAMETERS = {
@@ -62,7 +61,9 @@ const main = async () => {
       console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
       await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
     } else {
-      console.log(`DELETE_OLD_STACK is false, keeping previous stack for subscription ${previousSubscriptionId}`);
+      console.log(
+        `DELETE_OLD_STACK is false, keeping previous stack for subscription ${previousSubscriptionId}`,
+      );
     }
 
     subscriptionId = previousSubscriptionId;
