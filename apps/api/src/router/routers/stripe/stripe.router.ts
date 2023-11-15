@@ -126,7 +126,10 @@ export const stripeRouter = router({
                 workspace: {
                   name: pendingData.name,
                   identifier: pendingData.identifier,
-                  email: pendingData.email,
+                  billing: {
+                    name: pendingData.billing.name,
+                    email: pendingData.billing.email,
+                  },
                   creationData: workspaceCreationData,
                 },
                 subscription: {
@@ -153,7 +156,9 @@ export const stripeRouter = router({
               server: {
                 ...workspaceCreationData.server,
                 environment_variables: {
-                  AUTH_TOKEN: authToken,
+                  PEDAKI_AUTH_TOKEN: authToken,
+                  PEDAKI_BILLING_EMAIL: pendingData.billing.email,
+                  PEDAKI_BILLING_NAME: pendingData.billing.name,
                 },
               },
               workspace: {
@@ -193,7 +198,7 @@ export const stripeRouter = router({
         },
       });
 
-      if (!workspace || !workspace.identifier) {
+      if (!workspace?.identifier) {
         throw new WorkspaceNotFoundError();
       }
 

@@ -33,8 +33,12 @@ export const CreateWorkspaceInput = z.object({
         message: 'RESTRICTED_IDENTIFIER',
       },
     ),
-  email: z.string().email(),
-  subscriptionInterval: z.enum(['monthly', 'yearly']),
+
+  billing: z.object({
+    email: z.string().email(),
+    name: z.string(),
+    subscriptionInterval: z.enum(['monthly', 'yearly']),
+  }),
 
   server: ServerResourceSchema.pick({ region: true, provider: true, size: true }).refine(
     value => {

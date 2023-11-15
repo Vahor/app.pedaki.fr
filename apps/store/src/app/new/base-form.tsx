@@ -62,7 +62,7 @@ export function BaseForm({ form }: { form: FormType }) {
       />
       <FormField
         control={form.control}
-        name="email"
+        name="billing.email"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Email</FormLabel>
@@ -73,6 +73,27 @@ export function BaseForm({ form }: { form: FormType }) {
                 type="email"
                 autoCapitalize="none"
                 autoComplete="email"
+                autoCorrect="off"
+                disabled={isSubmitting}
+                {...field}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="billing.name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Name</FormLabel>
+            <FormMessage />
+            <FormControl>
+              <Input
+                placeholder="name@example.com"
+                type="text"
+                autoCapitalize="none"
+                autoComplete="username"
                 autoCorrect="off"
                 disabled={isSubmitting}
                 {...field}

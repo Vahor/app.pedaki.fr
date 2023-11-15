@@ -33,13 +33,17 @@ const FormWrapper = () => {
     mode: 'onChange',
     defaultValues: {
       cgu: false,
-      subscriptionInterval: 'yearly',
+      billing: {
+        subscriptionInterval: 'monthly',
+        // TODO: remove this
+        email: 'test@email.com',
+        name: "jaune d'oeuf",
+      },
       server: {
         provider: 'aws',
         size: 'small',
       },
       // TODO: remove this
-      email: 'test@email.com',
       identifier: 'mewo',
       name: 'test',
     },
