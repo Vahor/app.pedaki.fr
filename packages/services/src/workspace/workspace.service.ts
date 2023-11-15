@@ -5,7 +5,6 @@ import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js'
 import type { Prisma } from '@prisma/client';
 import { ProductType } from '@prisma/client';
 
-
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
 class WorkspaceService {
