@@ -2,6 +2,7 @@ import { prisma } from '@pedaki/db';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
+import { env } from '~/env.ts';
 
 const WORKSPACE_IDENTIFIER = 'demo';
 
@@ -56,8 +57,15 @@ const main = async () => {
   let authToken = '';
 
   if (previousSubscriptionId) {
-    console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
-    await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
+    if (env.DELETE_OLD_STACK) {
+      console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
+      await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
+    } else {
+      console.log(
+        `DELETE_OLD_STACK is false, keeping previous stack for subscription ${previousSubscriptionId}`,
+      );
+    }
+
     subscriptionId = previousSubscriptionId;
 
     // Update token

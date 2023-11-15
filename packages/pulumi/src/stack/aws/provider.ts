@@ -7,6 +7,7 @@ import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
 import * as domain from './resources/domain.ts';
 import * as frontend from './resources/frontend.ts';
+import * as key from './resources/key.ts';
 import * as network from './resources/network.ts';
 
 export class AwsServerProvider implements StackProvider<'aws'> {
@@ -66,6 +67,11 @@ export class AwsServerProvider implements StackProvider<'aws'> {
       },
     );
 
+    // Keys generation
+    const encryptionKey = new key.EncryptionKey(`${params.identifier}-encryption-key`);
+    const passwordSalt = new key.EncryptionKey(`${params.identifier}-password-salt`);
+    const authSecret = new key.EncryptionKey(`${params.identifier}-auth-secret`);
+
     // Create an EC2 instance
     const server = new frontend.WebService(
       `${params.identifier}-frontend`,
@@ -75,6 +81,9 @@ export class AwsServerProvider implements StackProvider<'aws'> {
         dbName: db.name,
         dbUser: db.user,
         dbPassword: db.password,
+        dbEncryptionKey: encryptionKey.key,
+        passwordSalt: passwordSalt.key,
+        authSecret: authSecret.key,
         vpcId: vpc.vpcId,
         subnetIds: vpc.subnetIds,
         securityGroupIds: vpc.feSecurityGroupIds,
@@ -82,7 +91,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
         tags,
       },
       {
-        dependsOn: [db],
+        dependsOn: [db, encryptionKey, passwordSalt, authSecret],
       },
     );
 

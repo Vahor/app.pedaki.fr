@@ -10,6 +10,9 @@ export interface WebServiceArgs {
   dbUser: pulumi.Output<string>;
   dbPassword: pulumi.Output<string | undefined>;
   dbPort: pulumi.Output<number>;
+  dbEncryptionKey: string;
+  passwordSalt: string;
+  authSecret: string;
   vpcId: pulumi.Output<string>;
   subnetIds: pulumi.Output<string>[];
   securityGroupIds: pulumi.Output<string>[];
@@ -68,12 +71,14 @@ export class WebService extends pulumi.ComponentResource {
 
     const envFileContent = pulumi.interpolate`
 ${rawEnvFileContent}
-export NEXT_PUBLIC_TESTVALUE='host: ${args.dbHost} - user: ${args.dbUser} - pass: ${
-      args.dbPassword
-    } - name: ${args.dbName} - ${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
-export SECRET_PRIVATE_VARIABLE='${args.dbName} - ${
-      args.stackParameters.server.environment_variables.IS_DEMO ? 'demo' : 'not demo'
-    }'
+
+export DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslaccept=strict'
+export PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
+
+export PASSWORD_SALT='${args.passwordSalt}'
+export NEXTAUTH_SECRET='${args.authSecret}'
+
+export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`
