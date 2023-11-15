@@ -17,7 +17,13 @@ describe('redacted', () => {
       PRISMA_ENCRYPTION_KEY: 'value',
       DATABASE_URL: 'value',
     });
-    expect(result).toEqual({ AUTH_TOKEN: REPLACEMENT });
+    expect(result).toEqual({
+      PEDAKI_AUTH_TOKEN: REPLACEMENT,
+      NEXTAUTH_SECRET: REPLACEMENT,
+      PASSWORD_SALT: REPLACEMENT,
+      PRISMA_ENCRYPTION_KEY: REPLACEMENT,
+      DATABASE_URL: REPLACEMENT,
+    });
     expectTypeOf(result).toEqualTypeOf<{
       PEDAKI_AUTH_TOKEN: string;
       NEXTAUTH_SECRET: string;
