@@ -77,7 +77,7 @@ importers:
     dependencies:
       '@auth/prisma-adapter':
         specifier: ^1.0.6
-        version: 1.0.6(@prisma/client@5.5.2)
+        version: 1.0.6(@prisma/client@5.6.0)
       '@fastify/cookie':
         specifier: ^9.1.0
         version: 9.1.0
@@ -148,7 +148,7 @@ importers:
     dependencies:
       '@auth/prisma-adapter':
         specifier: ^1.0.6
-        version: 1.0.6(@prisma/client@5.5.2)
+        version: 1.0.6(@prisma/client@5.6.0)
       '@hookform/resolvers':
         specifier: ^3.3.2
         version: 3.3.2(react-hook-form@7.46.2)
@@ -284,18 +284,18 @@ importers:
         specifier: ^1.11.0
         version: 1.11.0
       '@prisma/adapter-planetscale':
-        specifier: ^5.5.2
-        version: 5.5.2(@planetscale/database@1.11.0)
+        specifier: ^5.6.0
+        version: 5.6.0(@planetscale/database@1.11.0)
       '@prisma/client':
-        specifier: ^5.5.2
-        version: 5.5.2(prisma@5.5.2)
+        specifier: ^5.6.0
+        version: 5.6.0(prisma@5.6.0)
       prisma-field-encryption:
         specifier: ^1.5.0
-        version: 1.5.0(@prisma/client@5.5.2)
+        version: 1.5.0(@prisma/client@5.6.0)
     devDependencies:
       prisma:
-        specifier: ^5.5.2
-        version: 5.5.2
+        specifier: ^5.6.0
+        version: 5.6.0
     publishDirectory: dist
 
   packages/models:
@@ -305,8 +305,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@prisma/client':
-        specifier: ^5.5.2
-        version: 5.5.2(prisma@5.5.2)
+        specifier: ^5.6.0
+        version: 5.6.0(prisma@5.6.0)
     publishDirectory: dist
 
   packages/pulumi:
@@ -324,8 +324,8 @@ importers:
         specifier: ^5.14.0
         version: 5.14.0
       '@pulumi/pulumi':
-        specifier: ^3.93.0
-        version: 3.93.0
+        specifier: ^3.94.0
+        version: 3.94.0
       '@pulumi/random':
         specifier: ^4.14.0
         version: 4.14.0
@@ -369,8 +369,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@prisma/client':
-        specifier: ^5.5.2
-        version: 5.5.2(prisma@5.5.2)
+        specifier: ^5.6.0
+        version: 5.6.0(prisma@5.6.0)
       '@trpc/server':
         specifier: 10.43.3
         version: 10.43.3
@@ -433,13 +433,13 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/prisma-adapter@1.0.6(@prisma/client@5.5.2):
+  /@auth/prisma-adapter@1.0.6(@prisma/client@5.6.0):
     resolution: {integrity: sha512-599Bb+iajDf3cSUF0bNzcqpiJr9QCo7dwzXMuRvzxvtT/1fhDWGDt3E/GwXiYnvUYPndEA47atNVjLhV2ch0Hw==}
     peerDependencies:
       '@prisma/client': '>=2.26.0 || >=3 || >=4 || >=5'
     dependencies:
       '@auth/core': 0.18.1
-      '@prisma/client': 5.5.2(prisma@5.5.2)
+      '@prisma/client': 5.6.0(prisma@5.6.0)
     transitivePeerDependencies:
       - nodemailer
     dev: false
@@ -1863,19 +1863,19 @@ packages:
     engines: {node: '>=16'}
     dev: false
 
-  /@prisma/adapter-planetscale@5.5.2(@planetscale/database@1.11.0):
-    resolution: {integrity: sha512-skPJ5Bat4vtvnMw6T5DFmRo6Kc/bR7L7rHyjjmf8xUrqMLr/0K9Wa/6l8n5f8xqrH1I9vpflQQ1uAVKT/8aXmw==}
+  /@prisma/adapter-planetscale@5.6.0(@planetscale/database@1.11.0):
+    resolution: {integrity: sha512-VhBEXKcRDbkozzo3W0mXd4lIHxvpR6YJkZRCHhPTyAx7gba7kpu/lJ83y/P1+YXRiyN2Qmf91pDVYr1qcpfCwQ==}
     peerDependencies:
       '@planetscale/database': ^1.11.0
     dependencies:
       '@planetscale/database': 1.11.0
-      '@prisma/driver-adapter-utils': 5.5.2
+      '@prisma/driver-adapter-utils': 5.6.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@prisma/client@5.5.2(prisma@5.5.2):
-    resolution: {integrity: sha512-54XkqR8M+fxbzYqe+bIXimYnkkcGqgOh0dn0yWtIk6CQT4IUCAvNFNcQZwk2KqaLU+/1PHTSWrcHtx4XjluR5w==}
+  /@prisma/client@5.6.0(prisma@5.6.0):
+    resolution: {integrity: sha512-mUDefQFa1wWqk4+JhKPYq8BdVoFk9NFMBXUI8jAkBfQTtgx8WPx02U2HB/XbAz3GSUJpeJOKJQtNvaAIDs6sug==}
     engines: {node: '>=16.13'}
     requiresBuild: true
     peerDependencies:
@@ -1884,8 +1884,8 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 5.5.1-1.aebc046ce8b88ebbcb45efe31cbe7d06fd6abc0a
-      prisma: 5.5.2
+      '@prisma/engines-version': 5.6.0-32.e95e739751f42d8ca026f6b910f5a2dc5adeaeee
+      prisma: 5.6.0
 
   /@prisma/debug@5.4.1:
     resolution: {integrity: sha512-JJkDz43hVj5D/deu6QOlmtTnrTM3OaMQ7RqZVDo+7bpEy/s4W2JkAbOVsHZCCjs0SMMMPOfLlrpG5dREdoqAeQ==}
@@ -1897,19 +1897,19 @@ packages:
       - supports-color
     dev: false
 
-  /@prisma/driver-adapter-utils@5.5.2:
-    resolution: {integrity: sha512-lRkxjboGcIl2VkJNomZQ9b6vc2qGFnVwjaR/o3cTPGmmSxETx71cYRYcG/NHKrhvKxI6oKNZ/xzyuzPpg1+kJQ==}
+  /@prisma/driver-adapter-utils@5.6.0:
+    resolution: {integrity: sha512-/TSrfCGLAQghNf+bwg5/e8iKAgecCYU/gMN0IyNra3183/VTQJneLFgbacuSK9bBXiIRUmpbuUIrJ6dhENzfjA==}
     dependencies:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@prisma/engines-version@5.5.1-1.aebc046ce8b88ebbcb45efe31cbe7d06fd6abc0a:
-    resolution: {integrity: sha512-O+qHFnZvAyOFk1tUco2/VdiqS0ym42a3+6CYLScllmnpbyiTplgyLt2rK/B9BTjYkSHjrgMhkG47S0oqzdIckA==}
+  /@prisma/engines-version@5.6.0-32.e95e739751f42d8ca026f6b910f5a2dc5adeaeee:
+    resolution: {integrity: sha512-UoFgbV1awGL/3wXuUK3GDaX2SolqczeeJ5b4FVec9tzeGbSWJboPSbT0psSrmgYAKiKnkOPFSLlH6+b+IyOwAw==}
 
-  /@prisma/engines@5.5.2:
-    resolution: {integrity: sha512-Be5hoNF8k+lkB3uEMiCHbhbfF6aj1GnrTBnn5iYFT7GEr3TsOEp1soviEcBR0tYCgHbxjcIxJMhdbvxALJhAqg==}
+  /@prisma/engines@5.6.0:
+    resolution: {integrity: sha512-Mt2q+GNJpU2vFn6kif24oRSBQv1KOkYaterQsi0k2/lA+dLvhRX6Lm26gon6PYHwUM8/h8KRgXIUMU0PCLB6bw==}
     requiresBuild: true
 
   /@prisma/generator-helper@5.4.1:
@@ -1969,7 +1969,7 @@ packages:
   /@pulumi/aws@6.8.0:
     resolution: {integrity: sha512-V9Z755RrAFDaAfnEf545EXd3ejqBafURKvUY5IeTbPkJhA48yZIjCNW5qA7hMFurGGiFl0c/Bx2iNfR9D6EW6g==}
     dependencies:
-      '@pulumi/pulumi': 3.93.0
+      '@pulumi/pulumi': 3.94.0
       builtin-modules: 3.0.0
       mime: 2.6.0
       read-package-tree: 5.3.1
@@ -1981,13 +1981,13 @@ packages:
   /@pulumi/cloudflare@5.14.0:
     resolution: {integrity: sha512-hgmLCqNU6iEJz1l0mBfynbx6vXl6q3mlH8qcvs5fa1dqXzAMt1O+8e5PRxgCo2iJHtNFU6Wmy7zLodtb1MRkYg==}
     dependencies:
-      '@pulumi/pulumi': 3.93.0
+      '@pulumi/pulumi': 3.94.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@pulumi/pulumi@3.93.0:
-    resolution: {integrity: sha512-3Hg9lTIu1EmD288NdSkBKog/x6A6YdYmk/xP48JJ3IpksquiLANvkEgjx10v6tgt9xWVZ8h4oeKuFZVZ9jxZvw==}
+  /@pulumi/pulumi@3.94.0:
+    resolution: {integrity: sha512-+CGFuAmFI5Z4bL42I2qBH9kG2Y92aNLH6Vw2n7bYZ6uGYOiI5NUOpDBDcwilexZyPOpEACmeF6m+3vRMDAxLog==}
     engines: {node: '>=8.13.0 || >=10.10.0'}
     dependencies:
       '@grpc/grpc-js': 1.9.6
@@ -2026,7 +2026,7 @@ packages:
   /@pulumi/random@4.14.0:
     resolution: {integrity: sha512-R9GgDbX/PR53C3a9V55FrOHwS3k7YEUr6bDnPcXI3M9PEELFIprYQRnO0oafpE4je5NRxY5a0qQ+TJQLpkhSkA==}
     dependencies:
-      '@pulumi/pulumi': 3.93.0
+      '@pulumi/pulumi': 3.94.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -7791,14 +7791,14 @@ packages:
       uuid: 9.0.1
     dev: true
 
-  /prisma-field-encryption@1.5.0(@prisma/client@5.5.2):
+  /prisma-field-encryption@1.5.0(@prisma/client@5.6.0):
     resolution: {integrity: sha512-lPa1b+98P8roXe79fY8XZI8F7KcbtPe0znTOM71jvIjy3F9SIic8CMK9fJje/Tp3q0ah2QTtFw+pZftaD3LnfA==}
     hasBin: true
     peerDependencies:
       '@prisma/client': '>= 4.7'
     dependencies:
       '@47ng/cloak': 1.1.0
-      '@prisma/client': 5.5.2(prisma@5.5.2)
+      '@prisma/client': 5.6.0(prisma@5.6.0)
       '@prisma/generator-helper': 5.4.1
       debug: 4.3.4
       immer: 10.0.3
@@ -7808,13 +7808,13 @@ packages:
       - supports-color
     dev: false
 
-  /prisma@5.5.2:
-    resolution: {integrity: sha512-WQtG6fevOL053yoPl6dbHV+IWgKo25IRN4/pwAGqcWmg7CrtoCzvbDbN9fXUc7QS2KK0LimHIqLsaCOX/vHl8w==}
+  /prisma@5.6.0:
+    resolution: {integrity: sha512-EEaccku4ZGshdr2cthYHhf7iyvCcXqwJDvnoQRAJg5ge2Tzpv0e2BaMCp+CbbDUwoVTzwgOap9Zp+d4jFa2O9A==}
     engines: {node: '>=16.13'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 5.5.2
+      '@prisma/engines': 5.6.0
 
   /process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
