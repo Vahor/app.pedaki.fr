@@ -1,4 +1,4 @@
-const REDACTED_PATTERNS = ['PASS', 'AUTH'] as const;
+const REDACTED_PATTERNS = ['PASS', 'AUTH', 'DATABASE_URL', 'PRISMA_ENCRYPTION_KEY'] as const;
 
 export const REPLACEMENT = '[secret]' as const;
 
