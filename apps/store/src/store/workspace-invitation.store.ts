@@ -7,7 +7,7 @@ export interface WorkspaceInvitationStore {
   removeEmail: (email: string) => void;
 }
 
-export const useWorkspaceInvitationStore = create<WorkspaceInvitationStore>()((set, get) => ({
+export const useWorkspaceInvitationStore = create<WorkspaceInvitationStore>()(set => ({
   emails: [],
   setEmails: (emails: string[]) => {
     set({ emails });

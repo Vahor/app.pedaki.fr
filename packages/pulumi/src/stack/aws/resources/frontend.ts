@@ -78,7 +78,9 @@ export PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
 export PASSWORD_SALT='${args.passwordSalt}'
 export NEXTAUTH_SECRET='${args.authSecret}'
 
-export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.AUTH_TOKEN}'
+export RESEND_API_KEY='${env.RESEND_API_KEY}'
+
+export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`

@@ -18,7 +18,10 @@ export const ServerResourceSchema = ResourceSchema.merge(
     size: z.enum(['small']),
     environment_variables: z
       .object({
-        AUTH_TOKEN: z.string(),
+        PEDAKI_AUTH_TOKEN: z.string(),
+
+        PEDAKI_BILLING_EMAIL: z.string(),
+        PEDAKI_BILLING_NAME: z.string(),
       })
       .catchall(z.string()),
   }),

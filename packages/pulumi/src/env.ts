@@ -5,6 +5,8 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
+    RESEND_API_KEY: z.string().startsWith('re_'),
+
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_SECRET_ACCESS_KEY: z.string(),
 

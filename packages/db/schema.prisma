@@ -38,7 +38,8 @@ model Workspace {
 
   // The user responsible for the workspace
   stripeCustomerId String @map("stripe_customer_id")
-  mainEmail        String @map("main_email") @db.VarChar(255)
+  billingEmail     String @map("billing_email") @db.VarChar(255)
+  billingName      String @map("billing_name") @db.VarChar(255)
 
   expectedStatus Status @default(UNDEFINED) @map("expected_status") // Changed by the backend
   currentStatus  Status @default(UNDEFINED) @map("current_status") // Should be only changed with an information from the client

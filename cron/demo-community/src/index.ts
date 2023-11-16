@@ -5,6 +5,8 @@ import { workspaceService } from '@pedaki/services/workspace/workspace.service.j
 import { env } from '~/env.ts';
 
 const WORKSPACE_IDENTIFIER = 'demo';
+const PEDAKI_BILLING_EMAIL = 'developers@pedaki.fr';
+const PEDAKI_BILLING_NAME = 'Pedaki';
 
 const BASE_PARAMETERS = {
   identifier: WORKSPACE_IDENTIFIER,
@@ -16,6 +18,8 @@ const BASE_PARAMETERS = {
     size: 'small',
     environment_variables: {
       IS_DEMO: 'true',
+      PEDAKI_BILLING_EMAIL: PEDAKI_BILLING_EMAIL,
+      PEDAKI_BILLING_NAME: PEDAKI_BILLING_NAME,
     },
   },
   database: {
@@ -40,7 +44,7 @@ const stackParameters = (subscriptionId: number, authToken: string) =>
       ...BASE_PARAMETERS.server,
       environment_variables: {
         ...BASE_PARAMETERS.server.environment_variables,
-        AUTH_TOKEN: authToken,
+        PEDAKI_AUTH_TOKEN: authToken,
       },
     },
   }) as const;
@@ -92,7 +96,10 @@ const main = async () => {
         workspace: {
           creationData: BASE_PARAMETERS,
           identifier: WORKSPACE_IDENTIFIER,
-          email: 'developers@pedaki.fr',
+          billing: {
+            email: PEDAKI_BILLING_EMAIL,
+            name: PEDAKI_BILLING_NAME,
+          },
           name: 'Demo',
         },
         subscription: {

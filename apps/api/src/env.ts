@@ -12,7 +12,7 @@ export const env = createEnv({
     PUBLIC_KEY: z.string().optional(),
 
     // optional for development
-    RESEND_API_KEY: z.string().min(1),
+    RESEND_API_KEY: z.string().startsWith('re_'),
     MAILER_PREVIEW: z.coerce.boolean().default(false),
 
     STORE_URL: z.string().url().default('https://store.pedaki.fr'),

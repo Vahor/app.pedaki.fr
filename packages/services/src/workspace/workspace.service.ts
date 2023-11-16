@@ -71,7 +71,9 @@ class WorkspaceService {
     workspace,
     subscription,
   }: {
-    workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier' | 'email'> & {
+    workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier'> & {
+      billing: Pick<CreateWorkspaceInput['billing'], 'name' | 'email'>;
+    } & {
       creationData: Omit<WorkspaceData, 'workspace' | 'server'> & {
         server: Omit<WorkspaceData['server'], 'environment_variables'>;
       };
@@ -88,11 +90,12 @@ class WorkspaceService {
       data: {
         name: workspace.name,
         identifier: workspace.identifier,
-        mainEmail: workspace.email,
+        billingEmail: workspace.billing.email,
+        billingName: workspace.billing.name,
         stripeCustomerId: subscription.customerId,
         members: {
           create: {
-            email: workspace.email,
+            email: workspace.billing.email,
           },
         },
         subscriptions: {
