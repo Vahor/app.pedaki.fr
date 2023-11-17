@@ -67,6 +67,7 @@ model WorkspaceToken {
   workspaceId String    @unique @map("workspace_id") @db.VarChar(25)
 
   @@index([workspaceId])
+  @@index([token]) // TODO: check if we need tokenHash instead (see the generated sql)
   @@map("token_to_workspace")
 }
 

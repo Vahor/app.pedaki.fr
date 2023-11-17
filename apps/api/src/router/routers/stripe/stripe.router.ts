@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
@@ -189,6 +190,13 @@ export const stripeRouter = router({
     .output(z.object({ url: z.string().url() }))
     .meta({ openapi: { method: 'GET', path: '/stripe/{workspaceId}/customer-portal-url' } })
     .query(async ({ input, ctx }) => {
+      // TODO: currently we can only update the status of our own workspace
+      //  we might want to update this in the future to allow admins to generate a portal url for any workspace
+
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new NotYourWorkspaceError();
+      }
+
       const { url } = await stripeService.createPortalSession({
         customerId: ctx.workspace.stripeCustomerId,
         returnUrl: input.returnUrl,

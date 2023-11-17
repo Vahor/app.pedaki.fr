@@ -81,6 +81,7 @@ export NEXTAUTH_SECRET='${args.authSecret}'
 export RESEND_API_KEY='${env.RESEND_API_KEY}'
 
 export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
+export PEDAKI_WORKSPACE_IDENTIFIER='${args.stackParameters.identifier}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`
