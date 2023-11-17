@@ -43,6 +43,9 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
       workspaceId: workspaceId,
       token: token,
     },
+    select: {
+      stripeCustomerId: true,
+    },
   });
 
   if (!workspace) {
@@ -51,7 +54,10 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
 
   return next({
     ctx: {
-      workspaceId: workspaceId,
+      workspace: {
+        identifier: workspaceId,
+        stripeCustomerId: workspace.stripeCustomerId,
+      },
     },
   });
 });

@@ -189,21 +189,8 @@ export const stripeRouter = router({
     .input(z.object({ returnUrl: z.string().url() }))
     .output(z.object({ url: z.string().url() }))
     .query(async ({ input, ctx }) => {
-      // Get workspace
-      const workspace = await prisma.workspace.findUnique({
-        where: { id: ctx.workspaceId },
-        select: {
-          identifier: true,
-          stripeCustomerId: true,
-        },
-      });
-
-      if (!workspace?.identifier) {
-        throw new WorkspaceNotFoundError();
-      }
-
       const { url } = await stripeService.createPortalSession({
-        customerId: workspace.stripeCustomerId,
+        customerId: ctx.workspace.stripeCustomerId,
         returnUrl: input.returnUrl,
       });
 

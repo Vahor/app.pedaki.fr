@@ -1,7 +1,7 @@
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
-import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
+import type { WorkspaceData, WorkspaceStatus } from '@pedaki/models/workspace/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { ProductType } from '@prisma/client';
 
@@ -239,6 +239,25 @@ class WorkspaceService {
         endedAt,
         cancelAt,
         canceledAt,
+      },
+    });
+  }
+
+  async updateCurrentStatus({
+    workspaceId,
+    status,
+  }: {
+    workspaceId: string;
+    status: WorkspaceStatus;
+  }) {
+    console.log(`Updating workspace status '${workspaceId}'...`);
+
+    await prisma.workspace.update({
+      where: {
+        identifier: workspaceId,
+      },
+      data: {
+        currentStatus: status,
       },
     });
   }

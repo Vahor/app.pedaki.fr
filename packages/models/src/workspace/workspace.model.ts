@@ -19,3 +19,4 @@ export interface WorkspaceData {
 }
 
 export const WorkspaceStatusSchema = z.nativeEnum(Status);
+export type WorkspaceStatus = z.infer<typeof WorkspaceStatusSchema>;

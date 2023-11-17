@@ -1,10 +1,26 @@
 import { prisma } from '@pedaki/db';
 import { WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
 import { WorkspaceStatusSchema } from '@pedaki/models/workspace/workspace.model.js';
+import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { z } from 'zod';
-import { publicProcedure, router } from '../../trpc.ts';
+import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
 
 export const workspaceDataRouter = router({
+  updateCurrentStatus: workspaceProcedure
+    .input(
+      z.object({
+        status: WorkspaceStatusSchema,
+      }),
+    )
+    .output(z.object({}))
+    .meta({ openapi: { method: 'POST', path: '/workspace/self/data/status' } })
+    .mutation(async ({ input, ctx }) => {
+      await workspaceService.updateCurrentStatus({
+        workspaceId: ctx.workspace.identifier,
+        status: input.status,
+      });
+    }),
+
   getStatus: publicProcedure
     .input(
       z.object({
