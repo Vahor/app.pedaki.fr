@@ -19,7 +19,7 @@ export function PlanFormInformation({ form }: { form: FormType }) {
       <p>Vous ne pourrez changer de plan qu&apos;à la fin de votre période d&apos;engagement.</p>
       <FormField
         control={form.control}
-        name="subscriptionInterval"
+        name="billing.subscriptionInterval"
         render={({ field }) => (
           <p>
             Avec votre abonnement {field.value === 'yearly' ? 'annuel' : 'mensuel'}, vous allez

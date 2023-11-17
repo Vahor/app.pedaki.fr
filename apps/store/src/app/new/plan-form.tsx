@@ -51,7 +51,7 @@ export function PlanForm({ form }: Readonly<{ form: FormType }>) {
       />
       <FormField
         control={form.control}
-        name="subscriptionInterval"
+        name="billing.subscriptionInterval"
         render={({ field }) => (
           <FormItem className="flex flex-row items-start space-x-3">
             <div>
