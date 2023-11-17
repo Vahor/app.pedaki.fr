@@ -10,10 +10,11 @@ export const workspaceDataRouter = router({
     .input(
       z.object({
         status: WorkspaceStatusSchema,
+        workspaceId: z.string(),
       }),
     )
     .output(z.object({}))
-    .meta({ openapi: { method: 'POST', path: '/workspace/self/data/status' } })
+    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/status' } })
     .mutation(async ({ input, ctx }) => {
       await workspaceService.updateCurrentStatus({
         workspaceId: ctx.workspace.identifier,

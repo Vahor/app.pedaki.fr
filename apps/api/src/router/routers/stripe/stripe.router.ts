@@ -1,5 +1,4 @@
 import { prisma } from '@pedaki/db';
-import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
@@ -186,8 +185,9 @@ export const stripeRouter = router({
     }),
 
   getCustomerPortalUrl: workspaceProcedure
-    .input(z.object({ returnUrl: z.string().url() }))
+    .input(z.object({ returnUrl: z.string().url(), workspaceId: z.string() }))
     .output(z.object({ url: z.string().url() }))
+    .meta({ openapi: { method: 'GET', path: '/stripe/{workspaceId}/customer-portal-url' } })
     .query(async ({ input, ctx }) => {
       const { url } = await stripeService.createPortalSession({
         customerId: ctx.workspace.stripeCustomerId,
