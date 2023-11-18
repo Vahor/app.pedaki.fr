@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
 import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
@@ -42,7 +43,11 @@ export const workspaceInvitationRouter = router({
     .input(z.object({ workspaceId: z.string() }))
     .output(z.object({ emails: z.array(z.string()) }))
     .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/invitations' } })
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      // TODO: currently we can read invites of our own workspace
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new WorkspaceNotFoundError();
+      }
       return invitationService.getAllInvites(input.workspaceId);
     }),
 
@@ -50,7 +55,11 @@ export const workspaceInvitationRouter = router({
     .input(z.object({ workspaceId: z.string(), emails: z.array(z.string()) }))
     .output(z.undefined())
     .meta({ openapi: { method: 'DELETE', path: '/workspace/{workspaceId}/invitations' } })
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      // TODO: currently we can read invites of our own workspace
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new WorkspaceNotFoundError();
+      }
       await invitationService.deleteManyInvites(input.workspaceId, input.emails);
     }),
 });
