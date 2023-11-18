@@ -54,7 +54,7 @@ export const workspaceInvitationRouter = router({
   deleteManyInWorkspace: workspaceProcedure
     .input(z.object({ workspaceId: z.string(), emails: z.array(z.string()) }))
     .output(z.undefined())
-    .meta({ openapi: { method: 'DELETE', path: '/workspace/{workspaceId}/invitations' } })
+    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/invitations/delete' } })
     .mutation(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
       if (ctx.workspace.identifier !== input.workspaceId) {
