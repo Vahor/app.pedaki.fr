@@ -13,7 +13,7 @@ export const workspaceDataRouter = router({
         workspaceId: z.string(),
       }),
     )
-    .output(z.object({}))
+    .output(z.undefined())
     .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/status' } })
     .mutation(async ({ input, ctx }) => {
       // The param is only here to respect the REST API

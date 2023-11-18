@@ -32,7 +32,7 @@ export const workspaceInvitationRouter = router({
 
   getMany: publicProcedure
     .input(z.object({ token: z.string() }))
-    .output(z.object({ emails: z.array(z.string()) }))
+    .output(z.object({ emails: z.array(z.string().email()) }))
     .query(({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 

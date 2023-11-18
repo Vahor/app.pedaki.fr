@@ -145,7 +145,7 @@ class WorkspaceService {
       },
     });
 
-    return { workspaceId: id, subscriptionId, authToken: token };
+    return { workspaceId: id, subscriptionId, authToken: `${id}:${token}` };
   }
 
   async registerNewWorkspaceToken({ workspaceId }: { workspaceId: string }) {
