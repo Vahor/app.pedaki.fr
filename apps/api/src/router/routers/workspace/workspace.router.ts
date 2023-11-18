@@ -1,10 +1,33 @@
 import { prisma } from '@pedaki/db';
-import { WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
+import { NotYourWorkspaceError, WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
 import { WorkspaceStatusSchema } from '@pedaki/models/workspace/workspace.model.js';
+import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { z } from 'zod';
-import { publicProcedure, router } from '../../trpc.ts';
+import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
 
 export const workspaceDataRouter = router({
+  updateCurrentStatus: workspaceProcedure
+    .input(
+      z.object({
+        status: WorkspaceStatusSchema,
+        workspaceId: z.string(),
+      }),
+    )
+    .output(z.undefined())
+    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/status' } })
+    .mutation(async ({ input, ctx }) => {
+      // The param is only here to respect the REST API
+      // But we don't need it as we already have the workspaceId in the context
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new NotYourWorkspaceError();
+      }
+
+      await workspaceService.updateCurrentStatus({
+        workspaceId: ctx.workspace.identifier,
+        status: input.status,
+      });
+    }),
+
   getStatus: publicProcedure
     .input(
       z.object({

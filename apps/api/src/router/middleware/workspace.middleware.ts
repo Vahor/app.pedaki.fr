@@ -43,15 +43,28 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
       workspaceId: workspaceId,
       token: token,
     },
+    select: {
+      workspace: {
+        select: {
+          identifier: true,
+          stripeCustomerId: true,
+        },
+      },
+    },
   });
 
-  if (!workspace) {
+  // Can be null if the workspace is deleted
+  if (!workspace?.workspace.identifier) {
     throw error;
   }
 
   return next({
     ctx: {
-      workspaceId: workspaceId,
+      workspace: {
+        id: workspaceId,
+        identifier: workspace.workspace.identifier!,
+        stripeCustomerId: workspace.workspace.stripeCustomerId,
+      },
     },
   });
 });

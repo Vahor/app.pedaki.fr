@@ -1,5 +1,5 @@
 import { prisma } from '@pedaki/db';
-import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
+import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
@@ -29,6 +29,8 @@ export const stripeRouter = router({
           {
             // Update subscription info
             const data = CustomerSubscriptionSchema.parse(event.data.object);
+            // FIXME: delete me later
+            console.log('Subscription object', event.data.object);
 
             // Get our subscription id from stripe subscription id
             const subscription = await prisma.workspaceSubscription.findUnique({
@@ -51,9 +53,9 @@ export const stripeRouter = router({
               subscriptionId: subscription.id,
               currentPeriodStart: new Date(data.current_period_start * 1000),
               currentPeriodEnd: new Date(data.current_period_end * 1000),
-              endedAt: data.ended_at ? new Date(data.ended_at * 1000) : undefined,
-              cancelAt: data.cancel_at ? new Date(data.cancel_at * 1000) : undefined,
-              canceledAt: data.canceled_at ? new Date(data.canceled_at * 1000) : undefined,
+              endedAt: data.ended_at ? new Date(data.ended_at * 1000) : null,
+              cancelAt: data.cancel_at ? new Date(data.cancel_at * 1000) : null,
+              canceledAt: data.canceled_at ? new Date(data.canceled_at * 1000) : null,
             });
           }
           break;
@@ -186,24 +188,19 @@ export const stripeRouter = router({
     }),
 
   getCustomerPortalUrl: workspaceProcedure
-    .input(z.object({ returnUrl: z.string().url() }))
+    .input(z.object({ returnUrl: z.string().url(), workspaceId: z.string() }))
     .output(z.object({ url: z.string().url() }))
+    .meta({ openapi: { method: 'GET', path: '/stripe/{workspaceId}/customer-portal-url' } })
     .query(async ({ input, ctx }) => {
-      // Get workspace
-      const workspace = await prisma.workspace.findUnique({
-        where: { id: ctx.workspaceId },
-        select: {
-          identifier: true,
-          stripeCustomerId: true,
-        },
-      });
+      // TODO: currently we can only update the status of our own workspace
+      //  we might want to update this in the future to allow admins to generate a portal url for any workspace
 
-      if (!workspace?.identifier) {
-        throw new WorkspaceNotFoundError();
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new NotYourWorkspaceError();
       }
 
       const { url } = await stripeService.createPortalSession({
-        customerId: workspace.stripeCustomerId,
+        customerId: ctx.workspace.stripeCustomerId,
         returnUrl: input.returnUrl,
       });
 

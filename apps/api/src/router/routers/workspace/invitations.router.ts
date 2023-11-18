@@ -1,9 +1,10 @@
 import { prisma } from '@pedaki/db';
+import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
 import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { z } from 'zod';
-import { publicProcedure, router } from '../../trpc.ts';
+import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
 
 export const workspaceInvitationRouter = router({
   create: publicProcedure
@@ -31,16 +32,34 @@ export const workspaceInvitationRouter = router({
 
   getMany: publicProcedure
     .input(z.object({ token: z.string() }))
-    .output(z.object({ emails: z.array(z.string()) }))
-    .query(async ({ input }) => {
+    .output(z.object({ emails: z.array(z.string().email()) }))
+    .query(({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      const emails = await prisma.pendingWorkspaceInvite.findMany({
-        where: { workspaceId: workspaceId },
-        orderBy: { createdAt: 'asc' },
-        select: { email: true },
-      });
+      return invitationService.getAllInvites(workspaceId);
+    }),
 
-      return { emails: emails.map(e => e.email) };
+  getManyInWorkspace: workspaceProcedure
+    .input(z.object({ workspaceId: z.string() }))
+    .output(z.object({ emails: z.array(z.string()) }))
+    .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/invitations' } })
+    .query(({ input, ctx }) => {
+      // TODO: currently we can read invites of our own workspace
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new WorkspaceNotFoundError();
+      }
+      return invitationService.getAllInvites(input.workspaceId);
+    }),
+
+  deleteManyInWorkspace: workspaceProcedure
+    .input(z.object({ workspaceId: z.string(), emails: z.array(z.string()) }))
+    .output(z.undefined())
+    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/invitations/delete' } })
+    .mutation(async ({ input, ctx }) => {
+      // TODO: currently we can read invites of our own workspace
+      if (ctx.workspace.identifier !== input.workspaceId) {
+        throw new WorkspaceNotFoundError();
+      }
+      await invitationService.deleteManyInvites(input.workspaceId, input.emails);
     }),
 });
