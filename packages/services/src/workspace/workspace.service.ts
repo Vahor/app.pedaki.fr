@@ -224,9 +224,9 @@ class WorkspaceService {
     subscriptionId: number;
     currentPeriodStart: Date;
     currentPeriodEnd: Date;
-    endedAt?: Date;
-    cancelAt?: Date;
-    canceledAt?: Date;
+    endedAt: Date | null;
+    cancelAt: Date | null;
+    canceledAt: Date | null;
   }) {
     console.log(`Updating workspace subscription '${subscriptionId}'...`);
     await prisma.workspaceSubscription.update({

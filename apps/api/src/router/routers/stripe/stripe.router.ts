@@ -29,6 +29,8 @@ export const stripeRouter = router({
           {
             // Update subscription info
             const data = CustomerSubscriptionSchema.parse(event.data.object);
+            // FIXME: delete me later
+            console.log('Subscription object', event.data.object);
 
             // Get our subscription id from stripe subscription id
             const subscription = await prisma.workspaceSubscription.findUnique({
@@ -51,9 +53,9 @@ export const stripeRouter = router({
               subscriptionId: subscription.id,
               currentPeriodStart: new Date(data.current_period_start * 1000),
               currentPeriodEnd: new Date(data.current_period_end * 1000),
-              endedAt: data.ended_at ? new Date(data.ended_at * 1000) : undefined,
-              cancelAt: data.cancel_at ? new Date(data.cancel_at * 1000) : undefined,
-              canceledAt: data.canceled_at ? new Date(data.canceled_at * 1000) : undefined,
+              endedAt: data.ended_at ? new Date(data.ended_at * 1000) : null,
+              cancelAt: data.cancel_at ? new Date(data.cancel_at * 1000) : null,
+              canceledAt: data.canceled_at ? new Date(data.canceled_at * 1000) : null,
             });
           }
           break;
