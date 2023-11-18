@@ -38,6 +38,27 @@ class InvitationService {
       throw error;
     }
   }
+
+  async getAllInvites(workspaceId: string): Promise<{ emails: string[] }> {
+    const emails = await prisma.pendingWorkspaceInvite.findMany({
+      where: { workspaceId: workspaceId },
+      orderBy: { createdAt: 'asc' },
+      select: { email: true },
+    });
+
+    return { emails: emails.map(e => e.email) };
+  }
+
+  async deleteManyInvites(workspaceId: string, emails: string[]): Promise<void> {
+    await prisma.pendingWorkspaceInvite.deleteMany({
+      where: {
+        workspaceId: workspaceId,
+        email: {
+          in: emails,
+        },
+      },
+    });
+  }
 }
 
 const invitationService = new InvitationService();
