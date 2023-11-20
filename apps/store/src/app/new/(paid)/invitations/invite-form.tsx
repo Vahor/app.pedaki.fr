@@ -49,6 +49,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
           createInvitationMutation.mutateAsync({
             email: values.email,
             token: rawToken,
+            name: 'test', // TODO: add name field
           }),
           200,
         ),

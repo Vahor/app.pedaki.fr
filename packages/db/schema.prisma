@@ -97,6 +97,8 @@ model PendingWorkspaceInvite {
   workspaceId String    @map("workspace_id") @db.VarChar(25)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
+  name String @db.VarChar(255)
+
   email     String  @db.VarChar(255) /// @encrypted
   emailHash String? @unique @map("email_hash") @db.VarChar(500) /// @encryption:hash(email)
 
