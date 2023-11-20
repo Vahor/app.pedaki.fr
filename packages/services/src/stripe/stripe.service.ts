@@ -70,7 +70,7 @@ class StripeService {
           },
 
       success_url: `${env.STORE_URL}/new/pending?token=${metadata.pendingId}`,
-      cancel_url: `${env.STORE_URL}/new`,
+      cancel_url: `${env.STORE_URL}/new/cancel?token=${metadata.pendingId}`,
       payment_intent_data: isSubscription
         ? undefined
         : {
@@ -81,12 +81,21 @@ class StripeService {
           },
 
       metadata: metadata,
+      custom_text: {
+        submit: {
+          message: `Votre workspace sera accessible à l'adresse ${metadata.identifier}.pedaki.fr.`,
+        },
+      },
     });
 
     return {
       url: session.url!,
       id: session.id,
     };
+  }
+
+  async expireCheckoutSession({ sessionId }: { sessionId: string }) {
+    await this.stripe.checkout.sessions.expire(sessionId);
   }
 
   async createPortalSession({ customerId, returnUrl }: { customerId: string; returnUrl: string }) {

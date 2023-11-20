@@ -1,28 +1,38 @@
 'use client';
 
+import { safeHistoryReplaceState } from '@pedaki/common/utils/navigation.js';
 import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 const OpenOldPayment = () => {
+  const searchParams = useSearchParams();
   const getPaymentUrl = useWorkspaceFormStore(store => store.getPaymentUrl);
-  const router = useRouter();
+  const setPaymentUrl = useWorkspaceFormStore(store => store.setPaymentUrl);
 
+  const router = useRouter();
+  const pathName = usePathname();
   const initialized = useRef(false);
   const paymentUrl = getPaymentUrl();
 
   useEffect(() => {
-    if (paymentUrl && !initialized.current) {
+    if (!initialized.current) {
       initialized.current = true;
-      toast('Réouvrir la page de paiement ?', {
-        action: {
-          label: 'Oui',
-          onClick: () => {
-            router.push(paymentUrl);
+
+      if (searchParams.has('cancel')) {
+        setPaymentUrl(null);
+        safeHistoryReplaceState(null, '', pathName);
+      } else if (paymentUrl) {
+        toast('Réouvrir la page de paiement ?', {
+          action: {
+            label: 'Oui',
+            onClick: () => {
+              router.push(paymentUrl);
+            },
           },
-        },
-      });
+        });
+      }
     }
   }, [paymentUrl, router]);
 
