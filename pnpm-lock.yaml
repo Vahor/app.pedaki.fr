@@ -88,8 +88,8 @@ importers:
         specifier: ^8.4.1
         version: 8.4.1
       '@pedaki/common':
-        specifier: ^0.1.4
-        version: 0.1.4(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
+        specifier: 0.4.2-beta.9
+        version: 0.4.2-beta.9(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
       '@pedaki/db':
         specifier: workspace:*
         version: link:../../packages/db/dist
@@ -159,8 +159,8 @@ importers:
         specifier: workspace:*
         version: link:../api/dist
       '@pedaki/common':
-        specifier: ^0.1.4
-        version: 0.1.4(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
+        specifier: 0.4.2-beta.9
+        version: 0.4.2-beta.9(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
       '@pedaki/db':
         specifier: workspace:*
         version: link:../../packages/db/dist
@@ -315,8 +315,8 @@ importers:
   packages/pulumi:
     dependencies:
       '@pedaki/common':
-        specifier: ^0.1.4
-        version: 0.1.4(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
+        specifier: 0.4.2-beta.9
+        version: 0.4.2-beta.9(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
       '@pedaki/models':
         specifier: workspace:*
         version: link:../models/dist
@@ -347,8 +347,8 @@ importers:
   packages/services:
     dependencies:
       '@pedaki/common':
-        specifier: 0.4.2-beta.7
-        version: 0.4.2-beta.7(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
+        specifier: 0.4.2-beta.9
+        version: 0.4.2-beta.9(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
       '@pedaki/db':
         specifier: workspace:*
         version: link:../db/dist
@@ -1889,23 +1889,8 @@ packages:
       '@noble/hashes': 1.3.2
     dev: false
 
-  /@pedaki/common@0.1.4(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3):
-    resolution: {integrity: sha512-bEtXM6l8xLLoLlKonpl/55r4AXxwWVATMuHK8xPfZemz/7sSHyArZSh+Kp2h50h1/66G6vsB3weyoZjomBJx1w==}
-    engines: {node: '>=18.0.0 <19.0.0', npm: use-pnpm, pnpm: '>=8.0.0', yarn: use-pnpm}
-    peerDependencies:
-      bcryptjs: ^2.4.3
-      memory-cache: ^0.2.0
-      nanoid: ^5.0.0
-      sonner: ^1.0.0
-    dependencies:
-      bcryptjs: 2.4.3
-      memory-cache: 0.2.0
-      nanoid: 5.0.1
-      sonner: 1.0.3(react-dom@18.2.0)(react@18.2.0)
-    dev: false
-
-  /@pedaki/common@0.4.2-beta.7(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3):
-    resolution: {integrity: sha512-2EytNF/hdxx5IWdcMbVlI8wrkkRuftkwEdG3zxHTK21olQ3QhhoorsNe9jAcs1kBAnNArKOcCzAwCxed+7vcNA==}
+  /@pedaki/common@0.4.2-beta.9(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3):
+    resolution: {integrity: sha512-NBLXxWo9svT9kknvbS7GEbARE7UZqojcnxbyJK6v1U8+BKl9UUc+1r9hy7Et+S7b3utpQjsgnseRmhlcnzr/nw==}
     engines: {node: '>=18.0.0 <19.0.0', npm: use-pnpm, pnpm: '>=8.0.0', yarn: use-pnpm}
     peerDependencies:
       bcryptjs: ^2.4.3
