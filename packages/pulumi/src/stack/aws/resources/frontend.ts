@@ -81,7 +81,7 @@ export NEXTAUTH_SECRET='${args.authSecret}'
 export RESEND_API_KEY='${env.RESEND_API_KEY}'
 
 export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
-export PEDAKI_WORKSPACE_IDENTIFIER='${args.stackParameters.identifier}'
+export PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.subdomain}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`
@@ -106,7 +106,7 @@ services:
             - web
 `;
 
-    const domain = args.stackParameters.identifier + '.pedaki.fr';
+    const domain = args.stackParameters.subdomain + '.pedaki.fr';
 
     const caddyFileContent = pulumi.interpolate`
 {

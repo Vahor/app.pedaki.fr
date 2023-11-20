@@ -25,6 +25,6 @@ export const workspaceMembersRouter = router({
     .meta({ openapi: { method: 'POST', path: '/workspace/member' } })
     .mutation(async ({ input, ctx }) => {
       const { email } = input;
-      await memberService.register(ctx.workspace.identifier, email);
+      await memberService.register(ctx.workspace.subdomain, email);
     }),
 });

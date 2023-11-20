@@ -45,7 +45,7 @@ export const workspaceInvitationRouter = router({
     .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/invitations' } })
     .query(({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
-      if (ctx.workspace.identifier !== input.workspaceId) {
+      if (ctx.workspace.id !== input.workspaceId) {
         throw new WorkspaceNotFoundError();
       }
       return invitationService.getAllInvites(input.workspaceId);
@@ -57,7 +57,7 @@ export const workspaceInvitationRouter = router({
     .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/invitations/delete' } })
     .mutation(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
-      if (ctx.workspace.identifier !== input.workspaceId) {
+      if (ctx.workspace.id !== input.workspaceId) {
         throw new WorkspaceNotFoundError();
       }
       await invitationService.deleteManyInvites(input.workspaceId, input.emails);

@@ -15,16 +15,16 @@ class PendingWorkspaceService {
   async create(input: z.infer<typeof CreateWorkspaceInput>): Promise<PendingWorkspace['id']> {
     const jsonData = JSON.stringify(input);
 
-    // Check that the identifier is not already taken
+    // Check that the subdomain is not already taken
     const existing = await prisma.$transaction([
       prisma.workspace.count({
         where: {
-          identifier: input.identifier,
+          subdomain: input.subdomain,
         },
       }),
       prisma.pendingWorkspaceCreation.count({
         where: {
-          identifier: input.identifier,
+          subdomain: input.subdomain,
         },
       }),
     ]);
@@ -45,7 +45,7 @@ class PendingWorkspaceService {
     const pending = await prisma.pendingWorkspaceCreation.create({
       data: {
         data: jsonData,
-        identifier: input.identifier,
+        subdomain: input.subdomain,
       },
       select: {
         id: true,
@@ -70,15 +70,15 @@ class PendingWorkspaceService {
   }
 
   generateToken(
-    pendingWorkspace: Required<Pick<PendingWorkspace, 'identifier' | 'paidAt' | 'workspaceId'>>,
+    pendingWorkspace: Required<Pick<PendingWorkspace, 'subdomain' | 'paidAt' | 'workspaceId'>>,
   ): string {
     // 3 hour after payment
     const expirationDate = new Date(pendingWorkspace.paidAt.getTime() + 1000 * 60 * 60 * 3);
 
     const raw: PendingToken = {
-      identifier: pendingWorkspace.identifier,
+      subdomain: pendingWorkspace.subdomain,
       workspaceId: pendingWorkspace.workspaceId,
-      workspaceUrl: workspaceService.getWorkspaceUrl(pendingWorkspace.identifier),
+      workspaceUrl: workspaceService.getWorkspaceUrl(pendingWorkspace.subdomain),
       expiresAt: expirationDate,
     };
 

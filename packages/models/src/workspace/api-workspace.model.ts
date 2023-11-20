@@ -2,7 +2,7 @@ import { ServerResourceSchema } from '~/resource/resource.model.js';
 import { isValidServerRegion } from '~/resource/server-region.model.ts';
 import { z } from 'zod';
 
-const restrictedIdentifiers = [
+const restrictedSubdomains = [
   'api',
   'admin',
   'demo',
@@ -21,16 +21,16 @@ export const WorkspaceId = z.string().cuid();
 
 export const CreateWorkspaceInput = z.object({
   name: z.string().min(3).max(60),
-  identifier: z
+  subdomain: z
     .string()
     .min(3)
     .max(50)
     .refine(
-      identifier => {
-        return !restrictedIdentifiers.includes(identifier);
+      subdomain => {
+        return !restrictedSubdomains.includes(subdomain);
       },
       {
-        message: 'RESTRICTED_IDENTIFIER',
+        message: 'RESTRICTED_SUBDOMAIN',
       },
     ),
 

@@ -8,7 +8,7 @@ export class TestServerProvider implements StackProvider<'test'> {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async create(params: StackParameters<'test'>): Promise<StackOutputs> {
     const newStack: WorkspaceInstance = {
-      identifier: params.identifier,
+      subdomain: params.subdomain,
       server: {
         provider: 'test',
         region: 'us-east-2',
@@ -32,7 +32,7 @@ export class TestServerProvider implements StackProvider<'test'> {
         type: 'server',
         provider: 'test',
         region: newStack.server.region,
-        id: newStack.identifier,
+        id: newStack.subdomain,
         size: params.server.size,
         environment_variables: redacted(params.server.environment_variables),
       },
@@ -40,7 +40,7 @@ export class TestServerProvider implements StackProvider<'test'> {
   }
 
   public delete(params: StackParameters<'test'>): Promise<void> {
-    this.stacks = this.stacks.filter(stack => stack.identifier !== params.identifier);
+    this.stacks = this.stacks.filter(stack => stack.subdomain !== params.subdomain);
     return Promise.resolve(undefined);
   }
 }

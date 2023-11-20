@@ -10,20 +10,20 @@ export const workspaceDataRouter = router({
     .input(
       z.object({
         status: WorkspaceStatusSchema,
-        workspaceId: z.string(),
+        subdomain: z.string(),
       }),
     )
     .output(z.undefined())
-    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/status' } })
+    .meta({ openapi: { method: 'POST', path: '/workspace/{subdomain}/status' } })
     .mutation(async ({ input, ctx }) => {
       // The param is only here to respect the REST API
       // But we don't need it as we already have the workspaceId in the context
-      if (ctx.workspace.identifier !== input.workspaceId) {
+      if (ctx.workspace.subdomain !== input.subdomain) {
         throw new NotYourWorkspaceError();
       }
 
       await workspaceService.updateCurrentStatus({
-        workspaceId: ctx.workspace.identifier,
+        subdomain: ctx.workspace.subdomain,
         status: input.status,
       });
     }),
@@ -31,7 +31,7 @@ export const workspaceDataRouter = router({
   getStatus: publicProcedure
     .input(
       z.object({
-        identifier: z.string(),
+        subdomain: z.string(),
       }),
     )
     .output(
@@ -45,7 +45,7 @@ export const workspaceDataRouter = router({
 
       const response = await prisma.workspace.findUnique({
         where: {
-          identifier: input.identifier,
+          subdomain: input.subdomain,
         },
         select: {
           currentStatus: true,
