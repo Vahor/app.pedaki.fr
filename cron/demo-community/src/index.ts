@@ -1,5 +1,6 @@
 import { prisma } from '@pedaki/db';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
+import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { env } from '~/env.ts';
@@ -113,10 +114,13 @@ const main = async () => {
         currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
       },
     });
+
     subscriptionId = newSubscriptionId;
     authToken = newAuthToken;
     workspaceId = newWorkspaceId;
   }
+
+  await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr', 'Developers');
 
   await resourceService.upsertStack(stackParameters(workspaceId, subscriptionId, authToken));
 
