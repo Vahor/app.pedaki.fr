@@ -1,5 +1,5 @@
-import { versionRouter } from './routers/version/index.ts';
 import { stripeRouter } from './routers/stripe/stripe.router.ts';
+import { versionRouter } from './routers/version/index.ts';
 import { workspaceRouter } from './routers/workspace/index.ts';
 import { router } from './trpc.ts';
 

@@ -51,7 +51,7 @@ export class Db extends pulumi.ComponentResource {
         engine: 'mysql',
         engineVersion: '8.0',
         instanceClass: this.instanceClass(args.stackParameters.database.size),
-        storageType: 'gp2',
+        storageType: 'gp3',
         skipFinalSnapshot: true,
         publiclyAccessible: false,
         copyTagsToSnapshot: true,
