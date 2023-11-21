@@ -6,7 +6,6 @@ import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pend
 import { z } from 'zod';
 import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
 
-
 export const workspaceInvitationRouter = router({
   create: publicProcedure
     .input(CreateWorkspaceInvitationInput)
