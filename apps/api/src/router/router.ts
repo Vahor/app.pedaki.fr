@@ -1,10 +1,10 @@
-import { stackRouter } from './routers/stack/index.ts';
+import { versionRouter } from '~/router/routers/version';
 import { stripeRouter } from './routers/stripe/stripe.router.ts';
 import { workspaceRouter } from './routers/workspace/index.ts';
 import { router } from './trpc.ts';
 
 export const appRouter = router({
-  stack: stackRouter,
+  version: versionRouter,
   workspace: workspaceRouter,
   stripe: stripeRouter,
 });

@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 export interface WorkspaceData {
   workspace: {
+    id: string;
     subdomain: string;
     subscriptionId: number;
   };

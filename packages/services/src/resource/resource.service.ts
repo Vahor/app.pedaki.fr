@@ -21,7 +21,10 @@ class ResourceService {
     const provider = this.getProvider(vpc.provider);
 
     await provider.delete({
-      subdomain: workspace.subdomain,
+      workspace: {
+        id: workspace.id,
+        subdomain: workspace.subdomain,
+      },
       region: vpc.region,
       server,
       database,
@@ -116,7 +119,10 @@ class ResourceService {
     const provider = this.getProvider(vpc.provider);
 
     const outputs = await provider.create({
-      subdomain: workspace.subdomain,
+      workspace: {
+        id: workspace.id,
+        subdomain: workspace.subdomain,
+      },
       region: vpc.region,
       server,
       database,

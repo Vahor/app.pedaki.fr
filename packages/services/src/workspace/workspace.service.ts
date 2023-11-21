@@ -21,7 +21,7 @@ class WorkspaceService {
   }
 
   /**
-   * Mark a workspace as deleted, this will not delete the workpace.
+   * Mark a workspace as deleted, this will not delete the workspace.
    * The column `deletedAt` will be set to the current date.
    * @param subdomain the workspace subdomain
    */
@@ -47,7 +47,9 @@ class WorkspaceService {
     }
   }
 
-  async getLatestSubscriptionId(subdomain: string): Promise<number | null> {
+  async getLatestSubscription(
+    subdomain: string,
+  ): Promise<{ subscriptionId: number; workspaceId: string } | null> {
     console.log(`Getting latest subscription id for workspace '${subdomain}'`);
     const subscription = await prisma.workspaceSubscription.findFirst({
       where: {
@@ -61,10 +63,16 @@ class WorkspaceService {
       },
       select: {
         id: true,
+        workspaceId: true,
       },
     });
     console.log('DEBUG: subscription', subscription);
-    return subscription?.id ?? null;
+    return subscription
+      ? {
+          subscriptionId: subscription.id,
+          workspaceId: subscription.workspaceId,
+        }
+      : null;
   }
 
   async createWorkspace({

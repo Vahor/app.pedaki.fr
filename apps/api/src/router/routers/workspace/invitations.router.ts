@@ -1,5 +1,5 @@
 import { prisma } from '@pedaki/db';
-import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
+import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
@@ -13,7 +13,7 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      await invitationService.addPendingInvite(workspaceId, input.email);
+      await invitationService.addPendingInvite(workspaceId, input.email, input.name);
     }),
 
   delete: publicProcedure
@@ -32,23 +32,27 @@ export const workspaceInvitationRouter = router({
 
   getMany: publicProcedure
     .input(z.object({ token: z.string() }))
-    .output(z.object({ emails: z.array(z.string().email()) }))
-    .query(({ input }) => {
+    .output(z.object({ invitations: z.array(z.object({ email: z.string(), name: z.string() })) }))
+    .query(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      return invitationService.getAllInvites(workspaceId);
+      return {
+        invitations: await invitationService.getAllInvites(workspaceId),
+      };
     }),
 
   getManyInWorkspace: workspaceProcedure
     .input(z.object({ workspaceId: z.string() }))
-    .output(z.object({ emails: z.array(z.string()) }))
+    .output(z.object({ invitations: z.array(z.object({ email: z.string(), name: z.string() })) }))
     .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/invitations' } })
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
       if (ctx.workspace.id !== input.workspaceId) {
-        throw new WorkspaceNotFoundError();
+        throw new NotYourWorkspaceError();
       }
-      return invitationService.getAllInvites(input.workspaceId);
+      return {
+        invitations: await invitationService.getAllInvites(input.workspaceId),
+      };
     }),
 
   deleteManyInWorkspace: workspaceProcedure
@@ -58,7 +62,7 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
       if (ctx.workspace.id !== input.workspaceId) {
-        throw new WorkspaceNotFoundError();
+        throw new NotYourWorkspaceError();
       }
       await invitationService.deleteManyInvites(input.workspaceId, input.emails);
     }),

@@ -17,7 +17,10 @@ export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
 }
 
 export interface StackParameters<SP extends ServerProvider> {
-  subdomain: string;
+  workspace: {
+    id: string;
+    subdomain: string;
+  };
   region: ServerRegion<SP>;
   server: ServerResourceInput;
   database: DatabaseResourceInput;

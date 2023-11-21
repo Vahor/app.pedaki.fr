@@ -2,7 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
-import { CADDY_DOCKER_IMAGE, DOCKER_IMAGE } from '~/utils/docker.ts';
+import { CADDY_DOCKER_IMAGE, DOCKER_IMAGE, VERSION } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -66,22 +66,29 @@ export class WebService extends pulumi.ComponentResource {
   private startScript = (args: WebServiceArgs) => {
     let rawEnvFileContent = '';
     for (const [key, value] of Object.entries(args.stackParameters.server.environment_variables)) {
-      rawEnvFileContent += `export ${key}='${value}'\n`;
+      rawEnvFileContent += `${key}='${value}'\n`;
     }
 
     const envFileContent = pulumi.interpolate`
 ${rawEnvFileContent}
 
-export DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslaccept=strict'
-export PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
+NODE_ENV=production
 
-export PASSWORD_SALT='${args.passwordSalt}'
-export NEXTAUTH_SECRET='${args.authSecret}'
+PEDAKI_DOMAIN='${args.stackParameters.workspace.subdomain}.pedaki.fr'
+PEDAKI_TAG='${VERSION}'
 
-export RESEND_API_KEY='${env.RESEND_API_KEY}'
+DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslaccept=strict'
+PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
 
-export PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
-export PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.subdomain}'
+PASSWORD_SALT='${args.passwordSalt}'
+NEXTAUTH_SECRET='${args.authSecret}'
+
+RESEND_API_KEY='${env.RESEND_API_KEY}'
+RESEND_EMAIL_DOMAIN='pedaki.fr'
+
+PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
+PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.workspace.subdomain}'
+PEDAKI_WORKSPACE_ID='${args.stackParameters.workspace.id}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`
@@ -106,7 +113,7 @@ services:
             - web
 `;
 
-    const domain = args.stackParameters.subdomain + '.pedaki.fr';
+    const domain = args.stackParameters.workspace.subdomain + '.pedaki.fr';
 
     const caddyFileContent = pulumi.interpolate`
 {
