@@ -12,13 +12,13 @@ import * as network from './resources/network.ts';
 
 export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
-    const stack = await PulumiUtils.createOrSelectStack(params.subdomain, this.program(params));
+    const stack = await PulumiUtils.createOrSelectStack(params.workspace.id, this.program(params));
     await stack.setConfig('aws:region', { value: params.region });
 
     const tags = this.tags(params);
     await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
-    console.log(`Creating/updating stack '${params.subdomain}'...`);
+    console.log(`Creating/updating stack '${params.workspace.id}'...`);
     const upRes = await stack.up();
 
     // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
@@ -31,7 +31,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
   }
 
   public async delete(params: StackParameters<'aws'>): Promise<void> {
-    await PulumiUtils.deleteStack(params.subdomain, this.program(params));
+    await PulumiUtils.deleteStack(params.workspace.id, this.program(params));
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -39,19 +39,19 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     const tags = this.tags(params);
 
     // Create vpc for the whole stack
-    const vpc = new network.Vpc(`${params.subdomain}-net`, {
+    const vpc = new network.Vpc(`${params.workspace.id}-net`, {
       stackParameters: params,
       tags,
     });
 
-    const dbPassword = new random.RandomPassword(`${params.subdomain}-db-password`, {
+    const dbPassword = new random.RandomPassword(`${params.workspace.id}-db-password`, {
       length: 32,
       special: true,
       overrideSpecial: '_%',
     }).result;
 
     const db = new backend.Db(
-      `${params.subdomain}-db`,
+      `${params.workspace.id}-db`,
       {
         dbName: 'pedaki',
         dbUser: 'pedakiuser',
@@ -68,13 +68,13 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     );
 
     // Keys generation
-    const encryptionKey = new key.EncryptionKey(`${params.subdomain}-encryption-key`);
-    const passwordSalt = new key.EncryptionKey(`${params.subdomain}-password-salt`);
-    const authSecret = new key.EncryptionKey(`${params.subdomain}-auth-secret`);
+    const encryptionKey = new key.EncryptionKey(`${params.workspace.id}-encryption-key`);
+    const passwordSalt = new key.EncryptionKey(`${params.workspace.id}-password-salt`);
+    const authSecret = new key.EncryptionKey(`${params.workspace.id}-auth-secret`);
 
     // Create an EC2 instance
     const server = new frontend.WebService(
-      `${params.subdomain}-frontend`,
+      `${params.workspace.id}-frontend`,
       {
         dbHost: db.host,
         dbPort: db.port,
@@ -97,7 +97,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
 
     // Add cloudflare dns
     const dns = new domain.Domain(
-      `${params.subdomain}-dns`,
+      `${params.workspace.id}-dns`,
       {
         publicIp: server.publicIp,
         stackParameters: params,
@@ -136,6 +136,6 @@ export class AwsServerProvider implements StackProvider<'aws'> {
   };
 
   private tags = (params: StackParameters<'aws'>) => ({
-    'pedaki:subdomain': params.subdomain,
+    'pedaki:subdomain': params.workspace.subdomain,
   });
 }

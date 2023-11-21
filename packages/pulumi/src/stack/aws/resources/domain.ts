@@ -25,7 +25,7 @@ export class Domain extends pulumi.ComponentResource {
       zoneId: env.CLOUDFLARE_ZONE_ID,
       proxied: true,
       ttl: 1, // TTL must be set to 1 when proxied is true
-      comment: `Automatically created by Pulumi for ${args.stackParameters.subdomain}`,
+      comment: `Automatically created by Pulumi for ${args.stackParameters.workspace.subdomain}`,
     });
 
     this.id = record.name;

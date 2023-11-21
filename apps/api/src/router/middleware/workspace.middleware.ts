@@ -15,6 +15,7 @@ const missingToken = new TRPCError({
 const getAuthorizationToken = (
   headers: Record<string, string | string[] | undefined>,
 ): [string, string] => {
+  console.log('DEBUG: headers', headers)
   const authorization = headers.authorization;
   if (!authorization || typeof authorization !== 'string') {
     throw missingToken;

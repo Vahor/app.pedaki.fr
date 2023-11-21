@@ -1,10 +1,11 @@
 import { prisma } from '@pedaki/db';
-import { WorkspaceNotFoundError } from '@pedaki/models/errors/WorkspaceNotFoundError.js';
+import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { z } from 'zod';
 import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
+
 
 export const workspaceInvitationRouter = router({
   create: publicProcedure
@@ -48,7 +49,7 @@ export const workspaceInvitationRouter = router({
     .query(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
       if (ctx.workspace.id !== input.workspaceId) {
-        throw new WorkspaceNotFoundError();
+        throw new NotYourWorkspaceError();
       }
       return {
         invitations: await invitationService.getAllInvites(input.workspaceId),
@@ -62,7 +63,7 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
       if (ctx.workspace.id !== input.workspaceId) {
-        throw new WorkspaceNotFoundError();
+        throw new NotYourWorkspaceError();
       }
       await invitationService.deleteManyInvites(input.workspaceId, input.emails);
     }),

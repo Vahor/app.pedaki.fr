@@ -74,7 +74,7 @@ ${rawEnvFileContent}
 
 NODE_ENV=production
 
-PEDAKI_DOMAIN='${args.stackParameters.subdomain}.pedaki.fr'
+PEDAKI_DOMAIN='${args.stackParameters.workspace.subdomain}.pedaki.fr'
 PEDAKI_TAG='${VERSION}'
 
 DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslaccept=strict'
@@ -87,8 +87,8 @@ RESEND_API_KEY='${env.RESEND_API_KEY}'
 RESEND_EMAIL_DOMAIN='pedaki.fr'
 
 PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
-PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.subdomain}'
-PEDAKI_WORKSPACE_ID='${args.stackParameters.subdomain}'
+PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.workspace.subdomain}'
+PEDAKI_WORKSPACE_ID='${args.stackParameters.workspace.id}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`
@@ -113,7 +113,7 @@ services:
             - web
 `;
 
-    const domain = args.stackParameters.subdomain + '.pedaki.fr';
+    const domain = args.stackParameters.workspace.subdomain + '.pedaki.fr';
 
     const caddyFileContent = pulumi.interpolate`
 {
