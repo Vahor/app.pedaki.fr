@@ -20,7 +20,7 @@ const BASE_PARAMETERS = {
       IS_DEMO: 'true',
       PEDAKI_BILLING_EMAIL: PEDAKI_BILLING_EMAIL,
       PEDAKI_BILLING_NAME: PEDAKI_BILLING_NAME,
-      PEDAKI_BILLING_PASSWORD: "demo",
+      PEDAKI_BILLING_PASSWORD: 'demo',
     },
   },
   database: {
