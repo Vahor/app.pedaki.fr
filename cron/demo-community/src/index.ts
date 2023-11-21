@@ -33,11 +33,12 @@ const BASE_PARAMETERS = {
   },
 } as const;
 
-const stackParameters = (subscriptionId: number, authToken: string) =>
+const stackParameters = (workspaceId: string, subscriptionId: number, authToken: string) =>
   ({
     ...BASE_PARAMETERS,
     workspace: {
       ...BASE_PARAMETERS.workspace,
+      id: workspaceId,
       subscriptionId,
     },
     server: {
@@ -54,16 +55,19 @@ const main = async () => {
   console.log(`This will use the ${DOCKER_IMAGE} docker image`);
   await prisma.$connect();
 
-  const previousSubscriptionId =
-    await workspaceService.getLatestSubscriptionId(WORKSPACE_SUBDOMAIN);
+  const response = await workspaceService.getLatestSubscription(WORKSPACE_SUBDOMAIN);
 
   let subscriptionId: number;
+  let workspaceId: string;
   let authToken = '';
 
-  if (previousSubscriptionId) {
+  if (response) {
+    const { subscriptionId: previousSubscriptionId, workspaceId: previousWorkspaceId } = response;
     if (env.DELETE_OLD_STACK) {
       console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
-      await resourceService.deleteStack(stackParameters(previousSubscriptionId, authToken));
+      await resourceService.deleteStack(
+        stackParameters(previousWorkspaceId, previousSubscriptionId, authToken),
+      );
     } else {
       console.log(
         `DELETE_OLD_STACK is false, keeping previous stack for subscription ${previousSubscriptionId}`,
@@ -71,17 +75,10 @@ const main = async () => {
     }
 
     subscriptionId = previousSubscriptionId;
-
-    // Update token
-    const { id } = await prisma.workspace.findUniqueOrThrow({
-      where: {
-        subdomain: WORKSPACE_SUBDOMAIN,
-      },
-      select: {
-        id: true,
-      },
+    workspaceId = previousWorkspaceId;
+    authToken = await workspaceService.registerNewWorkspaceToken({
+      workspaceId: previousWorkspaceId,
     });
-    authToken = await workspaceService.registerNewWorkspaceToken({ workspaceId: id });
 
     // Update subscription
     await workspaceService.updateWorkspaceSubscriptionStripeData({
@@ -94,29 +91,33 @@ const main = async () => {
     });
   } else {
     console.log('No previous subscription found, creating a new one');
-    const { subscriptionId: newSubscriptionId, authToken: newAuthToken } =
-      await workspaceService.createWorkspace({
-        workspace: {
-          creationData: BASE_PARAMETERS,
-          subdomain: WORKSPACE_SUBDOMAIN,
-          billing: {
-            email: PEDAKI_BILLING_EMAIL,
-            name: PEDAKI_BILLING_NAME,
-          },
-          name: 'Demo',
+    const {
+      subscriptionId: newSubscriptionId,
+      authToken: newAuthToken,
+      workspaceId: newWorkspaceId,
+    } = await workspaceService.createWorkspace({
+      workspace: {
+        creationData: BASE_PARAMETERS,
+        subdomain: WORKSPACE_SUBDOMAIN,
+        billing: {
+          email: PEDAKI_BILLING_EMAIL,
+          name: PEDAKI_BILLING_NAME,
         },
-        subscription: {
-          subscriptionId: 'sub_00000000000000',
-          customerId: 'cus_00000000000000',
-          currentPeriodStart: new Date(),
-          currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
-        },
-      });
+        name: 'Demo',
+      },
+      subscription: {
+        subscriptionId: 'sub_00000000000000',
+        customerId: 'cus_00000000000000',
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+      },
+    });
     subscriptionId = newSubscriptionId;
     authToken = newAuthToken;
+    workspaceId = newWorkspaceId;
   }
 
-  await resourceService.upsertStack(stackParameters(subscriptionId, authToken));
+  await resourceService.upsertStack(stackParameters(workspaceId, subscriptionId, authToken));
 
   console.log("Finished cron 'cron-demo-community'");
 };

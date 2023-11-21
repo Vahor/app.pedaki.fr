@@ -33,22 +33,26 @@ export const workspaceInvitationRouter = router({
   getMany: publicProcedure
     .input(z.object({ token: z.string() }))
     .output(z.object({ invitations: z.array(z.object({ email: z.string(), name: z.string() })) }))
-    .query(({ input }) => {
+    .query(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      return invitationService.getAllInvites(workspaceId);
+      return {
+        invitations: await invitationService.getAllInvites(workspaceId),
+      };
     }),
 
   getManyInWorkspace: workspaceProcedure
     .input(z.object({ workspaceId: z.string() }))
     .output(z.object({ invitations: z.array(z.object({ email: z.string(), name: z.string() })) }))
     .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/invitations' } })
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace
       if (ctx.workspace.id !== input.workspaceId) {
         throw new WorkspaceNotFoundError();
       }
-      return invitationService.getAllInvites(input.workspaceId);
+      return {
+        invitations: await invitationService.getAllInvites(input.workspaceId),
+      };
     }),
 
   deleteManyInWorkspace: workspaceProcedure

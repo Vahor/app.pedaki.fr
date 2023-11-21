@@ -88,6 +88,7 @@ RESEND_EMAIL_DOMAIN='pedaki.fr'
 
 PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
 PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.subdomain}'
+PEDAKI_WORKSPACE_ID='${args.stackParameters.subdomain}'
 `;
 
     const dockerComposeContent = pulumi.interpolate`
