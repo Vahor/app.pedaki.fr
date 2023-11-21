@@ -37,6 +37,7 @@
     "cpy": "^11.0.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "latest",
+    "esbuild": "^0.19.7",
     "esbuild-plugin-file-path-extensions": "^1.0.0",
     "execa": "^8.0.1",
     "expect-type": "^0.17.3",
