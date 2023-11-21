@@ -5,7 +5,7 @@ import { workspaceService } from '@pedaki/services/workspace/workspace.service.j
 import { env } from '~/env.ts';
 
 const WORKSPACE_SUBDOMAIN = 'demo';
-const PEDAKI_BILLING_EMAIL = 'developers@pedaki.fr';
+const PEDAKI_BILLING_EMAIL = 'demo@pedaki.fr';
 const PEDAKI_BILLING_NAME = 'Pedaki';
 
 const BASE_PARAMETERS = {
@@ -20,6 +20,7 @@ const BASE_PARAMETERS = {
       IS_DEMO: 'true',
       PEDAKI_BILLING_EMAIL: PEDAKI_BILLING_EMAIL,
       PEDAKI_BILLING_NAME: PEDAKI_BILLING_NAME,
+      PEDAKI_BILLING_PASSWORD: "demo",
     },
   },
   database: {
