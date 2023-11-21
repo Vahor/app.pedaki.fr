@@ -9,7 +9,7 @@ export function BaseFormInformation({ form }: { form: FormType }) {
       <br />
       <FormField
         control={form.control}
-        name="identifier"
+        name="subdomain"
         render={({ field }) => (
           <p>
             Votre workspace sera accessible à l&apos;adresse{' '}

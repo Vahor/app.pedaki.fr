@@ -8,32 +8,32 @@ import { ProductType } from '@prisma/client';
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
 class WorkspaceService {
-  getHealthStatusUrl(identifier: string) {
-    return `${this.getWorkspaceUrl(identifier)}/api/health`;
+  getHealthStatusUrl(subdomain: string) {
+    return `${this.getWorkspaceUrl(subdomain)}/api/health`;
   }
 
-  getWorkspaceUrl(identifier: string) {
-    return `https://${identifier}.pedaki.fr`;
+  getWorkspaceUrl(subdomain: string) {
+    return `https://${subdomain}.pedaki.fr`;
   }
 
-  getDomainName(identifier: string) {
-    return `${identifier}.pedaki.fr`;
+  getDomainName(subdomain: string) {
+    return `${subdomain}.pedaki.fr`;
   }
 
   /**
    * Mark a workspace as deleted, this will not delete the workpace.
    * The column `deletedAt` will be set to the current date.
-   * @param identifier the workspace identifier
+   * @param subdomain the workspace subdomain
    */
-  async deleteWorkspaceByIdentifier(identifier: string): Promise<boolean> {
-    console.log(`Deleting workspace '${identifier}'`);
+  async deleteWorkspaceBySubdomain(subdomain: string): Promise<boolean> {
+    console.log(`Deleting workspace '${subdomain}'`);
     try {
       await prisma.workspace.update({
         where: {
-          identifier,
+          subdomain,
         },
         data: {
-          identifier: null,
+          subdomain: null,
           deletedAt: new Date(),
         },
         select: {
@@ -42,17 +42,17 @@ class WorkspaceService {
       });
       return true;
     } catch (error) {
-      console.error(`Workspace '${identifier}' not found`);
+      console.error(`Workspace '${subdomain}' not found`);
       return false;
     }
   }
 
-  async getLatestSubscriptionId(identifier: string): Promise<number | null> {
-    console.log(`Getting latest subscription id for workspace '${identifier}'`);
+  async getLatestSubscriptionId(subdomain: string): Promise<number | null> {
+    console.log(`Getting latest subscription id for workspace '${subdomain}'`);
     const subscription = await prisma.workspaceSubscription.findFirst({
       where: {
         workspace: {
-          identifier,
+          subdomain,
           deletedAt: null,
         },
       },
@@ -71,7 +71,7 @@ class WorkspaceService {
     workspace,
     subscription,
   }: {
-    workspace: Pick<CreateWorkspaceInput, 'name' | 'identifier'> & {
+    workspace: Pick<CreateWorkspaceInput, 'name' | 'subdomain'> & {
       billing: Pick<CreateWorkspaceInput['billing'], 'name' | 'email'>;
     } & {
       creationData: Omit<WorkspaceData, 'workspace' | 'server'> & {
@@ -85,11 +85,11 @@ class WorkspaceService {
       currentPeriodEnd: Date;
     };
   }): Promise<{ workspaceId: string; subscriptionId: number; authToken: string }> {
-    console.log(`Creating workspace (database) '${workspace.identifier}'...`);
+    console.log(`Creating workspace (database) '${workspace.subdomain}'...`);
     const { id, subscriptions } = await prisma.workspace.create({
       data: {
         name: workspace.name,
-        identifier: workspace.identifier,
+        subdomain: workspace.subdomain,
         billingEmail: workspace.billing.email,
         billingName: workspace.billing.name,
         stripeCustomerId: subscription.customerId,
@@ -138,7 +138,7 @@ class WorkspaceService {
           version: WORKSPACE_CREATION_METADATA_VERSION,
           ...workspace.creationData,
           workspace: {
-            identifier: workspace.identifier,
+            subdomain: workspace.subdomain,
             subscriptionId,
           },
         } as Prisma.JsonObject,
@@ -197,18 +197,18 @@ class WorkspaceService {
     console.log(`Deleted ${response.count} old workspace tokens`);
   }
 
-  async getWorkspaceId(identifier: string) {
-    console.log(`Getting workspace id for workspace '${identifier}'`);
+  async getWorkspaceId(subdomain: string) {
+    console.log(`Getting workspace id for workspace '${subdomain}'`);
     const workspace = await prisma.workspace.findUnique({
       where: {
-        identifier,
+        subdomain,
       },
       select: {
         id: true,
       },
     });
     if (!workspace) {
-      throw new Error(`Workspace '${identifier}' not found`);
+      throw new Error(`Workspace '${subdomain}' not found`);
     }
     return workspace.id;
   }
@@ -243,18 +243,12 @@ class WorkspaceService {
     });
   }
 
-  async updateCurrentStatus({
-    workspaceId,
-    status,
-  }: {
-    workspaceId: string;
-    status: WorkspaceStatus;
-  }) {
-    console.log(`Updating workspace status '${workspaceId}'...`);
+  async updateCurrentStatus({ subdomain, status }: { subdomain: string; status: WorkspaceStatus }) {
+    console.log(`Updating workspace status '${subdomain}'...`);
 
     await prisma.workspace.update({
       where: {
-        identifier: workspaceId,
+        subdomain: subdomain,
       },
       data: {
         currentStatus: status,

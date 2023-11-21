@@ -8,7 +8,7 @@ import type { ServerRegion } from '@pedaki/models/resource/server-region.model.j
 import type { StackOutputs } from '~/output.ts';
 
 export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
-  identifier: string;
+  subdomain: string;
   server: {
     provider: SP;
     machinePublicIp: string;
@@ -17,7 +17,7 @@ export interface WorkspaceInstance<SP extends ServerProvider = ServerProvider> {
 }
 
 export interface StackParameters<SP extends ServerProvider> {
-  identifier: string;
+  subdomain: string;
   region: ServerRegion<SP>;
   server: ServerResourceInput;
   database: DatabaseResourceInput;

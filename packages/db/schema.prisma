@@ -33,8 +33,8 @@ model Workspace {
   deletedAt DateTime? @map("deleted_at")
 
   // Used as subdomain when the workspace is created
-  // An identifier is null if the workspaces was deleted (as we need it to be unique)
-  identifier String? @unique @db.VarChar(60)
+  // An subdomain is null if the workspaces was deleted (as we need it to be unique)
+  subdomain String? @unique @db.VarChar(60)
 
   // The user responsible for the workspace
   stripeCustomerId String @map("stripe_customer_id")
@@ -86,7 +86,7 @@ model PendingWorkspaceCreation {
   data String @db.Text /// @encrypted
 
   // Used here as a lock to prevent creating two workspaces at the same time
-  identifier String @unique @db.VarChar(60)
+  subdomain String @unique @db.VarChar(60)
 
   @@map("pending_workspace_creation")
 }

@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 export interface WorkspaceData {
   workspace: {
-    identifier: string;
+    subdomain: string;
     subscriptionId: number;
   };
   vpc: VpcResourceInput;

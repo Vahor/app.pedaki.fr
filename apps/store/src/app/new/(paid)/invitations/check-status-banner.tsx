@@ -6,15 +6,15 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 interface CheckStatusBannerProps {
-  identifier: string;
+  subdomain: string;
   baseUrl: string;
 }
 
-export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ identifier, baseUrl }) => {
+export const CheckStatusBanner: React.FC<CheckStatusBannerProps> = ({ subdomain, baseUrl }) => {
   const router = useRouter();
 
   const { data } = api.workspace.data.getStatus.useQuery(
-    { identifier: identifier },
+    { subdomain: subdomain },
     {
       refetchInterval: data => {
         if (data?.current === 'ACTIVE') {

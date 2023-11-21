@@ -17,29 +17,27 @@ class ResourceService {
   }
 
   async deleteStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    console.log(`Deleting stack for workspace '${workspace.identifier}'...`);
+    console.log(`Deleting stack for workspace '${workspace.subdomain}'...`);
     const provider = this.getProvider(vpc.provider);
 
     await provider.delete({
-      identifier: workspace.identifier,
+      subdomain: workspace.subdomain,
       region: vpc.region,
       server,
       database,
       dns,
     });
 
-    console.log(
-      `Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.identifier}'`,
-    );
+    console.log(`Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.subdomain}'`);
 
-    console.log(`Deleting database resources for workspace '${workspace.identifier}'...`);
+    console.log(`Deleting database resources for workspace '${workspace.subdomain}'...`);
     const deleteResponse = await prisma.workspaceResource.deleteMany({
       where: {
         subscriptionId: workspace.subscriptionId,
       },
     });
     console.log(
-      `Database resources deleted for workspace '${workspace.identifier}' (deleted: ${deleteResponse.count})`,
+      `Database resources deleted for workspace '${workspace.subdomain}' (deleted: ${deleteResponse.count})`,
     );
 
     return null;
@@ -50,8 +48,8 @@ class ResourceService {
    * And retry if it fails.
    */
   async safeCreateStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    console.log(`Creating stack for workspace '${workspace.identifier}'...`);
-    // First check that there is no resource with the same identifier
+    console.log(`Creating stack for workspace '${workspace.subdomain}'...`);
+    // First check that there is no resource with the same subdomain
     const existingResource = await prisma.workspaceResource.count({
       where: {
         subscriptionId: workspace.subscriptionId,
@@ -114,21 +112,21 @@ class ResourceService {
    * @param database Customization for the database (size, etc.)
    */
   async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    console.log(`Upserting stack for workspace '${workspace.identifier}'...`);
+    console.log(`Upserting stack for workspace '${workspace.subdomain}'...`);
     const provider = this.getProvider(vpc.provider);
 
     const outputs = await provider.create({
-      identifier: workspace.identifier,
+      subdomain: workspace.subdomain,
       region: vpc.region,
       server,
       database,
       dns,
     });
 
-    console.log(`Stack upserted (provider) for workspace '${workspace.identifier}'`, outputs);
+    console.log(`Stack upserted (provider) for workspace '${workspace.subdomain}'`, outputs);
 
     // Upsert resource in prisma
-    console.log(`Upserting database resources for workspace '${workspace.identifier}'...`);
+    console.log(`Upserting database resources for workspace '${workspace.subdomain}'...`);
 
     await prisma.$transaction([
       ...outputs.map(resource => {
@@ -159,7 +157,7 @@ class ResourceService {
       }),
     ]);
 
-    console.log(`Database resources upserted for workspace '${workspace.identifier}'`);
+    console.log(`Database resources upserted for workspace '${workspace.subdomain}'`);
 
     return null;
   }

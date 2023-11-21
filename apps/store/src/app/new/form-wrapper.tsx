@@ -44,7 +44,7 @@ const FormWrapper = () => {
         size: 'small',
       },
       // TODO: remove this
-      identifier: 'mewo',
+      subdomain: 'mewo',
       name: 'test',
     },
   });

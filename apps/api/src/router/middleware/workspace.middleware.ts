@@ -46,7 +46,7 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
     select: {
       workspace: {
         select: {
-          identifier: true,
+          subdomain: true,
           stripeCustomerId: true,
         },
       },
@@ -54,7 +54,7 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
   });
 
   // Can be null if the workspace is deleted
-  if (!workspace?.workspace.identifier) {
+  if (!workspace?.workspace.subdomain) {
     throw error;
   }
 
@@ -62,7 +62,7 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
     ctx: {
       workspace: {
         id: workspaceId,
-        identifier: workspace.workspace.identifier!,
+        subdomain: workspace.workspace.subdomain!,
         stripeCustomerId: workspace.workspace.stripeCustomerId,
       },
     },

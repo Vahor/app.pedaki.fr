@@ -37,7 +37,7 @@ export function BaseForm({ form }: { form: FormType }) {
       />
       <FormField
         control={form.control}
-        name="identifier"
+        name="subdomain"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Workspace URL</FormLabel>

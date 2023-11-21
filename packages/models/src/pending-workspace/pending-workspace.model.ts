@@ -11,13 +11,13 @@ export const PendingWorkspaceSchema = z.object({
 
   data: z.string(),
 
-  identifier: z.string(),
+  subdomain: z.string(),
 });
 
 export type PendingWorkspace = z.infer<typeof PendingWorkspaceSchema>;
 
 export const PendingTokenSchema = z.object({
-  identifier: z.string(),
+  subdomain: z.string(),
   workspaceId: z.string(),
   expiresAt: z.coerce.date(),
   workspaceUrl: z.string(),

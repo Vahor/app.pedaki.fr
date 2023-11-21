@@ -28,7 +28,7 @@ export const parseToken = (token: unknown): ParseTokenOutput => {
     }
 
     return {
-      identifier: parsed.identifier,
+      subdomain: parsed.subdomain,
       workspaceId: parsed.workspaceId,
       workspaceUrl: parsed.workspaceUrl,
       expiresAt: parsed.expiresAt,

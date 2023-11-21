@@ -80,7 +80,7 @@ export const workspaceReservationRouter = router({
           id: input.id,
         },
         select: {
-          identifier: true,
+          subdomain: true,
         },
       });
 
@@ -89,7 +89,7 @@ export const workspaceReservationRouter = router({
       }
 
       return {
-        url: workspaceService.getHealthStatusUrl(pending.identifier),
+        url: workspaceService.getHealthStatusUrl(pending.subdomain),
       };
     }),
 
@@ -140,11 +140,11 @@ export const workspaceReservationRouter = router({
         },
         select: {
           workspaceId: true,
-          identifier: true,
+          subdomain: true,
           paidAt: true,
         },
       });
-      if (!pending?.identifier || !pending.workspaceId) {
+      if (!pending?.subdomain || !pending.workspaceId) {
         throw new PendingNotFoundError();
       }
 
@@ -154,7 +154,7 @@ export const workspaceReservationRouter = router({
 
       return pendingWorkspaceService.generateToken({
         workspaceId: pending.workspaceId,
-        identifier: pending.identifier,
+        subdomain: pending.subdomain,
         paidAt: pending.paidAt,
       });
     }),

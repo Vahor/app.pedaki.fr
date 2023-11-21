@@ -4,12 +4,12 @@ import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { env } from '~/env.ts';
 
-const WORKSPACE_IDENTIFIER = 'demo';
+const WORKSPACE_SUBDOMAIN = 'demo';
 const PEDAKI_BILLING_EMAIL = 'developers@pedaki.fr';
 const PEDAKI_BILLING_NAME = 'Pedaki';
 
 const BASE_PARAMETERS = {
-  identifier: WORKSPACE_IDENTIFIER,
+  subdomain: WORKSPACE_SUBDOMAIN,
   vpc: {
     provider: 'aws',
     region: 'eu-west-3',
@@ -29,7 +29,7 @@ const BASE_PARAMETERS = {
     subdomain: 'demo',
   },
   workspace: {
-    identifier: WORKSPACE_IDENTIFIER,
+    subdomain: WORKSPACE_SUBDOMAIN,
   },
 } as const;
 
@@ -55,7 +55,7 @@ const main = async () => {
   await prisma.$connect();
 
   const previousSubscriptionId =
-    await workspaceService.getLatestSubscriptionId(WORKSPACE_IDENTIFIER);
+    await workspaceService.getLatestSubscriptionId(WORKSPACE_SUBDOMAIN);
 
   let subscriptionId: number;
   let authToken = '';
@@ -75,7 +75,7 @@ const main = async () => {
     // Update token
     const { id } = await prisma.workspace.findUniqueOrThrow({
       where: {
-        identifier: WORKSPACE_IDENTIFIER,
+        subdomain: WORKSPACE_SUBDOMAIN,
       },
       select: {
         id: true,
@@ -88,6 +88,9 @@ const main = async () => {
       subscriptionId,
       currentPeriodStart: new Date(),
       currentPeriodEnd: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+      endedAt: null,
+      cancelAt: null,
+      canceledAt: null,
     });
   } else {
     console.log('No previous subscription found, creating a new one');
@@ -95,7 +98,7 @@ const main = async () => {
       await workspaceService.createWorkspace({
         workspace: {
           creationData: BASE_PARAMETERS,
-          identifier: WORKSPACE_IDENTIFIER,
+          subdomain: WORKSPACE_SUBDOMAIN,
           billing: {
             email: PEDAKI_BILLING_EMAIL,
             name: PEDAKI_BILLING_NAME,

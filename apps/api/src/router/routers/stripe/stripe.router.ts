@@ -119,7 +119,7 @@ export const stripeRouter = router({
                 size: pendingData.server.size,
               },
               dns: {
-                subdomain: pendingData.identifier,
+                subdomain: pendingData.subdomain,
               },
             };
 
@@ -127,7 +127,7 @@ export const stripeRouter = router({
               await workspaceService.createWorkspace({
                 workspace: {
                   name: pendingData.name,
-                  identifier: pendingData.identifier,
+                  subdomain: pendingData.subdomain,
                   billing: {
                     name: pendingData.billing.name,
                     email: pendingData.billing.email,
@@ -164,7 +164,7 @@ export const stripeRouter = router({
                 },
               },
               workspace: {
-                identifier: pendingData.identifier,
+                subdomain: pendingData.subdomain,
                 subscriptionId,
               },
             });
@@ -188,14 +188,14 @@ export const stripeRouter = router({
     }),
 
   getCustomerPortalUrl: workspaceProcedure
-    .input(z.object({ returnUrl: z.string().url(), workspaceId: z.string() }))
+    .input(z.object({ returnUrl: z.string().url(), subdomain: z.string() }))
     .output(z.object({ url: z.string().url() }))
-    .meta({ openapi: { method: 'GET', path: '/stripe/{workspaceId}/customer-portal-url' } })
+    .meta({ openapi: { method: 'GET', path: '/stripe/{subdomain}/customer-portal-url' } })
     .query(async ({ input, ctx }) => {
       // TODO: currently we can only update the status of our own workspace
       //  we might want to update this in the future to allow admins to generate a portal url for any workspace
 
-      if (ctx.workspace.identifier !== input.workspaceId) {
+      if (ctx.workspace.subdomain !== input.subdomain) {
         throw new NotYourWorkspaceError();
       }
 
