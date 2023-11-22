@@ -178,7 +178,7 @@ echo "${envFileContent}" > web-variables.env
 sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
-sudo /usr/local/bin/docker-compose up -d cli
+sudo /usr/local/bin/docker-compose up cli
 sudo /usr/local/bin/docker-compose up -d caddy web
 `;
   };
