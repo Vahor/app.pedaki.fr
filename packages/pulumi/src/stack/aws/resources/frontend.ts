@@ -2,7 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
 import type { StackParameters } from '~/type.ts';
-import { CADDY_DOCKER_IMAGE, DOCKER_IMAGE, VERSION } from '~/utils/docker.ts';
+import { CADDY_DOCKER_IMAGE, CLI_DOCKER_IMAGE, DOCKER_IMAGE, VERSION } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
   dbHost: pulumi.Output<string>;
@@ -51,12 +51,12 @@ export class WebService extends pulumi.ComponentResource {
         userDataReplaceOnChange: true, // Force to recreate the ec2 instance when the script changes
         ipv6AddressCount: 0, // Disable ipv6
         rootBlockDevice: {
-            volumeSize: 16,
-            volumeType: 'gp3',
-            deleteOnTermination: true,
+          volumeSize: 16,
+          volumeType: 'gp3',
+          deleteOnTermination: true,
         },
         metadataOptions: {
-            httpTokens: 'required',
+          httpTokens: 'required',
         },
         tags: {
           ...args.tags,
@@ -108,7 +108,12 @@ services:
         image: '${DOCKER_IMAGE}'
         env_file:
             - web-variables.env
-        restart: unless-stopped
+        restart: unless-stopped  
+        
+    cli:
+        image: '${CLI_DOCKER_IMAGE}'
+        env_file:
+            - web-variables.env
 
     caddy:
         image: '${CADDY_DOCKER_IMAGE}'
@@ -173,7 +178,8 @@ echo "${envFileContent}" > web-variables.env
 sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
-sudo /usr/local/bin/docker-compose up -d
+sudo /usr/local/bin/docker-compose up -d cli
+sudo /usr/local/bin/docker-compose up -d caddy web
 `;
   };
 
