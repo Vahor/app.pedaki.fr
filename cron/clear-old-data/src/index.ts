@@ -52,7 +52,7 @@ const removeOldWorkspaceTokens = async () => {
 
   let count = 0;
   for (const tokens of moreThanOneToken) {
-    const oldestToken = tokens.toSorted((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
+    const oldestToken = tokens.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
     if (!oldestToken) {
       continue;
     }
