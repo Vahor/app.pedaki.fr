@@ -147,6 +147,9 @@ https://${domain}, :80, :443 {
 `;
 
     return pulumi.interpolate`#!/bin/bash
+set -e -x
+export DEBIAN_FRONTEND=noninteractive
+
 sudo yum update -y
 sudo yum install docker -y
 
@@ -154,8 +157,6 @@ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 sudo service docker start
-sudo systemctl enable docker
-sudo systemctl start docker
 
 sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
 
