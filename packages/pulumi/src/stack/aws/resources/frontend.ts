@@ -49,6 +49,15 @@ export class WebService extends pulumi.ComponentResource {
         ami: amiId,
         userData: this.startScript(args),
         userDataReplaceOnChange: true, // Force to recreate the ec2 instance when the script changes
+        ipv6AddressCount: 0, // Disable ipv6
+        rootBlockDevice: {
+            volumeSize: 16,
+            volumeType: 'gp3',
+            deleteOnTermination: true,
+        },
+        metadataOptions: {
+            httpTokens: 'required',
+        },
         tags: {
           ...args.tags,
           Name: ec2Name,
