@@ -78,9 +78,10 @@ const main = async () => {
 
     subscriptionId = previousSubscriptionId;
     workspaceId = previousWorkspaceId;
-    authToken = await workspaceService.registerNewWorkspaceToken({
+    const token = await workspaceService.registerNewWorkspaceToken({
       workspaceId: previousWorkspaceId,
     });
+    authToken = `${previousWorkspaceId}:${token}`;
 
     // Update subscription
     await workspaceService.updateWorkspaceSubscriptionStripeData({

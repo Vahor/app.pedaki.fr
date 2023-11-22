@@ -160,7 +160,7 @@ echo "${envFileContent}" > web-variables.env
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
-sysctl -w net.core.rmem_max=2500000
+sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose up -d
