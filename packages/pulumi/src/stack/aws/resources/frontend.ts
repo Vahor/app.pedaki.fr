@@ -186,7 +186,15 @@ mkdir -p /app/certificates
 sudo wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /app/certificates/rds-combined-ca-bundle.pem
 
 sudo /usr/local/bin/docker-compose pull
-sudo /usr/local/bin/docker-compose up cli
+sudo /usr/local/bin/docker-compose run --rm cli
+
+# Exit if the cli container failed
+if [ $? -ne 0 ]
+then
+    # TODO: catch error
+    echo "Failed to run cli container"
+fi
+
 sudo /usr/local/bin/docker-compose up -d caddy web
 `;
   };
