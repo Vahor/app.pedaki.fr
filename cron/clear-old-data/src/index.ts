@@ -22,7 +22,7 @@ const removeOldPendingWorkspaceCreations = async () => {
   });
 
   const count = result.count;
-  console.log(`clear-old-data deleted ${count} pending workspaces`);
+  console.log(`[pending] clear-old-data deleted ${count} pending workspaces`);
 };
 
 const removeOldWorkspaceTokens = async () => {
@@ -86,7 +86,7 @@ const removeOldWorkspaceInvitations = async () => {
   });
 
   const count = result.count;
-  console.log(`clear-old-data deleted ${count} workspace invitations`);
+  console.log(`[invitations] clear-old-data deleted ${count} workspace invitations`);
 };
 
 main()
