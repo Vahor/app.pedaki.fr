@@ -40,10 +40,8 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
   // Check if the token is valid
   const workspace = await prisma.workspaceToken.findUnique({
     where: {
-      token_workspaceId: {
-        token,
-        workspaceId,
-      },
+      token,
+      workspaceId,
     },
     select: {
       workspace: {
