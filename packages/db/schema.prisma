@@ -47,7 +47,7 @@ model Workspace {
   members WorkspaceMember[]
 
   subscriptions  WorkspaceSubscription[]
-  token          WorkspaceToken?
+  tokens         WorkspaceToken[]
   pendingInvites PendingWorkspaceInvite[]
 
   @@index([id])
@@ -60,12 +60,13 @@ model WorkspaceToken {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  token     String  @unique /// @encrypted
-  tokenHash String? @unique @map("token_hash") @db.VarChar(320) /// @encryption:hash(token)
+  token     String /// @encrypted
+  tokenHash String? @map("token_hash") @db.VarChar(320) /// @encryption:hash(token)
 
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  workspaceId String    @unique @map("workspace_id") @db.VarChar(25)
+  workspaceId String    @map("workspace_id") @db.VarChar(25)
 
+  @@unique([token, workspaceId])
   @@index([workspaceId])
   @@index([token]) // TODO: check if we need tokenHash instead (see the generated sql)
   @@map("token_to_workspace")
