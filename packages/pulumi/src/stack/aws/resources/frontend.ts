@@ -86,7 +86,7 @@ NODE_ENV=production
 PEDAKI_DOMAIN='${args.stackParameters.workspace.subdomain}.pedaki.fr'
 PEDAKI_TAG='${VERSION}'
 
-DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslaccept=strict'
+DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslcacert=/app/certificates/rds-combined-ca-bundle.pem'
 PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
 
 PASSWORD_SALT='${args.passwordSalt}'
@@ -109,11 +109,15 @@ services:
         env_file:
             - web-variables.env
         restart: unless-stopped  
+        volumes:
+            - /app/certificates:/app/certificates
         
     cli:
         image: '${CLI_DOCKER_IMAGE}'
         env_file:
             - web-variables.env
+        volumes:
+            - /app/certificates:/app/certificates
 
     caddy:
         image: '${CADDY_DOCKER_IMAGE}'
@@ -176,6 +180,10 @@ echo "${envFileContent}" > web-variables.env
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
 sudo sysctl -w net.core.rmem_max=2500000
+
+# Download aws RDS CA certificate
+mkdir -p /app/certificates
+sudo wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /app/certificates/rds-combined-ca-bundle.pem
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose up cli
