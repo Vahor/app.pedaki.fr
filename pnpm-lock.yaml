@@ -235,7 +235,7 @@ importers:
         specifier: ^8.4.31
         version: 8.4.31
 
-  cron/clear-old-pending:
+  cron/clear-old-data:
     dependencies:
       '@pedaki/db':
         specifier: workspace:*

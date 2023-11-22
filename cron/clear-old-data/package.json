@@ -1,5 +1,5 @@
 {
-  "name": "@pedaki/cron-clear-old-pending",
+  "name": "@pedaki/cron-clear-old-data",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

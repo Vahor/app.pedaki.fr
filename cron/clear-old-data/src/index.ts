@@ -2,10 +2,10 @@ import { prisma } from '@pedaki/db';
 import { env } from '~/env.ts';
 
 const main = async () => {
-  console.log("Starting cron 'clear-old-pending'");
+  console.log("Starting cron 'clear-old-data'");
   await removeOldPendingWorkspaceCreations();
   await removeOldWorkspaceInvitations();
-  console.log("Finished cron 'clear-old-pending'");
+  console.log("Finished cron 'clear-old-data'");
 };
 
 const removeOldPendingWorkspaceCreations = async () => {
@@ -21,7 +21,7 @@ const removeOldPendingWorkspaceCreations = async () => {
   });
 
   const count = result.count;
-  console.log(`clear-old-pending deleted ${count} pending workspaces`);
+  console.log(`clear-old-data deleted ${count} pending workspaces`);
 };
 
 const removeOldWorkspaceInvitations = async () => {
@@ -37,7 +37,7 @@ const removeOldWorkspaceInvitations = async () => {
   });
 
   const count = result.count;
-  console.log(`clear-old-pending deleted ${count} workspace invitations`);
+  console.log(`clear-old-data deleted ${count} workspace invitations`);
 };
 
 main()

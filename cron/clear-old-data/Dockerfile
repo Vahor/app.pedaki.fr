@@ -15,16 +15,16 @@ COPY .npmrc ./
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 COPY packages/db/package.json ./packages/db/
-COPY cron/clear-old-pending/package.json ./cron/clear-old-pending/
+COPY cron/clear-old-data/package.json ./cron/clear-old-data/
 
 RUN --mount=type=cache,id=s/0eb7c8d5-3796-4b22-b0dc-988ca0084b57-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-COPY cron/clear-old-pending ./cron/clear-old-pending
+COPY cron/clear-old-data ./cron/clear-old-data
 COPY packages ./packages
 COPY scripts ./scripts
 
 ENV NODE_ENV=production
-RUN pnpm build --filter cron-clear-old-pending
+RUN pnpm build --filter cron-clear-old-data
 
 # Copy node_modules/.prisma to a tmp folder
 RUN mkdir -p tmp
@@ -32,7 +32,7 @@ RUN cp -r node_modules/.prisma tmp/.prisma
 
 # Delete node_modules and reinstall only production dependencies
 RUN npx rimraf --glob ./**/node_modules
-RUN --mount=type=cache,id=s/0eb7c8d5-3796-4b22-b0dc-988ca0084b57-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-clear-old-pending
+RUN --mount=type=cache,id=s/0eb7c8d5-3796-4b22-b0dc-988ca0084b57-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-clear-old-data
 
 # Copy back node_modules/.prisma
 RUN cp -r tmp/.prisma node_modules
@@ -42,7 +42,7 @@ WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
-COPY --from=builder /app/cron/clear-old-pending/dist ./dist
+COPY --from=builder /app/cron/clear-old-data/dist ./dist
 
 ## Load public env vars
 ARG PORT=8000
