@@ -120,7 +120,11 @@ const main = async () => {
     workspaceId = newWorkspaceId;
   }
 
-  await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr', 'Developers');
+  try {
+    await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr', 'Developers');
+  } catch (error) {
+    console.error('Error while adding pending invite', error);
+  }
 
   await resourceService.upsertStack(stackParameters(workspaceId, subscriptionId, authToken));
 
