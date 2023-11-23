@@ -2,6 +2,7 @@ import { prisma } from '@pedaki/db';
 import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import { PendingNotFoundError } from '@pedaki/models/errors/PendingNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
+import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
   CheckoutSessionCompletedSchema,
@@ -176,11 +177,7 @@ export const stripeRouter = router({
             const data = CheckoutSessionExpiredSchema.parse(event.data.object);
             const pendingId = data.metadata.pendingId;
 
-            await prisma.pendingWorkspaceCreation.delete({
-              where: {
-                id: pendingId,
-              },
-            });
+            pendingWorkspaceService.delete(pendingId);
 
             console.log('Deleted pending workspace creation after session expired', pendingId);
           }
