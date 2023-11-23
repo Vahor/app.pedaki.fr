@@ -83,7 +83,7 @@ model PendingWorkspaceCreation {
   workspaceId     String?   @unique @map("workspace_id") @db.VarChar(25)
 
   // In there we store the data needed to create the workspace (CreateWorkspaceInput)
-  data String @db.Text /// @encrypted
+  data String @db.Text
 
   // Used here as a lock to prevent creating two workspaces at the same time
   subdomain String @unique @db.VarChar(60)
@@ -99,12 +99,10 @@ model PendingWorkspaceInvite {
 
   name String @db.VarChar(255)
 
-  email     String  @db.VarChar(255) /// @encrypted
-  emailHash String? @unique @map("email_hash") @db.VarChar(500) /// @encryption:hash(email)
+  email String @db.VarChar(255)
 
   @@unique([email, workspaceId])
   @@index([workspaceId])
-  @@index([emailHash])
   @@map("pending_workspace_invite")
 }
 
