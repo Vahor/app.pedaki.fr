@@ -1,6 +1,6 @@
 import { prisma } from '@pedaki/db';
 import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
-import { PendingNotFoundError } from '@pedaki/models/errors/PendingNotFoundError';
+import { PendingNotFoundError } from '@pedaki/models/errors/PendingNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
