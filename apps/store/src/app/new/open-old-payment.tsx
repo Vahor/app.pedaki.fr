@@ -22,7 +22,7 @@ const OpenOldPayment = () => {
 
       if (searchParams.has('cancel')) {
         setPaymentUrl(null);
-        safeHistoryReplaceState(null, '', pathName);
+        safeHistoryReplaceState(pathName);
       } else if (paymentUrl) {
         toast('Réouvrir la page de paiement ?', {
           action: {
