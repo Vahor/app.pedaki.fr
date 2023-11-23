@@ -34,7 +34,8 @@ export class WebService extends pulumi.ComponentResource {
         mostRecent: true,
         filters: [
           { name: 'state', values: ['available'] },
-          { name: 'name', values: ['al2023-ami-minimal-kernel-default-x86_64'] },
+          { name: 'name', values: ['al2023-ami-minimal*-x86_64'] },
+          { name: 'owner-id', values: ['137112412989'] },
         ],
       })
       .then(ami => ami.id);
@@ -160,7 +161,7 @@ set -e -x
 export DEBIAN_FRONTEND=noninteractive
 
 sudo yum update -y
-sudo yum install docker -y
+sudo yum install docker wget -y
 
 sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
