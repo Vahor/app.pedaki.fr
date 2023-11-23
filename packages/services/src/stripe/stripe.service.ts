@@ -95,6 +95,7 @@ class StripeService {
   }
 
   async expireCheckoutSession({ sessionId }: { sessionId: string }) {
+    // checkout.session.expired webhook event will be called right after
     await this.stripe.checkout.sessions.expire(sessionId);
   }
 
