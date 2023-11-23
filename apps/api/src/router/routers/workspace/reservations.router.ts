@@ -26,7 +26,7 @@ export const workspaceReservationRouter = router({
           priceId: products[ProductType.HOSTING].priceId[input.billing.subscriptionInterval],
         },
         metadata: {
-          identifier: input.identifier,
+          subdomain: input.subdomain,
           workspaceName: input.name,
           pendingId,
         },

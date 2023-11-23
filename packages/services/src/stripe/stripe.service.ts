@@ -83,7 +83,7 @@ class StripeService {
       metadata: metadata,
       custom_text: {
         submit: {
-          message: `Votre workspace sera accessible à l'adresse ${metadata.identifier}.pedaki.fr.`,
+          message: `Votre workspace sera accessible à l'adresse ${metadata.subdomain}.pedaki.fr.`,
         },
       },
     });

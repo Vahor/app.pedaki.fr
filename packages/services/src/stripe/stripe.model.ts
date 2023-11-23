@@ -17,7 +17,7 @@ export const PaymentMetadataSchema = z
   .object({
     pendingId: z.string().cuid(),
     workspaceName: z.string(),
-    identifier: z.string(),
+    subdomain: z.string(),
   })
   .catchall(z.string());
 
