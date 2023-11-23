@@ -34,7 +34,7 @@ export class WebService extends pulumi.ComponentResource {
         mostRecent: true,
         filters: [
           { name: 'state', values: ['available'] },
-          { name: 'name', values: ['amzn-ami-hvm-*-x86_64-ebs'] },
+          { name: 'name', values: ['al2023-ami-minimal-kernel-default-x86_64'] },
         ],
       })
       .then(ami => ami.id);
