@@ -49,7 +49,7 @@ class InvitationService {
   }
 
   async deleteManyInvites(workspaceId: string, emails: string[]): Promise<void> {
-    await prisma.pendingWorkspaceInvite.deleteMany({
+    const result = await prisma.pendingWorkspaceInvite.deleteMany({
       where: {
         workspaceId: workspaceId,
         email: {
@@ -57,6 +57,8 @@ class InvitationService {
         },
       },
     });
+
+    console.log(`Deleted ${result.count} invites for workspace ${workspaceId}`);
   }
 }
 
