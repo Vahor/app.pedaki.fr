@@ -34,7 +34,7 @@ const OpenOldPayment = () => {
         });
       }
     }
-  }, [paymentUrl, router]);
+  }, [paymentUrl, router, pathName, searchParams, setPaymentUrl]);
 
   return null;
 };
