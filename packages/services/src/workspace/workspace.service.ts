@@ -101,6 +101,7 @@ class WorkspaceService {
         billingEmail: workspace.billing.email,
         billingName: workspace.billing.name,
         stripeCustomerId: subscription.customerId,
+        expectedStatus: 'CREATING',
         members: {
           create: {
             email: workspace.billing.email,
@@ -258,7 +259,7 @@ class WorkspaceService {
     workspaceId: string;
     status: WorkspaceStatus;
   }) {
-    console.log(`Updating workspace status '${workspaceId}'... (status: ${status})`);
+    console.log(`Updating workspace status (current) '${workspaceId}'... (status: ${status})`);
 
     await prisma.workspace.update({
       where: {
@@ -266,6 +267,25 @@ class WorkspaceService {
       },
       data: {
         currentStatus: status,
+      },
+    });
+  }
+
+  async updateExpectedStatus({
+    workspaceId,
+    status,
+  }: {
+    workspaceId: string;
+    status: WorkspaceStatus;
+  }) {
+    console.log(`Updating workspace status (expected) '${workspaceId}'... (status: ${status})`);
+
+    await prisma.workspace.update({
+      where: {
+        id: workspaceId,
+      },
+      data: {
+        expectedStatus: status,
       },
     });
   }

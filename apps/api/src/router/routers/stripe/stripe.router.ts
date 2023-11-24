@@ -153,22 +153,22 @@ export const stripeRouter = router({
               },
             });
 
-            // void resourceService.safeCreateStack({
-            //   ...workspaceCreationData,
-            //   server: {
-            //     ...workspaceCreationData.server,
-            //     environment_variables: {
-            //       PEDAKI_AUTH_TOKEN: authToken,
-            //       PEDAKI_BILLING_EMAIL: pendingData.billing.email,
-            //       PEDAKI_BILLING_NAME: pendingData.billing.name,
-            //     },
-            //   },
-            //   workspace: {
-            //     id: workspaceId,
-            //     subdomain: pendingData.subdomain,
-            //     subscriptionId,
-            //   },
-            // });
+              void resourceService.safeCreateStack({
+                  ...workspaceCreationData,
+                  server: {
+                      ...workspaceCreationData.server,
+                      environment_variables: {
+                          PEDAKI_AUTH_TOKEN: authToken,
+                          PEDAKI_BILLING_EMAIL: pendingData.billing.email,
+                          PEDAKI_BILLING_NAME: pendingData.billing.name,
+                      },
+                  },
+                  workspace: {
+                      id: workspaceId,
+                      subdomain: pendingData.subdomain,
+                      subscriptionId,
+                  },
+              });
           }
           break;
         case 'checkout.session.expired':
@@ -180,6 +180,19 @@ export const stripeRouter = router({
             pendingWorkspaceService.delete(pendingId);
 
             console.log('Deleted pending workspace creation after session expired', pendingId);
+
+            // we expect the server to be created in the next 10 minutes
+            void new Promise(resolve => setTimeout(resolve, 10 * 60 * 1000)).then(async () => {
+              await prisma.workspace.update({
+                where: {
+                  id: workspaceId,
+                  expectedStatus: 'CREATING',
+                },
+                data: {
+                  expectedStatus: status,
+                },
+              });
+            });
           }
           break;
 

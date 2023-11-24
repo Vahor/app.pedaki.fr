@@ -48,6 +48,7 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
         select: {
           subdomain: true,
           stripeCustomerId: true,
+          currentStatus: true,
         },
       },
     },
@@ -64,6 +65,7 @@ export const isFromWorkspace = t.middleware(async ({ ctx, next }) => {
         id: workspaceId,
         subdomain: workspace.workspace.subdomain!,
         stripeCustomerId: workspace.workspace.stripeCustomerId,
+        currentStatus: workspace.workspace.currentStatus,
       },
     },
   });
