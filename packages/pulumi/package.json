@@ -24,7 +24,7 @@
   "dependencies": {
     "@pedaki/common": "^0.1.4",
     "@pedaki/models": "workspace:*",
-    "@pulumi/aws": "^6.9.0",
+    "@pulumi/aws": "^6.10.0",
     "@pulumi/cloudflare": "^5.15.0",
     "@pulumi/pulumi": "^3.94.2",
     "@pulumi/random": "^4.14.0",
