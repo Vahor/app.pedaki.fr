@@ -251,12 +251,18 @@ class WorkspaceService {
     });
   }
 
-  async updateCurrentStatus({ subdomain, status }: { subdomain: string; status: WorkspaceStatus }) {
-    console.log(`Updating workspace status '${subdomain}'...`);
+  async updateCurrentStatus({
+    workspaceId,
+    status,
+  }: {
+    workspaceId: string;
+    status: WorkspaceStatus;
+  }) {
+    console.log(`Updating workspace status '${workspaceId}'...`);
 
     await prisma.workspace.update({
       where: {
-        subdomain: subdomain,
+        id: workspaceId,
       },
       data: {
         currentStatus: status,

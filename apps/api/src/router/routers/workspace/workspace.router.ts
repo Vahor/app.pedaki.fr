@@ -10,22 +10,24 @@ export const workspaceDataRouter = router({
     .input(
       z.object({
         status: WorkspaceStatusSchema,
-        subdomain: z.string(),
+        workspaceId: z.string(),
       }),
     )
-    .output(z.undefined())
-    .meta({ openapi: { method: 'POST', path: '/workspace/{subdomain}/status' } })
+    .output(z.boolean())
+    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/status' } })
     .mutation(async ({ input, ctx }) => {
       // The param is only here to respect the REST API
       // But we don't need it as we already have the workspaceId in the context
-      if (ctx.workspace.subdomain !== input.subdomain) {
+      if (ctx.workspace.id !== input.workspaceId) {
         throw new NotYourWorkspaceError();
       }
 
       await workspaceService.updateCurrentStatus({
-        subdomain: ctx.workspace.subdomain,
+        workspaceId: ctx.workspace.id,
         status: input.status,
       });
+
+      return true;
     }),
 
   getStatus: publicProcedure

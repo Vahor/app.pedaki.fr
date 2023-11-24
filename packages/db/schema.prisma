@@ -51,6 +51,7 @@ model Workspace {
   pendingInvites PendingWorkspaceInvite[]
 
   @@index([id])
+  @@index([subdomain])
   @@map("workspace")
 }
 
