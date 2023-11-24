@@ -182,17 +182,20 @@ export const stripeRouter = router({
             console.log('Deleted pending workspace creation after session expired', pendingId);
 
             // we expect the server to be created in the next 10 minutes
-            void new Promise(resolve => setTimeout(resolve, 10 * 60 * 1000)).then(async () => {
-              await prisma.workspace.update({
-                where: {
-                  id: workspaceId,
-                  expectedStatus: 'CREATING',
-                },
-                data: {
-                  expectedStatus: status,
-                },
-              });
-            });
+            setTimeout(
+              () => {
+                void prisma.workspace.update({
+                  where: {
+                    id: workspaceId,
+                    expectedStatus: 'CREATING',
+                  },
+                  data: {
+                    expectedStatus: 'ACTIVE',
+                  },
+                });
+              },
+              10 * 60 * 1000,
+            );
           }
           break;
 
