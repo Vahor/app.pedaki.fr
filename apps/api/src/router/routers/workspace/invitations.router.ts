@@ -17,7 +17,7 @@ export const workspaceInvitationRouter = router({
     }),
 
   delete: publicProcedure
-    .input(CreateWorkspaceInvitationInput)
+    .input(CreateWorkspaceInvitationInput.pick({ email: true, token: true }))
     .output(z.undefined())
     .mutation(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);

@@ -25,7 +25,7 @@ interface InviteFormProps {
   rawToken: string;
 }
 
-const Schema = CreateWorkspaceInvitationInput.pick({ email: true });
+const Schema = CreateWorkspaceInvitationInput.pick({ email: true, name: true });
 
 type InviteFormValues = z.infer<typeof Schema>;
 
@@ -34,6 +34,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
     resolver: zodResolver(Schema),
     mode: 'onBlur',
     defaultValues: {
+      name: 'bidule',
       email: 'test@email.com',
     },
   });
@@ -49,7 +50,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
           createInvitationMutation.mutateAsync({
             email: values.email,
             token: rawToken,
-            name: 'test', // TODO: add name field
+            name: values.name,
           }),
           200,
         ),
@@ -73,7 +74,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
       },
     )
       .then(() => {
-        addEmail(values.email);
+        addEmail({ name: values.name, email: values.email });
       })
       .catch(() => {
         // ignore
@@ -84,6 +85,24 @@ export function InviteForm({ rawToken }: InviteFormProps) {
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nom</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="john@example.com"
+                    type="text"
+                    disabled={isSubmitting}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"

@@ -13,7 +13,7 @@ import React, { useEffect } from 'react';
 import Balancer from 'react-wrap-balancer';
 
 interface InvitedEmailsProps {
-  initialEmails: string[];
+  initialEmails: { name: string; email: string }[];
   token: string;
 }
 
@@ -29,7 +29,7 @@ const twoLettersFromEmail = (email: string) => {
   return `${firstPart!.slice(0, 1).toUpperCase()}${secondPart.slice(0, 1).toUpperCase()}`;
 };
 
-export function InvitedEmails({ initialEmails, token }: InvitedEmailsProps) {
+export function InvitedEmails({ initialEmails, token }: Readonly<InvitedEmailsProps>) {
   const emails = useWorkspaceInvitationStore(state => state.emails);
   const setEmails = useWorkspaceInvitationStore(state => state.setEmails);
 
@@ -64,22 +64,22 @@ export function InvitedEmails({ initialEmails, token }: InvitedEmailsProps) {
   return (
     <div>
       <ul className="space-y-2">
-        {emails.map(email => (
-          <li key={email}>
+        {emails.map(info => (
+          <li key={info.email}>
             <Card className="flex items-center gap-2 bg-white p-3">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-gray-12 text-sm font-medium text-white">
-                  {twoLettersFromEmail(email)}
+                  {twoLettersFromEmail(info.name)}
                 </AvatarFallback>
               </Avatar>
               <span
                 className="max-w-[40ch] overflow-hidden text-ellipsis text-base text-secondary"
-                title={email}
+                title={info.email}
               >
-                {email}
+                {info.email}
               </span>
               <div className="flex-1"></div>
-              <RemoveInvitedEmailButton email={email} token={token} />
+              <RemoveInvitedEmailButton email={info.email} token={token} />
             </Card>
           </li>
         ))}

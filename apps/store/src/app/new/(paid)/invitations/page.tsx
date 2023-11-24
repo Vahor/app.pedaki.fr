@@ -38,7 +38,7 @@ export default async function InvitationPage({
     );
   }
 
-  const initialEmails = await api.workspace.invitation.getMany.query({
+  const { invitations } = await api.workspace.invitation.getMany.query({
     token: token!,
   });
 
@@ -52,7 +52,7 @@ export default async function InvitationPage({
             <CheckStatusBanner subdomain={data.subdomain} baseUrl={data.workspaceUrl} />
           </div>
           <div className="md:mt-8">
-            <InvitedEmails initialEmails={initialEmails.emails} token={token!} />
+            <InvitedEmails initialEmails={invitations} token={token!} />
           </div>
         </div>
       </>
