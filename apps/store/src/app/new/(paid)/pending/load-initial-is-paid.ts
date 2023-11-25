@@ -7,13 +7,13 @@ interface LoadInitialIsPaidOutput {
   status: 'waiting' | 'paid' | 'invalid' | 'expired';
 }
 
-export const loadInitialIsPaid = async (pendingId: unknown): Promise<LoadInitialIsPaidOutput> => {
-  if (!pendingId || typeof pendingId !== 'string') {
+export const loadInitialIsPaid = async (token: unknown): Promise<LoadInitialIsPaidOutput> => {
+  if (!token || typeof token !== 'string') {
     return { status: 'invalid' };
   }
 
   try {
-    const initialIsPaid = await api.workspace.reservation.paidStatus.query({ id: pendingId });
+    const initialIsPaid = await api.workspace.reservation.paidStatus.query({ token });
     return { status: initialIsPaid.paid ? 'paid' : 'waiting' };
   } catch (e) {
     if ((e as Error).message === 'NOT_FOUND') {

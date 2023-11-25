@@ -96,6 +96,14 @@ class PendingWorkspaceService {
     }
     return parsed;
   }
+
+  async delete(pendingId: string): Promise<void> {
+    await prisma.pendingWorkspaceCreation.delete({
+      where: {
+        id: pendingId,
+      },
+    });
+  }
 }
 
 const pendingWorkspaceService = new PendingWorkspaceService();

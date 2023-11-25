@@ -25,6 +25,7 @@ export const CreateWorkspaceInput = z.object({
     .string()
     .min(3)
     .max(50)
+    .regex(/^[a-z0-9-]+$/, { message: 'INVALID_IDENTIFIER' })
     .refine(
       subdomain => {
         return !restrictedSubdomains.includes(subdomain);

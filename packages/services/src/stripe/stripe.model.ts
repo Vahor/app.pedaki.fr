@@ -17,6 +17,7 @@ export const PaymentMetadataSchema = z
   .object({
     pendingId: z.string().cuid(),
     workspaceName: z.string(),
+    subdomain: z.string(),
   })
   .catchall(z.string());
 
@@ -42,4 +43,13 @@ export const CheckoutSessionCompletedSchema = z.object({
   customer: z.string(),
   subscription: z.string(),
   expires_at: z.number(),
+});
+
+export const CheckoutSessionExpiredSchema = z.object({
+  metadata: PaymentMetadataSchema,
+  status: z.string(),
+});
+
+export const PendingJWTSchema = z.object({
+  pendingId: z.string(),
 });

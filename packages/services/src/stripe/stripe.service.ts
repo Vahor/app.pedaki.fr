@@ -1,6 +1,12 @@
 import { env } from '~/env.ts';
 import type { CreatePaymentInput, CreatePaymentOutput } from '~/stripe/stripe.model.ts';
+import { PendingJWTSchema } from '~/stripe/stripe.model.ts';
+import jwt from 'jsonwebtoken';
 import Stripe from 'stripe';
+import { z } from 'zod';
+
+// 30 min expiration
+const EXPIRES_AT_DURATION_MINUTES = 30;
 
 class StripeService {
   private stripe: Stripe;
@@ -59,8 +65,7 @@ class StripeService {
       customer_email: customer.email,
       customer_creation: isSubscription ? undefined : 'if_required',
 
-      // 30 min expiration
-      expires_at: Math.floor(Date.now() / 1000) + 60 * 30,
+      expires_at: Math.floor(Date.now() / 1000) + 60 * EXPIRES_AT_DURATION_MINUTES,
       mode: isSubscription ? 'subscription' : 'payment',
       invoice_creation: isSubscription
         ? undefined
@@ -69,8 +74,15 @@ class StripeService {
             enabled: true,
           },
 
-      success_url: `${env.STORE_URL}/new/pending?token=${metadata.pendingId}`,
-      cancel_url: `${env.STORE_URL}/new`,
+      success_url: `${env.STORE_URL}/new/pending?token=${this.generatePendingJWT(
+        {
+          pendingId: metadata.pendingId,
+        },
+        '6h',
+      )}`,
+      cancel_url: `${env.STORE_URL}/new/cancel?token=${this.generatePendingJWT({
+        pendingId: metadata.pendingId,
+      })}`,
       payment_intent_data: isSubscription
         ? undefined
         : {
@@ -81,12 +93,22 @@ class StripeService {
           },
 
       metadata: metadata,
+      custom_text: {
+        submit: {
+          message: `Votre workspace sera accessible à l'adresse ${metadata.subdomain}.pedaki.fr.`,
+        },
+      },
     });
 
     return {
       url: session.url!,
       id: session.id,
     };
+  }
+
+  async expireCheckoutSession({ sessionId }: { sessionId: string }) {
+    // checkout.session.expired webhook event will be called right after
+    await this.stripe.checkout.sessions.expire(sessionId);
   }
 
   async createPortalSession({ customerId, returnUrl }: { customerId: string; returnUrl: string }) {
@@ -96,6 +118,19 @@ class StripeService {
     });
 
     return session;
+  }
+
+  generatePendingJWT(
+    content: z.infer<typeof PendingJWTSchema>,
+    expiresIn = `${EXPIRES_AT_DURATION_MINUTES}m`,
+  ) {
+    return jwt.sign(content, env.JWT_PRIVATE_KEY, {
+      expiresIn,
+    });
+  }
+
+  decodePendingJWT(token: string): z.infer<typeof PendingJWTSchema> {
+    return PendingJWTSchema.parse(jwt.verify(token, env.JWT_PRIVATE_KEY));
   }
 }
 

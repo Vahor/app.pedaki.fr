@@ -1,16 +1,19 @@
 import { prisma } from '@pedaki/db';
 import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
+import { PendingNotFoundError } from '@pedaki/models/errors/PendingNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
+import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import {
   CheckoutSessionCompletedSchema,
+  CheckoutSessionExpiredSchema,
   CustomerSubscriptionSchema,
 } from '@pedaki/services/stripe/stripe.model.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { router, stripeProcedure, workspaceProcedure } from '../../trpc.ts';
+import { publicProcedure, router, stripeProcedure, workspaceProcedure } from '../../trpc.ts';
 
 export const stripeRouter = router({
   webhook: stripeProcedure
@@ -21,9 +24,6 @@ export const stripeRouter = router({
       const event = ctx.stripeEvent;
       console.log(event.type);
       switch (event.type) {
-        // Not necessary? Already handled in checkout.session.completed
-        // case 'customer.subscription.created':
-        // break;
         case 'customer.subscription.updated':
         case 'customer.subscription.deleted':
           {
@@ -153,24 +153,36 @@ export const stripeRouter = router({
               },
             });
 
-            void resourceService.safeCreateStack({
-              ...workspaceCreationData,
-              server: {
-                ...workspaceCreationData.server,
-                environment_variables: {
-                  PEDAKI_AUTH_TOKEN: authToken,
-                  PEDAKI_BILLING_EMAIL: pendingData.billing.email,
-                  PEDAKI_BILLING_NAME: pendingData.billing.name,
-                },
-              },
-              workspace: {
-                id: workspaceId,
-                subdomain: pendingData.subdomain,
-                subscriptionId,
-              },
-            });
+            // void resourceService.safeCreateStack({
+            //   ...workspaceCreationData,
+            //   server: {
+            //     ...workspaceCreationData.server,
+            //     environment_variables: {
+            //       PEDAKI_AUTH_TOKEN: authToken,
+            //       PEDAKI_BILLING_EMAIL: pendingData.billing.email,
+            //       PEDAKI_BILLING_NAME: pendingData.billing.name,
+            //     },
+            //   },
+            //   workspace: {
+            //     id: workspaceId,
+            //     subdomain: pendingData.subdomain,
+            //     subscriptionId,
+            //   },
+            // });
           }
           break;
+        case 'checkout.session.expired':
+          {
+            // Checkout session expired, we can safely delete the pending workspace creation
+            const data = CheckoutSessionExpiredSchema.parse(event.data.object);
+            const pendingId = data.metadata.pendingId;
+
+            pendingWorkspaceService.delete(pendingId);
+
+            console.log('Deleted pending workspace creation after session expired', pendingId);
+          }
+          break;
+
         case 'invoice.paid':
           // Continue to provision the subscription as payments continue to be made.
           // Store the status in your database and check when a user accesses your service.
@@ -186,6 +198,34 @@ export const stripeRouter = router({
           // Sent each billing interval if there is an issue with your customer’s payment method.
           break;
       }
+    }),
+
+  cancelCheckoutSession: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+      }),
+    )
+    .output(z.undefined())
+    .mutation(async ({ input }) => {
+      const { pendingId } = stripeService.decodePendingJWT(input.token);
+
+      // TODO: add cache and quotas here as it's easy to spam this endpoint
+      // TODO: not sure about safety though
+      const pending = await prisma.pendingWorkspaceCreation.findUnique({
+        where: {
+          id: pendingId,
+        },
+        select: {
+          stripePaymentId: true,
+        },
+      });
+
+      if (!pending?.stripePaymentId) {
+        throw new PendingNotFoundError();
+      }
+
+      stripeService.expireCheckoutSession({ sessionId: pending.stripePaymentId });
     }),
 
   getCustomerPortalUrl: workspaceProcedure
