@@ -153,22 +153,22 @@ export const stripeRouter = router({
               },
             });
 
-              void resourceService.safeCreateStack({
-                  ...workspaceCreationData,
-                  server: {
-                      ...workspaceCreationData.server,
-                      environment_variables: {
-                          PEDAKI_AUTH_TOKEN: authToken,
-                          PEDAKI_BILLING_EMAIL: pendingData.billing.email,
-                          PEDAKI_BILLING_NAME: pendingData.billing.name,
-                      },
-                  },
-                  workspace: {
-                      id: workspaceId,
-                      subdomain: pendingData.subdomain,
-                      subscriptionId,
-                  },
-              });
+            void resourceService.safeCreateStack({
+              ...workspaceCreationData,
+              server: {
+                ...workspaceCreationData.server,
+                environment_variables: {
+                  PEDAKI_AUTH_TOKEN: authToken,
+                  PEDAKI_BILLING_EMAIL: pendingData.billing.email,
+                  PEDAKI_BILLING_NAME: pendingData.billing.name,
+                },
+              },
+              workspace: {
+                id: workspaceId,
+                subdomain: pendingData.subdomain,
+                subscriptionId,
+              },
+            });
           }
           break;
         case 'checkout.session.expired':
