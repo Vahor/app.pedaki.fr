@@ -153,22 +153,22 @@ export const stripeRouter = router({
               },
             });
 
-            void resourceService.safeCreateStack({
-              ...workspaceCreationData,
-              server: {
-                ...workspaceCreationData.server,
-                environment_variables: {
-                  PEDAKI_AUTH_TOKEN: authToken,
-                  PEDAKI_BILLING_EMAIL: pendingData.billing.email,
-                  PEDAKI_BILLING_NAME: pendingData.billing.name,
-                },
-              },
-              workspace: {
-                id: workspaceId,
-                subdomain: pendingData.subdomain,
-                subscriptionId,
-              },
-            });
+            // void resourceService.safeCreateStack({
+            //   ...workspaceCreationData,
+            //   server: {
+            //     ...workspaceCreationData.server,
+            //     environment_variables: {
+            //       PEDAKI_AUTH_TOKEN: authToken,
+            //       PEDAKI_BILLING_EMAIL: pendingData.billing.email,
+            //       PEDAKI_BILLING_NAME: pendingData.billing.name,
+            //     },
+            //   },
+            //   workspace: {
+            //     id: workspaceId,
+            //     subdomain: pendingData.subdomain,
+            //     subscriptionId,
+            //   },
+            // });
           }
           break;
         case 'checkout.session.expired':
@@ -203,16 +203,18 @@ export const stripeRouter = router({
   cancelCheckoutSession: publicProcedure
     .input(
       z.object({
-        id: z.string().cuid(),
+        token: z.string(),
       }),
     )
     .output(z.undefined())
     .mutation(async ({ input }) => {
+      const { pendingId } = stripeService.decodePendingJWT(input.token);
+
       // TODO: add cache and quotas here as it's easy to spam this endpoint
       // TODO: not sure about safety though
       const pending = await prisma.pendingWorkspaceCreation.findUnique({
         where: {
-          id: input.id,
+          id: pendingId,
         },
         select: {
           stripePaymentId: true,

@@ -8,10 +8,10 @@ export default async function NewWorkspaceCancelPage({
 }: {
   searchParams: Record<string, string>;
 }) {
-  const pendingId = searchParams.token;
+  const token = searchParams.token;
 
-  if (pendingId && typeof pendingId === 'string') {
-    await api.stripe.cancelCheckoutSession.mutate({ id: pendingId });
+  if (token && typeof token === 'string') {
+    await api.stripe.cancelCheckoutSession.mutate({ token });
   }
 
   redirect('/new?cancel');

@@ -97,7 +97,7 @@ export const workspaceReservationRouter = router({
   paidStatus: publicProcedure
     .input(
       z.object({
-        id: z.string().cuid(),
+        token: z.string(),
       }),
     )
     .output(
@@ -106,10 +106,11 @@ export const workspaceReservationRouter = router({
       }),
     )
     .query(async ({ input }) => {
-      // TODO: add cache and quotas here as it's easy to spam this endpoint
+      const { pendingId } = stripeService.decodePendingJWT(input.token);
+
       const pending = await prisma.pendingWorkspaceCreation.findUnique({
         where: {
-          id: input.id,
+          id: pendingId,
         },
         select: {
           paidAt: true,
@@ -128,16 +129,16 @@ export const workspaceReservationRouter = router({
   generateToken: publicProcedure
     .input(
       z.object({
-        id: z.string().cuid(),
+        token: z.string(),
       }),
     )
     .output(z.string())
     .query(async ({ input }) => {
-      // TODO: add cache and quotas here as it's easy to spam this endpoint
+      const { pendingId } = stripeService.decodePendingJWT(input.token);
 
       const pending = await prisma.pendingWorkspaceCreation.findUnique({
         where: {
-          id: input.id,
+          id: pendingId,
         },
         select: {
           workspaceId: true,

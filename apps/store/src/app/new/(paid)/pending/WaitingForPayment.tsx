@@ -10,17 +10,17 @@ import React, { useEffect } from 'react';
 
 interface PaymentPendingIndicatorProps {
   status: 'paid' | 'waiting';
-  pendingId: string;
+  token: string;
 }
 
-const WaitingForPayment: React.FC<PaymentPendingIndicatorProps> = ({ status, pendingId }) => {
+const WaitingForPayment: React.FC<PaymentPendingIndicatorProps> = ({ status, token }) => {
   const initialIsPaid = status === 'paid';
   const router = useRouter();
 
   const setPaymentUrl = useWorkspaceFormStore(store => store.setPaymentUrl);
 
   const { data } = api.workspace.reservation.paidStatus.useQuery(
-    { id: pendingId },
+    { token },
     {
       initialData: { paid: initialIsPaid },
       refetchInterval: data => {
@@ -33,7 +33,7 @@ const WaitingForPayment: React.FC<PaymentPendingIndicatorProps> = ({ status, pen
   );
 
   const { data: nextToken } = api.workspace.reservation.generateToken.useQuery(
-    { id: pendingId },
+    { token },
     {
       enabled: !!data?.paid,
     },

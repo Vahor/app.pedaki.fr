@@ -9,8 +9,8 @@ export default async function PendingPaymentPage({
 }: {
   searchParams: Record<string, string>;
 }) {
-  const pendingId = searchParams.token;
-  const initialIsPaid = await loadInitialIsPaid(pendingId);
+  const token = searchParams.token;
+  const initialIsPaid = await loadInitialIsPaid(token);
   // TODO: faire les textes (trads)
 
   if (initialIsPaid.status === 'invalid') {
@@ -35,5 +35,5 @@ export default async function PendingPaymentPage({
     );
   }
 
-  return <WaitingForPayment status={initialIsPaid.status} pendingId={pendingId!} />;
+  return <WaitingForPayment status={initialIsPaid.status} token={token!} />;
 }

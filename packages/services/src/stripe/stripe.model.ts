@@ -49,3 +49,7 @@ export const CheckoutSessionExpiredSchema = z.object({
   metadata: PaymentMetadataSchema,
   status: z.string(),
 });
+
+export const PendingJWTSchema = z.object({
+  pendingId: z.string(),
+});
