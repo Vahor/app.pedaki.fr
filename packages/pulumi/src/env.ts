@@ -5,8 +5,6 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
-    RESEND_API_KEY: z.string().startsWith('re_'),
-
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_SECRET_ACCESS_KEY: z.string(),
 
@@ -14,8 +12,6 @@ export const env = createEnv({
     APP_DOCKER_ORGANISATION: z.string(),
     APP_DOCKER_PACKAGE_NAME: z.string(),
     APP_DOCKER_IMAGE_VERSION: z.string(),
-    APP_DOCKER_USERNAME: z.string(),
-    APP_DOCKER_PASSWORD: z.string(),
 
     CLOUDFLARE_API_TOKEN: z.string(),
     CLOUDFLARE_ZONE_ID: z.string(),

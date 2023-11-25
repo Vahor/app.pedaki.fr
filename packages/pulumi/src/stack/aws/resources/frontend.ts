@@ -1,21 +1,17 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
+import type { Secrets } from '~/stack/aws/resources/secrets.ts';
 import type { StackParameters } from '~/type.ts';
-import { CADDY_DOCKER_IMAGE, CLI_DOCKER_IMAGE, DOCKER_IMAGE, VERSION } from '~/utils/docker.ts';
+import { CADDY_DOCKER_IMAGE, CLI_DOCKER_IMAGE, DOCKER_IMAGE } from '~/utils/docker.ts';
 
 export interface WebServiceArgs {
-  dbHost: pulumi.Output<string>;
-  dbName: pulumi.Output<string>;
-  dbUser: pulumi.Output<string>;
-  dbPassword: pulumi.Output<string | undefined>;
-  dbPort: pulumi.Output<number>;
-  dbEncryptionKey: string;
-  passwordSalt: string;
-  authSecret: string;
-  vpcId: pulumi.Output<string>;
-  subnetIds: pulumi.Output<string>[];
-  securityGroupIds: pulumi.Output<string>[];
+  instanceProfileArn: pulumi.Output<string>;
+  secrets: Secrets;
+  vpc: {
+    subnetIds: pulumi.Output<string>[];
+    securityGroupIds: pulumi.Output<string>[];
+  };
   tags: Record<string, string>;
   stackParameters: StackParameters<'aws'>;
 }
@@ -45,9 +41,10 @@ export class WebService extends pulumi.ComponentResource {
       ec2Name,
       {
         instanceType: this.instanceType(args.stackParameters.server.size),
-        vpcSecurityGroupIds: args.securityGroupIds,
-        subnetId: args.subnetIds[0],
+        vpcSecurityGroupIds: args.vpc.securityGroupIds,
+        subnetId: args.vpc.subnetIds[0],
         ami: amiId,
+        iamInstanceProfile: args.instanceProfileArn,
         userData: this.startScript(args),
         userDataReplaceOnChange: true, // Force to recreate the ec2 instance when the script changes
         ipv6AddressCount: 0, // Disable ipv6
@@ -74,33 +71,6 @@ export class WebService extends pulumi.ComponentResource {
   }
 
   private startScript = (args: WebServiceArgs) => {
-    let rawEnvFileContent = '';
-    for (const [key, value] of Object.entries(args.stackParameters.server.environment_variables)) {
-      rawEnvFileContent += `${key}='${value}'\n`;
-    }
-
-    const envFileContent = pulumi.interpolate`
-${rawEnvFileContent}
-
-NODE_ENV=production
-
-PEDAKI_DOMAIN='${args.stackParameters.workspace.subdomain}.pedaki.fr'
-PEDAKI_TAG='${VERSION}'
-
-DATABASE_URL='mysql://${args.dbUser}:${args.dbPassword}@${args.dbHost}:${args.dbPort}/${args.dbName}?sslcacert=/app/certificates/rds-combined-ca-bundle.pem'
-PRISMA_ENCRYPTION_KEY='${args.dbEncryptionKey}'
-
-PASSWORD_SALT='${args.passwordSalt}'
-NEXTAUTH_SECRET='${args.authSecret}'
-
-RESEND_API_KEY='${env.RESEND_API_KEY}'
-RESEND_EMAIL_DOMAIN='pedaki.fr'
-
-PEDAKI_AUTH_TOKEN='${args.stackParameters.server.environment_variables.PEDAKI_AUTH_TOKEN}'
-PEDAKI_WORKSPACE_SUBDOMAIN='${args.stackParameters.workspace.subdomain}'
-PEDAKI_WORKSPACE_ID='${args.stackParameters.workspace.id}'
-`;
-
     const dockerComposeContent = pulumi.interpolate`
 version: '3.8'
 name: pedaki
@@ -108,7 +78,7 @@ services:
     web:
         image: '${DOCKER_IMAGE}'
         env_file:
-            - web-variables.env
+            - .env
         restart: unless-stopped  
         volumes:
             - /app/certificates:/app/certificates
@@ -116,7 +86,7 @@ services:
     cli:
         image: '${CLI_DOCKER_IMAGE}'
         env_file:
-            - web-variables.env
+            - .env
         volumes:
             - /app/certificates:/app/certificates
 
@@ -137,7 +107,6 @@ services:
     const caddyFileContent = pulumi.interpolate`
 {
     email developers@pedaki.fr
-    acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
 }
 https://${domain}, :80, :443 {
     reverse_proxy http://web:8000
@@ -149,8 +118,12 @@ https://${domain}, :80, :443 {
     # hidden server name
     header -Server
     
-    tls {
-        dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
+    tls /app/certs/cloudflare-ca.pem /app/certs/cloudflare-ca-key.pem {
+        client_auth {
+             mode require_and_verify
+             trusted_ca_cert_file /app/certs/cloudflare-origin-pull-ca.pem
+        }
+        
         resolvers 1.1.1.1
     }
 }
@@ -163,28 +136,38 @@ export DEBIAN_FRONTEND=noninteractive
 sudo yum update -y
 sudo yum install docker wget -y
 
-sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-sudo service docker start
-
-sudo docker login -u ${env.APP_DOCKER_USERNAME} -p ${env.APP_DOCKER_PASSWORD} ${env.APP_DOCKER_HOST}
-
 sudo mkdir /app
 sudo chown ec2-user:ec2-user /app
 cd /app
 
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Loading env from ssm parameter store
+sudo aws ssm get-parameters --names /shared/resend /shared/docker /shared/cloudflare-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
+source .env
+
+
+# Download aws RDS CA certificate
+mkdir -p /app/certs
+sudo wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /app/certs/rds-combined-ca-bundle.pem
+
+# Create files from the cloudflare ca env variables (base64)
+echo "$CLOUDFLARE_CA" | base64 -d > /app/certs/cloudflare-ca.pem
+echo "$CLOUDFLARE_CA_KEY" | base64 -d > /app/certs/cloudflare-ca-key.pem
+echo "$CLOUDFLARE_ORIGIN_CA" | base64 -d > /app/certs/cloudflare-origin-pull-ca.pem
+
+sudo service docker start
+
+sudo docker login -u $APP_DOCKER_USERNAME -p $APP_DOCKER_PASSWORD ${env.APP_DOCKER_HOST}
+
+
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
-echo "${envFileContent}" > web-variables.env
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
 sudo sysctl -w net.core.rmem_max=2500000
-
-# Download aws RDS CA certificate
-mkdir -p /app/certificates
-sudo wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /app/certificates/rds-combined-ca-bundle.pem
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose run --rm cli
