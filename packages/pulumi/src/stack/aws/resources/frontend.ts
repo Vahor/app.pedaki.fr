@@ -81,14 +81,14 @@ services:
             - .env
         restart: unless-stopped  
         volumes:
-            - /app/certificates:/app/certificates
+            - /app/certs:/app/certs
         
     cli:
         image: '${CLI_DOCKER_IMAGE}'
         env_file:
             - .env
         volumes:
-            - /app/certificates:/app/certificates
+            - /app/certs:/app/certs
 
     caddy:
         image: '${CADDY_DOCKER_IMAGE}'
