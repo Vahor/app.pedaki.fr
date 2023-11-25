@@ -99,8 +99,6 @@ services:
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
             - /app/certs:/app/certs
-        depends_on:
-            - web
 `;
 
     const domain = args.stackParameters.workspace.subdomain + '.pedaki.fr';
@@ -170,6 +168,8 @@ echo "${dockerComposeContent}" > docker-compose.yml
 sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
+
+sudo /usr/local/bin/docker-compose up -d caddy
 sudo /usr/local/bin/docker-compose run --rm cli
 
 # Exit if the cli container failed
@@ -179,7 +179,7 @@ then
     echo "Failed to run cli container"
 fi
 
-sudo /usr/local/bin/docker-compose up -d caddy web
+sudo /usr/local/bin/docker-compose up -d web
 `;
   };
 
