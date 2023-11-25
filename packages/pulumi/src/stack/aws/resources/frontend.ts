@@ -118,7 +118,6 @@ https://${domain}, :80, :443 {
     # hidden server name
     header -Server
     
-    # TODO: use cloudlflare ca
     tls /app/certs/cloudflare-ca.pem /app/certs/cloudflare-ca-key.pem {
         client_auth {
              mode require_and_verify
@@ -160,7 +159,6 @@ echo "$CLOUDFLARE_ORIGIN_CA" | base64 -d > /app/certs/cloudflare-origin-pull-ca.
 
 sudo service docker start
 
-# TODO: create secret for docker login
 sudo docker login -u $APP_DOCKER_USERNAME -p $APP_DOCKER_PASSWORD ${env.APP_DOCKER_HOST}
 
 
