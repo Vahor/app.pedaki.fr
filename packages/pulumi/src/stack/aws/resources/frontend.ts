@@ -107,7 +107,7 @@ services:
 {
     email developers@pedaki.fr
 }
-https://${domain}, :80, :443 {
+https://${domain} {
     reverse_proxy http://web:8000
     encode zstd gzip
     
@@ -124,6 +124,7 @@ https://${domain}, :80, :443 {
         }
         
         resolvers 1.1.1.1
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
 `;
@@ -143,7 +144,7 @@ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Loading env from ssm parameter store
-sudo aws ssm get-parameters --names /shared/resend /shared/docker /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
+sudo aws ssm get-parameters --names /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
 source .env
 
 # Download aws RDS CA certificate
@@ -169,17 +170,12 @@ sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 
+sudo /usr/local/bin/docker-compose run --rm cli CREATING
 sudo /usr/local/bin/docker-compose up -d caddy
-sudo /usr/local/bin/docker-compose run --rm cli
-
-# Exit if the cli container failed
-if [ $? -ne 0 ]
-then
-    # TODO: catch error
-    echo "Failed to run cli container"
-fi
-
+sudo /usr/local/bin/docker-compose run --rm cli ""
 sudo /usr/local/bin/docker-compose up -d web
+sudo /usr/local/bin/docker-compose run --rm cli ACTIVE
+
 `;
   };
 
