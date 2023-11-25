@@ -107,7 +107,6 @@ services:
     const caddyFileContent = pulumi.interpolate`
 {
     email developers@pedaki.fr
-    acme_dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
 }
 https://${domain}, :80, :443 {
     reverse_proxy http://web:8000
@@ -120,8 +119,12 @@ https://${domain}, :80, :443 {
     header -Server
     
     # TODO: use cloudlflare ca
-    tls {
-        dns cloudflare ${env.CLOUDFLARE_API_TOKEN}
+    tls /app/certs/cloudflare-ca.pem /app/certs/cloudflare-ca-key.pem {
+        client_auth {
+             mode require_and_verify
+             trusted_ca_cert_file /app/certs/cloudflare-origin-pull-ca.pem
+        }
+        
         resolvers 1.1.1.1
     }
 }
@@ -142,8 +145,18 @@ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Loading env from ssm parameter store
-sudo aws ssm get-parameters --names /shared/resend /shared/docker ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
+sudo aws ssm get-parameters --names /shared/resend /shared/docker /shared/cloudflare-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
 source .env
+
+
+# Download aws RDS CA certificate
+mkdir -p /app/certs
+sudo wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /app/certs/rds-combined-ca-bundle.pem
+
+# Create files from the cloudflare ca env variables (base64)
+echo "$CLOUDFLARE_CA" | base64 -d > /app/certs/cloudflare-ca.pem
+echo "$CLOUDFLARE_CA_KEY" | base64 -d > /app/certs/cloudflare-ca-key.pem
+echo "$CLOUDFLARE_ORIGIN_CA" | base64 -d > /app/certs/cloudflare-origin-pull-ca.pem
 
 sudo service docker start
 
@@ -157,10 +170,6 @@ echo "${dockerComposeContent}" > docker-compose.yml
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
 sudo sysctl -w net.core.rmem_max=2500000
-
-# Download aws RDS CA certificate
-mkdir -p /app/certificates
-sudo wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -O /app/certs/rds-combined-ca-bundle.pem
 
 sudo /usr/local/bin/docker-compose pull
 sudo /usr/local/bin/docker-compose run --rm cli
