@@ -60,7 +60,7 @@ export class Vpc extends pulumi.ComponentResource {
           Name: igwName,
         },
       },
-      { parent: this },
+      { parent: this, dependsOn: [vpc] },
     );
 
     const rtName = `${name}-rt`;
@@ -79,7 +79,7 @@ export class Vpc extends pulumi.ComponentResource {
           },
         ],
       },
-      { parent: this },
+      { parent: this, dependsOn: [igw, vpc] },
     );
 
     // Subnets, at least across two zones
@@ -114,7 +114,7 @@ export class Vpc extends pulumi.ComponentResource {
             Name: subnetName,
           },
         },
-        { parent: this },
+        { parent: this, dependsOn: [vpc] },
       );
 
       const _ = new aws.ec2.RouteTableAssociation(
@@ -123,7 +123,7 @@ export class Vpc extends pulumi.ComponentResource {
           subnetId: subnet.id,
           routeTableId: routeTable.id,
         },
-        { parent: this },
+        { parent: this, dependsOn: [subnet, routeTable] },
       );
 
       subnetsIds.push(subnet.id);
@@ -160,36 +160,48 @@ export class Vpc extends pulumi.ComponentResource {
           { protocol: '-1', fromPort: 0, toPort: 0, cidrBlocks: ['0.0.0.0/0'] }, // All
         ],
       },
-      { parent: this },
+      { parent: this, dependsOn: [vpc] },
     );
 
     const rdsSgName = `${name}-rds-secgrp`;
-    const rdsSg = new aws.ec2.SecurityGroup(rdsSgName, {
-      vpcId: vpc.id,
-      description: 'Allow MySQL access',
-      tags: {
-        ...args.tags,
-        Name: rdsSgName,
+    const rdsSg = new aws.ec2.SecurityGroup(
+      rdsSgName,
+      {
+        vpcId: vpc.id,
+        description: 'Allow MySQL access',
+        tags: {
+          ...args.tags,
+          Name: rdsSgName,
+        },
+        revokeRulesOnDelete: true,
       },
-      revokeRulesOnDelete: true,
-    });
-    const _ = new aws.ec2.SecurityGroupRule(`${name}-rds-secgrp-ingress`, {
-      type: 'ingress',
-      fromPort: this.ports.mysql,
-      toPort: this.ports.mysql,
-      protocol: 'tcp',
-      securityGroupId: rdsSg.id,
-      sourceSecurityGroupId: ec2Sg.id,
-    });
+      { parent: this },
+    );
+    const _ = new aws.ec2.SecurityGroupRule(
+      `${name}-rds-secgrp-ingress`,
+      {
+        type: 'ingress',
+        fromPort: this.ports.mysql,
+        toPort: this.ports.mysql,
+        protocol: 'tcp',
+        securityGroupId: rdsSg.id,
+        sourceSecurityGroupId: ec2Sg.id,
+      },
+      { parent: this, dependsOn: [ec2Sg, rdsSg] },
+    );
 
     const subnetGroupName = `${name}-subnet-group`;
-    const subnetGroup = new aws.rds.SubnetGroup(subnetGroupName, {
-      subnetIds: subnetsIds,
-      tags: {
-        ...args.tags,
-        Name: subnetGroupName,
+    const subnetGroup = new aws.rds.SubnetGroup(
+      subnetGroupName,
+      {
+        subnetIds: subnetsIds,
+        tags: {
+          ...args.tags,
+          Name: subnetGroupName,
+        },
       },
-    });
+      { parent: this },
+    );
 
     this.arn = vpc.arn;
     this.vpcId = vpc.id;

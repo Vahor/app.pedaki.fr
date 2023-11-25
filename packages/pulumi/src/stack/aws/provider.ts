@@ -1,14 +1,18 @@
 import * as random from '@pulumi/random';
+import { env } from '~/env.ts';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
 import { StackOutputsSchema } from '~/output.ts';
 import type { StackParameters, StackProvider } from '~/type.ts';
+import { VERSION } from '~/utils/docker.ts';
 import { redacted } from '~/utils/redacted.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
 import * as domain from './resources/domain.ts';
 import * as frontend from './resources/frontend.ts';
+import * as iam from './resources/iam.ts';
 import * as key from './resources/key.ts';
 import * as network from './resources/network.ts';
+import * as secrets from './resources/secrets.ts';
 
 export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
@@ -68,25 +72,70 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     );
 
     // Keys generation
-    const encryptionKey = new key.EncryptionKey(`${params.workspace.id}-encryption-key`);
-    const passwordSalt = new key.EncryptionKey(`${params.workspace.id}-password-salt`);
+    const encryptionKey = new key.EncryptionKey(
+      `${params.workspace.id}-encryption-key`,
+      {},
+      { dependsOn: [db] },
+    );
+    const passwordSalt = new key.EncryptionKey(
+      `${params.workspace.id}-password-salt`,
+      {},
+      { dependsOn: [db] },
+    );
     const authSecret = new key.EncryptionKey(`${params.workspace.id}-auth-secret`);
+
+    const secret = new secrets.Secrets(
+      `${params.workspace.id}-secrets`,
+      {
+        db: {
+          host: db.host,
+          name: db.name,
+          user: db.user,
+          password: db.password,
+          port: db.port,
+          encryptionKey: encryptionKey.key,
+        },
+        auth: {
+          passwordSalt: passwordSalt.key,
+          authSecret: authSecret.key,
+        },
+        pedaki: {
+          subdomain: params.workspace.subdomain,
+          workspaceId: params.workspace.id,
+          authToken: params.server.environment_variables.PEDAKI_AUTH_TOKEN,
+          host: `${params.workspace.subdomain}.pedaki.fr`,
+          version: VERSION,
+        },
+        environment_variables: params.server.environment_variables,
+        tags,
+        stackParameters: params,
+      },
+      {
+        dependsOn: [db, encryptionKey, passwordSalt, authSecret],
+      },
+    );
+
+    const user = new iam.InstanceProfile(
+      `${params.workspace.id}-user`,
+      {
+        tags,
+        stackParameters: params,
+      },
+      {
+        dependsOn: [secret],
+      },
+    );
 
     // Create an EC2 instance
     const server = new frontend.WebService(
       `${params.workspace.id}-frontend`,
       {
-        dbHost: db.host,
-        dbPort: db.port,
-        dbName: db.name,
-        dbUser: db.user,
-        dbPassword: db.password,
-        dbEncryptionKey: encryptionKey.key,
-        passwordSalt: passwordSalt.key,
-        authSecret: authSecret.key,
-        vpcId: vpc.vpcId,
-        subnetIds: vpc.subnetIds,
-        securityGroupIds: vpc.feSecurityGroupIds,
+        instanceProfileArn: user.name,
+        secrets: secret,
+        vpc: {
+          subnetIds: vpc.subnetIds,
+          securityGroupIds: vpc.feSecurityGroupIds,
+        },
         stackParameters: params,
         tags,
       },
@@ -137,5 +186,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
 
   private tags = (params: StackParameters<'aws'>) => ({
     'pedaki:subdomain': params.workspace.subdomain,
+    'pedaki:workspace': params.workspace.id,
+    'pedaki:environment': env.NODE_ENV,
   });
 }

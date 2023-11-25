@@ -4,9 +4,7 @@ import type {
   PulumiFn,
 } from '@pulumi/pulumi/automation/index.js';
 import { LocalWorkspace } from '@pulumi/pulumi/automation/index.js';
-import { env } from '~/env.ts';
-
-export const projectName = `premium-${env.NODE_ENV}`;
+import { projectName } from '~/stack/constants.ts';
 
 const stackName = (name: string) => `${name}`;
 
