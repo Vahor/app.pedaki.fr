@@ -258,7 +258,7 @@ class WorkspaceService {
     workspaceId: string;
     status: WorkspaceStatus;
   }) {
-    console.log(`Updating workspace status '${workspaceId}'...`);
+    console.log(`Updating workspace status '${workspaceId}'... (status: ${status})`);
 
     await prisma.workspace.update({
       where: {

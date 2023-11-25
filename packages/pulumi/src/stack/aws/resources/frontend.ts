@@ -98,6 +98,7 @@ services:
             - 443:443
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
+            - /app/certs:/app/certs
         depends_on:
             - web
 `;
