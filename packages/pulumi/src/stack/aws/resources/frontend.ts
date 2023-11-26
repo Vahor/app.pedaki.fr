@@ -136,6 +136,10 @@ services:
 
     const fluentdConfig = pulumi.interpolate`
 <match>
+  @type record_transformer
+  <record>
+    $workspaceId \\"WORKSPACE_ID\\"
+  </record>
   @type http
   endpoint https://events.baselime.io/v1/docker-logs
   headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\"}
@@ -216,6 +220,7 @@ echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
 echo "${fluentdConfig}" > ./conf/fluent.conf
 sed -i "s/BASELIME_API_KEY/$BASELIME_API_KEY/g" ./conf/fluent.conf
+sed -i "s/WORKSPACE_ID/${args.stackParameters.workspace.id}/g" ./conf/fluent.conf
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
