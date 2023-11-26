@@ -1,6 +1,9 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
+import { initTelemetry } from '@pedaki/logger/telemetry.js';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
@@ -85,6 +88,8 @@ export function createServer() {
       await seedDatabase();
       logger.info(`Server listening on http://localhost:${port}`);
       logger.info(`Will use docker image: ${DOCKER_IMAGE}`);
+
+      initTelemetry([getNodeAutoInstrumentations()]);
     } catch (err) {
       console.error(err);
       throw err;
