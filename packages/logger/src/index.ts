@@ -20,8 +20,9 @@ export const logger = winston.createLogger({
       info.scope = { name: '@pedaki' };
       info.instanceId = instanceId;
 
-      if (typeof info.duration === 'number') {
-        info.durationMS = info.duration;
+      if (typeof info.durationMs === 'number') {
+        info.durationMS = info.durationMs;
+        delete info.durationMs;
       }
       return info;
     })(),

@@ -135,17 +135,10 @@ services:
 `;
 
     const fluentdConfig = pulumi.interpolate`
-<filter>
-  @type record_transformer
-  <record>
-    \\"\\$baselime.service\\" \\"WORKSPACE_ID-fluentd\\"
-  </record>
-</filter>
-
 <match>
   @type http
   endpoint https://events.baselime.io/v1/docker-logs
-  headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\"}
+  headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\", \\"x-service\\": \\"WORKSPACE_ID-fluentd\\"}
   open_timeout 5
   json_array true
   <format>
