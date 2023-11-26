@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import { env } from '~/env.ts';
 
 const main = async () => {

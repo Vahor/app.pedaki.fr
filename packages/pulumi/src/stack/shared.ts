@@ -1,3 +1,4 @@
+import { logger } from '@pedaki/logger';
 import type {
   InlineProgramArgs,
   LocalWorkspaceOptions,

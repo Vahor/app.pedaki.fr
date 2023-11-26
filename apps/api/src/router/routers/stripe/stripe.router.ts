@@ -226,7 +226,7 @@ export const stripeRouter = router({
         throw new PendingNotFoundError();
       }
 
-      stripeService.expireCheckoutSession({ sessionId: pending.stripePaymentId });
+      await stripeService.expireCheckoutSession({ sessionId: pending.stripePaymentId });
     }),
 
   getCustomerPortalUrl: workspaceProcedure
