@@ -21,6 +21,8 @@ export const env = createEnv({
 
     API_INTERNAL_SECRET: z.string().min(1),
     API_ENCRYPTION_KEY: z.string().min(32),
+
+    LOGGER_SERVICE_NAME: z.string().default('api'),
   },
   runtimeEnv: process.env,
 });

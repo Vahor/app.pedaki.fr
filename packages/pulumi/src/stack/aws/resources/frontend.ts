@@ -135,11 +135,14 @@ services:
 `;
 
     const fluentdConfig = pulumi.interpolate`
-<match>
+<filter docker.*>
   @type record_transformer
   <record>
     $workspaceId \\"WORKSPACE_ID\\"
   </record>
+</filter>
+
+<match>
   @type http
   endpoint https://events.baselime.io/v1/docker-logs
   headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\"}
