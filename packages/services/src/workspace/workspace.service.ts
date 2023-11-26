@@ -157,7 +157,7 @@ class WorkspaceService {
       },
     });
 
-    profiler.done(`Workspace created (database) '${workspace.subdomain}'`);
+    profiler.done({ message: `Workspace created (database) '${workspace.subdomain}'` });
 
     return { workspaceId: id, subscriptionId, authToken: `${id}:${token}` };
   }

@@ -25,7 +25,7 @@ const removeOldPendingWorkspaceCreations = async () => {
   });
 
   const count = result.count;
-  profiler.done(`[pending] clear-old-data deleted ${count} pending workspaces`);
+  profiler.done({ message: `[pending] clear-old-data deleted ${count} pending workspaces` });
 };
 
 const removeOldWorkspaceTokens = async () => {
@@ -75,7 +75,7 @@ const removeOldWorkspaceTokens = async () => {
     );
   }
 
-  profiler.done(`[tokens] clear-old-data deleted ${count} tokens`);
+  profiler.done({ message: `[tokens] clear-old-data deleted ${count} tokens` });
 };
 
 const removeOldWorkspaceInvitations = async () => {

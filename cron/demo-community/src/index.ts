@@ -139,7 +139,7 @@ const main = async () => {
 
   await resourceService.upsertStack(stackParameters(workspaceId, subscriptionId, authToken));
 
-  profiler.done("Finished cron 'cron-demo-community'");
+  profiler.done({ message: "Finished cron 'cron-demo-community'" });
 };
 void main()
   .catch(logger.error)
