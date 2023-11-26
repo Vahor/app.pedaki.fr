@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import { WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
 import { InvalidStateError } from '@pedaki/models/errors/InvalidStateError.js';
 import type { Prisma } from '@prisma/client';
@@ -70,7 +71,7 @@ class InvitationService {
       },
     });
 
-    console.log(`Deleted ${result.count} invites for workspace ${workspaceId}`);
+    logger.info(`Deleted ${result.count} invites for workspace ${workspaceId}`);
   }
 }
 

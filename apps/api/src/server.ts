@@ -83,8 +83,8 @@ export function createServer() {
       await init();
       await server.listen({ port, host: '0.0.0.0' });
       await seedDatabase();
-      console.log(`Server listening on http://localhost:${port}`);
-      console.log(`Will use docker image: ${DOCKER_IMAGE}`);
+      logger.info(`Server listening on http://localhost:${port}`);
+      logger.info(`Will use docker image: ${DOCKER_IMAGE}`);
     } catch (err) {
       console.error(err);
       throw err;

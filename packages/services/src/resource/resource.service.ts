@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
@@ -8,17 +9,8 @@ import { workspaceService } from '~/workspace/workspace.service.js';
 import { backOff } from 'exponential-backoff';
 
 class ResourceService {
-  private getProvider(providerName: ServerProvider) {
-    const provider = serverFactory.getProvider(providerName);
-    if (!provider) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: `Provider ${providerName} not found` });
-    }
-    console.log(`Using provider ${providerName}`);
-    return provider;
-  }
-
   async deleteStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    console.log(`Deleting stack for workspace '${workspace.subdomain}'...`);
+    logger.info(`Deleting stack for workspace '${workspace.subdomain}'...`);
     const provider = this.getProvider(vpc.provider);
 
     await provider.delete({
@@ -32,15 +24,15 @@ class ResourceService {
       dns,
     });
 
-    console.log(`Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.subdomain}'`);
+    logger.info(`Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.subdomain}'`);
 
-    console.log(`Deleting database resources for workspace '${workspace.subdomain}'...`);
+    logger.info(`Deleting database resources for workspace '${workspace.subdomain}'...`);
     const deleteResponse = await prisma.workspaceResource.deleteMany({
       where: {
         subscriptionId: workspace.subscriptionId,
       },
     });
-    console.log(
+    logger.info(
       `Database resources deleted for workspace '${workspace.subdomain}' (deleted: ${deleteResponse.count})`,
     );
 
@@ -52,7 +44,7 @@ class ResourceService {
    * And retry if it fails.
    */
   async safeCreateStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    console.log(`Creating stack for workspace '${workspace.subdomain}'...`);
+    logger.info(`Creating stack for workspace '${workspace.subdomain}'...`);
     // First check that there is no resource with the same subdomain
     const existingResource = await prisma.workspaceResource.count({
       where: {
@@ -82,12 +74,12 @@ class ResourceService {
         retry: (e: Error, attempt) => {
           shouldDeleteStack = false;
           // TODO: handle error and cancel retry if it's not a retryable error
-          console.error({
+          logger.error({
             error: e,
             message: e.message,
             code: e.name,
           });
-          console.log(`Retrying (${attempt}/4)...`);
+          logger.warn(`Retrying (${attempt}/4)...`);
 
           // ConcurrentUpdateError: code: -2
           if (e.name === ConcurrentUpdateError) {
@@ -128,7 +120,7 @@ class ResourceService {
    * @param database Customization for the database (size, etc.)
    */
   async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    console.log(`Upserting stack for workspace '${workspace.subdomain}'...`);
+    logger.info(`Upserting stack for workspace '${workspace.subdomain}'...`);
     const provider = this.getProvider(vpc.provider);
 
     const outputs = await provider.create({
@@ -142,10 +134,10 @@ class ResourceService {
       dns,
     });
 
-    console.log(`Stack upserted (provider) for workspace '${workspace.subdomain}'`, outputs);
+    logger.log(`Stack upserted (provider) for workspace '${workspace.subdomain}'`, outputs);
 
     // Upsert resource in prisma
-    console.log(`Upserting database resources for workspace '${workspace.subdomain}'...`);
+    logger.info(`Upserting database resources for workspace '${workspace.subdomain}'...`);
 
     await prisma.$transaction([
       ...outputs.map(resource => {
@@ -176,9 +168,18 @@ class ResourceService {
       }),
     ]);
 
-    console.log(`Database resources upserted for workspace '${workspace.subdomain}'`);
+    logger.info(`Database resources upserted for workspace '${workspace.subdomain}'`);
 
     return null;
+  }
+
+  private getProvider(providerName: ServerProvider) {
+    const provider = serverFactory.getProvider(providerName);
+    if (!provider) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: `Provider ${providerName} not found` });
+    }
+    logger.info(`Using provider ${providerName}`);
+    return provider;
   }
 }
 

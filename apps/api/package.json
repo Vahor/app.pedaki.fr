@@ -28,6 +28,7 @@
     "@fastify/cors": "^8.4.1",
     "@pedaki/db": "workspace:*",
     "@pedaki/mailer": "^0.0.8",
+    "@pedaki/logger": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
     "@trpc/server": "10.44.1",
     "fastify": "^4.24.3",

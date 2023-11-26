@@ -1,5 +1,6 @@
 import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import type { WorkspaceData, WorkspaceStatus } from '@pedaki/models/workspace/workspace.model.js';
 import type { Prisma } from '@prisma/client';
@@ -26,7 +27,7 @@ class WorkspaceService {
    * @param subdomain the workspace subdomain
    */
   async deleteWorkspaceBySubdomain(subdomain: string): Promise<boolean> {
-    console.log(`Deleting workspace '${subdomain}'`);
+    logger.info(`Deleting workspace '${subdomain}'`);
     try {
       await prisma.workspace.update({
         where: {
@@ -42,7 +43,7 @@ class WorkspaceService {
       });
       return true;
     } catch (error) {
-      console.error(`Workspace '${subdomain}' not found`);
+      logger.error(`Workspace '${subdomain}' not found`);
       return false;
     }
   }
@@ -50,7 +51,7 @@ class WorkspaceService {
   async getLatestSubscription(
     subdomain: string,
   ): Promise<{ subscriptionId: number; workspaceId: string } | null> {
-    console.log(`Getting latest subscription id for workspace '${subdomain}'`);
+    logger.info(`Getting latest subscription id for workspace '${subdomain}'`);
     const subscription = await prisma.workspaceSubscription.findFirst({
       where: {
         workspace: {
@@ -66,7 +67,7 @@ class WorkspaceService {
         workspaceId: true,
       },
     });
-    console.log('DEBUG: subscription', subscription);
+    logger.debug('DEBUG: subscription', subscription);
     return subscription
       ? {
           subscriptionId: subscription.id,
@@ -93,7 +94,7 @@ class WorkspaceService {
       currentPeriodEnd: Date;
     };
   }): Promise<{ workspaceId: string; subscriptionId: number; authToken: string }> {
-    console.log(`Creating workspace (database) '${workspace.subdomain}'...`);
+    logger.info(`Creating workspace (database) '${workspace.subdomain}'...`);
     const { id, subscriptions } = await prisma.workspace.create({
       data: {
         name: workspace.name,
@@ -133,7 +134,7 @@ class WorkspaceService {
     });
     const subscriptionId = subscriptions[0]!.id;
 
-    console.log('Updating workspace creation data on subscription and generating token...');
+    logger.info('Updating workspace creation data on subscription and generating token...');
     // Create token for the workspace
     const token = await this.registerNewWorkspaceToken({ workspaceId: id });
 
@@ -158,7 +159,7 @@ class WorkspaceService {
   }
 
   async registerNewWorkspaceToken({ workspaceId }: { workspaceId: string }) {
-    console.log(`Registering new workspace token (database) '${workspaceId}'...`);
+    logger.info(`Registering new workspace token (database) '${workspaceId}'...`);
     const token = this.#generateAuthToken();
     await prisma.workspaceToken.create({
       data: {
@@ -175,7 +176,7 @@ class WorkspaceService {
 
   async deleteOldWorkspaceTokens({ workspaceId }: { workspaceId: string }) {
     // TODO: call this method once the server is up and running
-    console.log(`Deleting old workspace tokens (database) '${workspaceId}'...`);
+    logger.info(`Deleting old workspace tokens (database) '${workspaceId}'...`);
 
     const mostRecentToken = await prisma.workspaceToken.findFirst({
       where: {
@@ -190,7 +191,7 @@ class WorkspaceService {
     });
 
     if (!mostRecentToken) {
-      console.log(`No token found for workspace '${workspaceId}'`);
+      logger.warn(`No token found for workspace '${workspaceId}'`);
       return;
     }
 
@@ -203,11 +204,11 @@ class WorkspaceService {
       },
     });
 
-    console.log(`Deleted ${response.count} old workspace tokens`);
+    logger.info(`Deleted ${response.count} old workspace tokens`);
   }
 
   async getWorkspaceId(subdomain: string) {
-    console.log(`Getting workspace id for workspace '${subdomain}'`);
+    logger.info(`Getting workspace id for workspace '${subdomain}'`);
     const workspace = await prisma.workspace.findUnique({
       where: {
         subdomain,
@@ -237,7 +238,7 @@ class WorkspaceService {
     cancelAt: Date | null;
     canceledAt: Date | null;
   }) {
-    console.log(`Updating workspace subscription '${subscriptionId}'...`);
+    logger.info(`Updating workspace subscription '${subscriptionId}'...`);
     await prisma.workspaceSubscription.update({
       where: {
         id: subscriptionId,
@@ -259,7 +260,7 @@ class WorkspaceService {
     workspaceId: string;
     status: WorkspaceStatus;
   }) {
-    console.log(`Updating workspace status (current) '${workspaceId}'... (status: ${status})`);
+    logger.info(`Updating workspace status (current) '${workspaceId}'... (status: ${status})`);
 
     await prisma.workspace.update({
       where: {
@@ -280,7 +281,7 @@ class WorkspaceService {
     status: WorkspaceStatus;
     whereStatus?: WorkspaceStatus;
   }) {
-    console.log(`Updating workspace status (expected) '${workspaceId}'... (status: ${status})`);
+    logger.info(`Updating workspace status (expected) '${workspaceId}'... (status: ${status})`);
 
     await prisma.workspace.update({
       where: {

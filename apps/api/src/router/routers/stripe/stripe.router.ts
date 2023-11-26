@@ -1,4 +1,5 @@
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import { PendingNotFoundError } from '@pedaki/models/errors/PendingNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
@@ -22,7 +23,7 @@ export const stripeRouter = router({
     .meta({ openapi: { method: 'POST', path: '/stripe/webhook' } })
     .mutation(async ({ ctx }) => {
       const event = ctx.stripeEvent;
-      console.log(event.type);
+      logger.debug(event.type);
       switch (event.type) {
         case 'customer.subscription.updated':
         case 'customer.subscription.deleted':
@@ -30,7 +31,7 @@ export const stripeRouter = router({
             // Update subscription info
             const data = CustomerSubscriptionSchema.parse(event.data.object);
             // FIXME: delete me later
-            console.log('Subscription object', event.data.object);
+            logger.debug('Subscription object', event.data.object);
 
             // Get our subscription id from stripe subscription id
             const subscription = await prisma.workspaceSubscription.findUnique({
@@ -177,9 +178,9 @@ export const stripeRouter = router({
             const data = CheckoutSessionExpiredSchema.parse(event.data.object);
             const pendingId = data.metadata.pendingId;
 
-            pendingWorkspaceService.delete(pendingId);
+            await pendingWorkspaceService.delete(pendingId);
 
-            console.log('Deleted pending workspace creation after session expired', pendingId);
+            logger.info('Deleted pending workspace creation after session expired', pendingId);
           }
           break;
 

@@ -1,5 +1,7 @@
+import { logger } from '@pedaki/logger';
+
 // eslint-disable-next-line @typescript-eslint/require-await
 export const seedDatabase = async () => {
-  console.log('Starting seeds...');
-  console.log('Seeds finished');
+  logger.info('Starting seeds...');
+  logger.info('Seeds finished');
 };
