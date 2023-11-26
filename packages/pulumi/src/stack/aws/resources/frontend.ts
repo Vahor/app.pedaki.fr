@@ -136,7 +136,7 @@ services:
 <match>
   @type http
   endpoint https://events.baselime.io/v1/docker-logs
-  headers {"x-api-key": "BASELIME_API_KEY"}
+  headers {\"x-api-key\": \"BASELIME_API_KEY\"}
   open_timeout 5
   json_array true
   <format>
