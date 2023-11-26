@@ -1,10 +1,10 @@
+import { logger } from '@pedaki/logger';
 import { env } from '~/env.ts';
 import type { CreatePaymentInput, CreatePaymentOutput } from '~/stripe/stripe.model.ts';
 import { PendingJWTSchema } from '~/stripe/stripe.model.ts';
 import jwt from 'jsonwebtoken';
 import Stripe from 'stripe';
 import type { z } from 'zod';
-import { logger } from '@pedaki/logger';
 
 // 30 min expiration
 const EXPIRES_AT_DURATION_MINUTES = 30;
