@@ -54,6 +54,8 @@ const stackParameters = (workspaceId: string, subscriptionId: number, authToken:
   }) as const;
 
 const main = async () => {
+  const profiler = logger.startTimer();
+
   logger.info(
     "Starting cron 'cron-demo-community'",
     `This will use the ${DOCKER_IMAGE} docker image`,
@@ -137,7 +139,7 @@ const main = async () => {
 
   await resourceService.upsertStack(stackParameters(workspaceId, subscriptionId, authToken));
 
-  logger.info("Finished cron 'cron-demo-community'");
+  profiler.done("Finished cron 'cron-demo-community'");
 };
 void main()
   .catch(logger.error)

@@ -3,14 +3,16 @@ import { logger } from '@pedaki/logger';
 import { env } from '~/env.ts';
 
 const main = async () => {
-  logger.info("Starting cron 'clear-old-data'");
+  const profiler = logger.startTimer();
   await removeOldPendingWorkspaceCreations();
   await removeOldWorkspaceTokens();
   await removeOldWorkspaceInvitations();
-  logger.info("Finished cron 'clear-old-data'");
+  profiler.done({ message: 'Completed' });
 };
 
 const removeOldPendingWorkspaceCreations = async () => {
+  const profiler = logger.startTimer();
+
   const maxAge = 1000 * 60 * env.PENDING_MAX_AGE;
   const maxDate = new Date(Date.now() - maxAge);
 
@@ -23,10 +25,12 @@ const removeOldPendingWorkspaceCreations = async () => {
   });
 
   const count = result.count;
-  logger.info(`[pending] clear-old-data deleted ${count} pending workspaces`);
+  profiler.done(`[pending] clear-old-data deleted ${count} pending workspaces`);
 };
 
 const removeOldWorkspaceTokens = async () => {
+  const profiler = logger.startTimer();
+
   const maxAge = 1000 * 60 * env.TOKEN_MAX_AGE;
   const maxDate = new Date(Date.now() - maxAge);
 
@@ -71,7 +75,7 @@ const removeOldWorkspaceTokens = async () => {
     );
   }
 
-  logger.info(`[tokens] clear-old-data deleted ${count} tokens`);
+  profiler.done(`[tokens] clear-old-data deleted ${count} tokens`);
 };
 
 const removeOldWorkspaceInvitations = async () => {

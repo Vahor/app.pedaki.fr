@@ -10,6 +10,7 @@ import { backOff } from 'exponential-backoff';
 
 class ResourceService {
   async deleteStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+    const profiler = logger.startTimer();
     logger.info(`Deleting stack for workspace '${workspace.subdomain}'...`);
     const provider = this.getProvider(vpc.provider);
 
@@ -35,6 +36,11 @@ class ResourceService {
     logger.info(
       `Database resources deleted for workspace '${workspace.subdomain}' (deleted: ${deleteResponse.count})`,
     );
+
+    profiler.done({
+      message: `Stack deleted for workspace '${workspace.subdomain}'`,
+      data: { provider: vpc.provider },
+    });
 
     return null;
   }
@@ -120,6 +126,7 @@ class ResourceService {
    * @param database Customization for the database (size, etc.)
    */
   async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+    const profiler = logger.startTimer();
     logger.info(`Upserting stack for workspace '${workspace.subdomain}'...`);
     const provider = this.getProvider(vpc.provider);
 
@@ -169,6 +176,11 @@ class ResourceService {
     ]);
 
     logger.info(`Database resources upserted for workspace '${workspace.subdomain}'`);
+
+    profiler.done({
+      message: `Stack upserted for workspace '${workspace.subdomain}'`,
+      data: { provider: vpc.provider },
+    });
 
     return null;
   }

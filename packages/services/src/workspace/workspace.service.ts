@@ -67,7 +67,7 @@ class WorkspaceService {
         workspaceId: true,
       },
     });
-    logger.debug('DEBUG: subscription', subscription);
+    logger.debug('DEBUG: subscription', { subscription });
     return subscription
       ? {
           subscriptionId: subscription.id,
@@ -94,6 +94,8 @@ class WorkspaceService {
       currentPeriodEnd: Date;
     };
   }): Promise<{ workspaceId: string; subscriptionId: number; authToken: string }> {
+    const profiler = logger.startTimer();
+
     logger.info(`Creating workspace (database) '${workspace.subdomain}'...`);
     const { id, subscriptions } = await prisma.workspace.create({
       data: {
@@ -154,6 +156,8 @@ class WorkspaceService {
         } as Prisma.JsonObject,
       },
     });
+
+    profiler.done(`Workspace created (database) '${workspace.subdomain}'`);
 
     return { workspaceId: id, subscriptionId, authToken: `${id}:${token}` };
   }

@@ -12,11 +12,14 @@ export const logger = winston.createLogger({
         info.spanId = span.spanContext().spanId;
         info.traceId = span.spanContext().traceId;
       }
+
+      // Override service name
+      info.service = { name: env.LOGGER_SERVICE_NAME };
+
       return info;
     })(),
     winston.format.json(),
   ),
-  defaultMeta: { service: { name: env.LOGGER_SERVICE_NAME } },
   exitOnError: false,
   transports: [
     new BaselimeTransport({
