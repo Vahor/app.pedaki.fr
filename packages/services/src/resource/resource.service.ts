@@ -134,7 +134,7 @@ class ResourceService {
       dns,
     });
 
-    logger.log(`Stack upserted (provider) for workspace '${workspace.subdomain}'`, outputs);
+    logger.info(`Stack upserted (provider) for workspace '${workspace.subdomain}'`, outputs);
 
     // Upsert resource in prisma
     logger.info(`Upserting database resources for workspace '${workspace.subdomain}'...`);
