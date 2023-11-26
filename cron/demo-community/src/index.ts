@@ -92,6 +92,11 @@ const main = async () => {
       cancelAt: null,
       canceledAt: null,
     });
+
+    await workspaceService.updateExpectedStatus({
+      workspaceId,
+      status: 'CREATING',
+    });
   } else {
     console.log('No previous subscription found, creating a new one');
     const {
