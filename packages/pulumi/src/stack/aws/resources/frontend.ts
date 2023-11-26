@@ -82,6 +82,17 @@ services:
     restart: unless-stopped
     volumes:
       - '/app/certs:/app/certs'
+    depends_on:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 'localhost:24224'
+        tag: 'docker.{{.Name}}'
+        labels: 'io.baselime.service,io.baselime.namespace'
+    labels:
+      io.baselime.service: web
+      io.baselime.namespace: '${args.stackParameters.workspace.id}'
 
   cli:
     image: '${CLI_DOCKER_IMAGE}'
