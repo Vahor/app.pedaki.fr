@@ -138,7 +138,7 @@ services:
 <filter>
   @type record_transformer
   <record>
-    workspaceId \\"WORKSPACE_ID\\"
+    service.name \\"WORKSPACE_ID-fluentd\\"
   </record>
 </filter>
 
