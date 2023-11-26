@@ -113,6 +113,8 @@ services:
 
   fluentd:
     image: 'fluentd:latest'
+    ports:
+      - '24224:24224'
     volumes:
       - './conf:/fluentd/etc'
     environment:
@@ -123,7 +125,7 @@ services:
 <match>
   @type http
   endpoint https://events.baselime.io/v1/docker-logs
-  headers {"x-api-key": #{ENV['BASELIME_API_KEY']}}
+  headers {"x-api-key": "BASELIME_API_KEY"}
   open_timeout 5
   json_array true
   <format>
@@ -180,6 +182,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Loading env from ssm parameter store
 sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
 sudo aws ssm get-parameters --names ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
+
 source .env
 
 # Download aws RDS CA certificate
@@ -199,6 +202,7 @@ mkdir -p /app/conf
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
 echo "${fluentdConfig}" > ./conf/fluent.conf
+sed -i "s/BASELIME_API_KEY/$BASELIME_API_KEY/g" ./conf/fluent.conf
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
@@ -206,6 +210,7 @@ sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 
+sudo /usr/local/bin/docker-compose up -d fluentd
 sudo /usr/local/bin/docker-compose run --rm cli CREATING
 sudo /usr/local/bin/docker-compose up -d caddy
 sudo /usr/local/bin/docker-compose run --rm cli ""
