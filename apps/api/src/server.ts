@@ -1,11 +1,11 @@
+import { BetterHttpInstrumentation, StripePlugin } from '@baselime/node-opentelemetry';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { FastifyInstrumentation } from '@opentelemetry/instrumentation-fastify';
 import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
 import { initTelemetry } from '@pedaki/logger/telemetry.js';
-import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
-// eslint-disable-next-line node/file-extension-in-import
+import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js'; // eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { openApiDocument } from '~/openapi.ts';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -89,7 +89,12 @@ export function createServer() {
       logger.info(`Server listening on http://localhost:${port}`);
       logger.info(`Will use docker image: ${DOCKER_IMAGE}`);
 
-      initTelemetry([getNodeAutoInstrumentations()]);
+      initTelemetry([
+        new BetterHttpInstrumentation({
+          plugins: [new StripePlugin()],
+        }),
+        new FastifyInstrumentation({}),
+      ]);
     } catch (err) {
       console.error(err);
       throw err;
