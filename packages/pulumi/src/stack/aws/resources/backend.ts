@@ -59,6 +59,7 @@ export class Db extends pulumi.ComponentResource {
         port: args.dbPort,
         multiAz: false, // TODO: make this configurable, 2x price at least
         maintenanceWindow: 'SAT:02:00-SAT:05:00', // TODO: add this in the docs,
+        parameterGroupName: 'rds-pedaki', // created in pedaki/infrastructure repo
         tags: {
           ...args.tags,
           Name: rdsName,
