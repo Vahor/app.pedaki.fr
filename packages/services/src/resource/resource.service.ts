@@ -4,6 +4,7 @@ import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js'
 import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
+import { workspaceService } from '~/workspace/workspace.service.js';
 import { backOff } from 'exponential-backoff';
 
 class ResourceService {
@@ -97,6 +98,18 @@ class ResourceService {
           return true;
         },
       },
+    );
+
+    // we expect the server to be created in the next 15 minutes
+    setTimeout(
+      () => {
+        void workspaceService.updateExpectedStatus({
+          workspaceId: workspace.id,
+          status: 'ACTIVE',
+          whereStatus: 'CREATING',
+        });
+      },
+      15 * 60 * 1000,
     );
   }
 

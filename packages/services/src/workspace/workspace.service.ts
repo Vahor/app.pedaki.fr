@@ -274,15 +274,18 @@ class WorkspaceService {
   async updateExpectedStatus({
     workspaceId,
     status,
+    whereStatus = undefined,
   }: {
     workspaceId: string;
     status: WorkspaceStatus;
+    whereStatus?: WorkspaceStatus;
   }) {
     console.log(`Updating workspace status (expected) '${workspaceId}'... (status: ${status})`);
 
     await prisma.workspace.update({
       where: {
         id: workspaceId,
+        expectedStatus: whereStatus,
       },
       data: {
         expectedStatus: status,

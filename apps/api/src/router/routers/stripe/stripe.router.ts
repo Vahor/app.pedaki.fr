@@ -169,22 +169,6 @@ export const stripeRouter = router({
                 subscriptionId,
               },
             });
-
-            // we expect the server to be created in the next 15 minutes
-            setTimeout(
-              () => {
-                void prisma.workspace.update({
-                  where: {
-                    id: workspaceId,
-                    expectedStatus: 'CREATING',
-                  },
-                  data: {
-                    expectedStatus: 'ACTIVE',
-                  },
-                });
-              },
-              15 * 60 * 1000,
-            );
           }
           break;
         case 'checkout.session.expired':
