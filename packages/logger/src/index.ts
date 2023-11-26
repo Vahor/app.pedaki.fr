@@ -21,7 +21,7 @@ export const logger = winston.createLogger({
       info.instanceId = instanceId;
 
       if (typeof info.duration === 'number') {
-        info.durationMs = info.duration;
+        info.durationMS = info.duration;
       }
       return info;
     })(),
