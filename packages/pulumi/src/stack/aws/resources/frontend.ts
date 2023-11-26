@@ -138,7 +138,7 @@ services:
 <filter>
   @type record_transformer
   <record>
-    service.name \\"WORKSPACE_ID-fluentd\\"
+    $baselime.service \\"WORKSPACE_ID-fluentd\\"
   </record>
 </filter>
 
