@@ -195,10 +195,10 @@ sudo service docker start
 
 sudo docker login -u $APP_DOCKER_USERNAME -p $APP_DOCKER_PASSWORD ${env.APP_DOCKER_HOST}
 
-
+mkdir -p /app/conf
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
-echo "${fluentdConfig}" > conf/fluent.conf
+echo "${fluentdConfig}" > ./conf/fluent.conf
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
