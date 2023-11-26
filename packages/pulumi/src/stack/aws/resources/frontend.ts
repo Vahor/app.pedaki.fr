@@ -89,17 +89,17 @@ services:
       - .env
     volumes:
       - '/app/certs:/app/certs'
-  depends_on:
-    - fluentd
-  logging:
-    driver: fluentd
-    options:
-      fluentd-address: 'localhost:24224'
-      tag: 'docker.{{.Name}}'
-      labels: 'io.baselime.service,io.baselime.namespace'
-  labels:
-    io.baselime.service: cli
-    io.baselime.namespace: '${args.stackParameters.workspace.id}'
+    depends_on:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 'localhost:24224'
+        tag: 'docker.{{.Name}}'
+        labels: 'io.baselime.service,io.baselime.namespace'
+    labels:
+      io.baselime.service: cli
+      io.baselime.namespace: '${args.stackParameters.workspace.id}'
 
   caddy:
     image: '${CADDY_DOCKER_IMAGE}'
@@ -117,7 +117,6 @@ services:
       - './conf:/fluentd/etc'
     environment:
       - FLUENTD_CONF=fluent.conf
-
 `;
 
     const fluentdConfig = pulumi.interpolate`
