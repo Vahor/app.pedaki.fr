@@ -170,7 +170,7 @@ export const stripeRouter = router({
               },
             });
 
-            // we expect the server to be created in the next 10 minutes
+            // we expect the server to be created in the next 15 minutes
             setTimeout(
               () => {
                 void prisma.workspace.update({
@@ -183,7 +183,7 @@ export const stripeRouter = router({
                   },
                 });
               },
-              10 * 60 * 1000,
+              15 * 60 * 1000,
             );
           }
           break;
