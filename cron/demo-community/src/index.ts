@@ -4,6 +4,7 @@ import { invitationService } from '@pedaki/services/invitation/invitation.servic
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { env } from '~/env.ts';
+import { logger } from '@pedaki/logger';
 
 const WORKSPACE_SUBDOMAIN = 'demo';
 const PEDAKI_BILLING_EMAIL = 'demo@pedaki.fr';
@@ -53,8 +54,7 @@ const stackParameters = (workspaceId: string, subscriptionId: number, authToken:
   }) as const;
 
 const main = async () => {
-  console.log("Starting cron 'cron-demo-community'");
-  console.log(`This will use the ${DOCKER_IMAGE} docker image`);
+  logger.debug("Starting cron 'cron-demo-community'", `This will use the ${DOCKER_IMAGE} docker image`);
   await prisma.$connect();
 
   const response = await workspaceService.getLatestSubscription(WORKSPACE_SUBDOMAIN);
@@ -66,12 +66,12 @@ const main = async () => {
   if (response) {
     const { subscriptionId: previousSubscriptionId, workspaceId: previousWorkspaceId } = response;
     if (env.DELETE_OLD_STACK) {
-      console.log(`Deleting previous stack for subscription ${previousSubscriptionId}`);
+      logger.debug(`Deleting previous stack for subscription ${previousSubscriptionId}`);
       await resourceService.deleteStack(
         stackParameters(previousWorkspaceId, previousSubscriptionId, authToken),
       );
     } else {
-      console.log(
+      logger.debug(
         `DELETE_OLD_STACK is false, keeping previous stack for subscription ${previousSubscriptionId}`,
       );
     }
@@ -98,7 +98,7 @@ const main = async () => {
       status: 'CREATING',
     });
   } else {
-    console.log('No previous subscription found, creating a new one');
+    logger.debug('No previous subscription found, creating a new one');
     const {
       subscriptionId: newSubscriptionId,
       authToken: newAuthToken,
@@ -129,16 +129,16 @@ const main = async () => {
   try {
     await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr', 'Developers');
   } catch (error) {
-    console.error('Error while adding pending invite', error);
+    logger.error('Error while adding pending invite', error);
   }
 
   await resourceService.upsertStack(stackParameters(workspaceId, subscriptionId, authToken));
 
-  console.log("Finished cron 'cron-demo-community'");
+  logger.debug("Finished cron 'cron-demo-community'");
 };
 void main()
-  .catch(console.error)
+  .catch(logger.error)
   .finally(() => void prisma.$disconnect())
   .then(() => {
-    console.log("Exiting cron 'cron-demo-community'");
+    logger.debug("Exiting cron 'cron-demo-community'");
   });

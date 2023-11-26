@@ -18,6 +18,7 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/services/package.json ./packages/services/
 COPY packages/pulumi/package.json ./packages/pulumi/
 COPY packages/models/package.json ./packages/models/
+COPY packages/logger/package.json ./packages/logger/
 COPY cron/demo-community/package.json ./cron/demo-community/
 
 RUN --mount=type=cache,id=s/abdf597f-fa85-4c66-a7e0-b512707bd711-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -52,6 +53,7 @@ COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
 COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
 COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
+COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
 COPY --from=builder /app/cron/demo-community/dist ./dist
 
 ARG DATABASE_URL
