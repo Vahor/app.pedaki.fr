@@ -14,7 +14,7 @@ export const logger = winston.createLogger({
       }
 
       // Override service name
-      info.service = env.LOGGER_SERVICE_NAME;
+      info.scope = { name: '@pedaki' };
 
       if (typeof info.duration === 'number') {
         info.durationMs = info.duration;
