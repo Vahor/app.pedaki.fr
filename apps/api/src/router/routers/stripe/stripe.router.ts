@@ -169,17 +169,6 @@ export const stripeRouter = router({
                 subscriptionId,
               },
             });
-          }
-          break;
-        case 'checkout.session.expired':
-          {
-            // Checkout session expired, we can safely delete the pending workspace creation
-            const data = CheckoutSessionExpiredSchema.parse(event.data.object);
-            const pendingId = data.metadata.pendingId;
-
-            pendingWorkspaceService.delete(pendingId);
-
-            console.log('Deleted pending workspace creation after session expired', pendingId);
 
             // we expect the server to be created in the next 10 minutes
             setTimeout(
@@ -196,6 +185,17 @@ export const stripeRouter = router({
               },
               10 * 60 * 1000,
             );
+          }
+          break;
+        case 'checkout.session.expired':
+          {
+            // Checkout session expired, we can safely delete the pending workspace creation
+            const data = CheckoutSessionExpiredSchema.parse(event.data.object);
+            const pendingId = data.metadata.pendingId;
+
+            pendingWorkspaceService.delete(pendingId);
+
+            console.log('Deleted pending workspace creation after session expired', pendingId);
           }
           break;
 
