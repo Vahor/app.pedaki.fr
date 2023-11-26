@@ -14,8 +14,11 @@ export const logger = winston.createLogger({
       }
 
       // Override service name
-      info.service = { name: env.LOGGER_SERVICE_NAME };
+      info.service = env.LOGGER_SERVICE_NAME;
 
+      if (typeof info.duration === 'number') {
+        info.durationMs = info.duration;
+      }
       return info;
     })(),
     winston.format.json(),

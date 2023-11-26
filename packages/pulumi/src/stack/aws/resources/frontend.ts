@@ -90,6 +90,7 @@ services:
         fluentd-address: 'localhost:24224'
         tag: 'docker.{{.Name}}'
         labels: 'io.baselime.service,io.baselime.namespace'
+        fluentd-async: 'true'
     labels:
       io.baselime.service: web
       io.baselime.namespace: '${args.stackParameters.workspace.id}'
@@ -108,6 +109,7 @@ services:
         fluentd-address: 'localhost:24224'
         tag: 'docker.{{.Name}}'
         labels: 'io.baselime.service,io.baselime.namespace'
+        fluentd-async: 'true'
     labels:
       io.baselime.service: cli
       io.baselime.namespace: '${args.stackParameters.workspace.id}'
