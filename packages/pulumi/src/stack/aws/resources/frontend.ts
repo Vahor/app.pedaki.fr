@@ -90,13 +90,13 @@ services:
         volumes:
             - /app/certs:/app/certs
     depends_on:
-      - fluentd
+        - fluentd
     logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: docker.{{.Name}}
-        labels: "io.baselime.service,io.baselime.namespace"
+        driver: fluentd
+        options:
+            fluentd-address: localhost:24224
+            tag: docker.{{.Name}}
+            labels: "io.baselime.service,io.baselime.namespace"
     labels:
       io.baselime.service: "cli"
       io.baselime.namespace: "${args.stackParameters.workspace.id}"
