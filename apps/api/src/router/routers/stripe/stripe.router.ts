@@ -31,7 +31,7 @@ export const stripeRouter = router({
             // Update subscription info
             const data = CustomerSubscriptionSchema.parse(event.data.object);
             // FIXME: delete me later
-            logger.debug('Subscription object', event.data.object);
+            logger.debug(`Subscription object`, { data });
 
             // Get our subscription id from stripe subscription id
             const subscription = await prisma.workspaceSubscription.findUnique({

@@ -28,15 +28,16 @@ export const isFromStripe = t.middleware(async ({ ctx, next }) => {
     });
   }
 
+  let event;
   try {
-    const event = stripeService.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
-
-    return next({
-      ctx: {
-        stripeEvent: event,
-      },
-    });
+    event = stripeService.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     throw error;
   }
+
+  return next({
+    ctx: {
+      stripeEvent: event,
+    },
+  });
 });
