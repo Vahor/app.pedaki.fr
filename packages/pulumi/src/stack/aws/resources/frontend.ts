@@ -89,6 +89,17 @@ services:
             - .env
         volumes:
             - /app/certs:/app/certs
+    depends_on:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: docker.{{.Name}}
+        labels: "io.baselime.service,io.baselime.namespace"
+    labels:
+      io.baselime.service: "cli"
+      io.baselime.namespace: "${args.stackParameters.workspace.id}"
 
     caddy:
         image: '${CADDY_DOCKER_IMAGE}'
@@ -99,6 +110,26 @@ services:
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
             - /app/certs:/app/certs
+            
+    fluentd:
+        image: fluentd:latest
+        volumes:
+            - ./conf:/fluentd/etc
+        environment:
+            - FLUENTD_CONF=fluent.conf
+`;
+
+    const fluentdConfig = pulumi.interpolate`
+<match>
+  @type http
+  endpoint https://events.baselime.io/v1/docker-logs
+  headers {"x-api-key": #{ENV['BASELIME_API_KEY']}}
+  open_timeout 5
+  json_array true
+  <format>
+    @type json
+  </format>
+</match>
 `;
 
     const domain = args.stackParameters.workspace.subdomain + '.pedaki.fr';
@@ -110,19 +141,19 @@ services:
 https://${domain} {
     reverse_proxy http://web:8000
     encode zstd gzip
-    
+
     # HSTS (63072000 seconds)
     header / Strict-Transport-Security "max-age=63072000"
-    
+
     # hidden server name
     header -Server
-    
+
     tls /app/certs/cloudflare-ca.pem /app/certs/cloudflare-ca-key.pem {
         client_auth {
              mode require_and_verify
              trusted_ca_cert_file /app/certs/cloudflare-origin-pull-ca.pem
         }
-        
+
         resolvers 1.1.1.1
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
@@ -147,7 +178,7 @@ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Loading env from ssm parameter store
-sudo aws ssm get-parameters --names /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
+sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
 source .env
 
 # Download aws RDS CA certificate
@@ -166,6 +197,7 @@ sudo docker login -u $APP_DOCKER_USERNAME -p $APP_DOCKER_PASSWORD ${env.APP_DOCK
 
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
+echo "${fluentdConfig}" > conf/fluent.conf
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
