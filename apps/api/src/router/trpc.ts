@@ -6,6 +6,6 @@ import { isFromWorkspace } from '~/router/middleware/workspace.middleware.ts';
 
 export const router = t.router;
 export const publicProcedure = t.procedure.use(telemetryMiddleware);
-export const internalProcedure = t.procedure.use(isInternal);
-export const stripeProcedure = t.procedure.use(isFromStripe);
-export const workspaceProcedure = t.procedure.use(isFromWorkspace);
+export const internalProcedure = publicProcedure.use(isInternal);
+export const stripeProcedure = publicProcedure.use(isFromStripe);
+export const workspaceProcedure = publicProcedure.use(isFromWorkspace);
