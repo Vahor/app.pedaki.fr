@@ -75,48 +75,49 @@ export class WebService extends pulumi.ComponentResource {
 version: '3.8'
 name: pedaki
 services:
-    web:
-        image: '${DOCKER_IMAGE}'
-        env_file:
-            - .env
-        restart: unless-stopped  
-        volumes:
-            - /app/certs:/app/certs
-        
-    cli:
-        image: '${CLI_DOCKER_IMAGE}'
-        env_file:
-            - .env
-        volumes:
-            - /app/certs:/app/certs
-    depends_on:
-        - fluentd
-    logging:
-        driver: fluentd
-        options:
-            fluentd-address: localhost:24224
-            tag: docker.{{.Name}}
-            labels: "io.baselime.service,io.baselime.namespace"
-    labels:
-      io.baselime.service: "cli"
-      io.baselime.namespace: "${args.stackParameters.workspace.id}"
+  web:
+    image: '${DOCKER_IMAGE}'
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - '/app/certs:/app/certs'
 
-    caddy:
-        image: '${CADDY_DOCKER_IMAGE}'
-        restart: unless-stopped
-        ports:
-            - 80:80
-            - 443:443
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - /app/certs:/app/certs
-            
-    fluentd:
-        image: fluentd:latest
-        volumes:
-            - ./conf:/fluentd/etc
-        environment:
-            - FLUENTD_CONF=fluent.conf
+  cli:
+    image: '${CLI_DOCKER_IMAGE}'
+    env_file:
+      - .env
+    volumes:
+      - '/app/certs:/app/certs'
+  depends_on:
+    - fluentd
+  logging:
+    driver: fluentd
+    options:
+      fluentd-address: 'localhost:24224'
+      tag: 'docker.{{.Name}}'
+      labels: 'io.baselime.service,io.baselime.namespace'
+  labels:
+    io.baselime.service: cli
+    io.baselime.namespace: '${args.stackParameters.workspace.id}'
+
+  caddy:
+    image: '${CADDY_DOCKER_IMAGE}'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - './Caddyfile:/etc/caddy/Caddyfile'
+      - '/app/certs:/app/certs'
+
+  fluentd:
+    image: 'fluentd:latest'
+    volumes:
+      - './conf:/fluentd/etc'
+    environment:
+      - FLUENTD_CONF=fluent.conf
+
 `;
 
     const fluentdConfig = pulumi.interpolate`
