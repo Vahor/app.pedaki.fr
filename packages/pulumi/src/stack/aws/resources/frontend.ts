@@ -138,7 +138,7 @@ services:
 <filter>
   @type record_transformer
   <record>
-    $workspaceId \\"WORKSPACE_ID\\"
+    workspaceId \\"WORKSPACE_ID\\"
   </record>
 </filter>
 
