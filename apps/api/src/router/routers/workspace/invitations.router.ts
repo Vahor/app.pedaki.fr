@@ -1,4 +1,4 @@
-import { prisma } from '@pedaki/db';
+import { InvalidStateError } from '@pedaki/models/errors/InvalidStateError.js';
 import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
@@ -21,13 +21,7 @@ export const workspaceInvitationRouter = router({
     .output(z.undefined())
     .mutation(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
-
-      await prisma.pendingWorkspaceInvite.deleteMany({
-        where: {
-          email: input.email,
-          workspaceId: workspaceId,
-        },
-      });
+      await invitationService.deletePendingInvite(workspaceId, input.email);
     }),
 
   getMany: publicProcedure
@@ -50,6 +44,12 @@ export const workspaceInvitationRouter = router({
       if (ctx.workspace.id !== input.workspaceId) {
         throw new NotYourWorkspaceError();
       }
+
+      // Just for safety, we only want to read/apply invites while the workspace is being created
+      if (ctx.workspace.currentStatus !== 'CREATING') {
+        throw new InvalidStateError();
+      }
+
       return {
         invitations: await invitationService.getAllInvites(input.workspaceId),
       };
@@ -64,6 +64,12 @@ export const workspaceInvitationRouter = router({
       if (ctx.workspace.id !== input.workspaceId) {
         throw new NotYourWorkspaceError();
       }
+
+      // Just for safety, we only want to read/apply invites while the workspace is being created
+      if (ctx.workspace.currentStatus !== 'CREATING') {
+        throw new InvalidStateError();
+      }
+
       await invitationService.deleteManyInvites(input.workspaceId, input.emails);
 
       return true;

@@ -1,5 +1,6 @@
 import { prisma } from '@pedaki/db';
 import { WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
+import { InvalidStateError } from '@pedaki/models/errors/InvalidStateError.js';
 import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
@@ -7,7 +8,7 @@ class InvitationService {
   async addPendingInvite(workspaceId: string, email: string, name: string): Promise<void> {
     const workspace = await prisma.workspace.findUnique({
       where: { id: workspaceId },
-      select: { billingEmail: true },
+      select: { billingEmail: true, expectedStatus: true },
     });
 
     if (!workspace) {
@@ -19,6 +20,11 @@ class InvitationService {
         code: 'BAD_REQUEST',
         message: 'MAIN_EMAIL',
       });
+    }
+
+    // We won't read invites after the workspace is created
+    if (workspace.expectedStatus !== 'CREATING') {
+      throw new InvalidStateError();
     }
 
     try {
@@ -38,6 +44,12 @@ class InvitationService {
       }
       throw error;
     }
+  }
+
+  async deletePendingInvite(workspaceId: string, email: string): Promise<void> {
+    await prisma.pendingWorkspaceInvite.delete({
+      where: { email_workspaceId: { email: email, workspaceId: workspaceId } },
+    });
   }
 
   async getAllInvites(workspaceId: string): Promise<{ email: string; name: string }[]> {

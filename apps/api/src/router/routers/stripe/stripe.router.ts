@@ -153,22 +153,38 @@ export const stripeRouter = router({
               },
             });
 
-            // void resourceService.safeCreateStack({
-            //   ...workspaceCreationData,
-            //   server: {
-            //     ...workspaceCreationData.server,
-            //     environment_variables: {
-            //       PEDAKI_AUTH_TOKEN: authToken,
-            //       PEDAKI_BILLING_EMAIL: pendingData.billing.email,
-            //       PEDAKI_BILLING_NAME: pendingData.billing.name,
-            //     },
-            //   },
-            //   workspace: {
-            //     id: workspaceId,
-            //     subdomain: pendingData.subdomain,
-            //     subscriptionId,
-            //   },
-            // });
+            void resourceService.safeCreateStack({
+              ...workspaceCreationData,
+              server: {
+                ...workspaceCreationData.server,
+                environment_variables: {
+                  PEDAKI_AUTH_TOKEN: authToken,
+                  PEDAKI_BILLING_EMAIL: pendingData.billing.email,
+                  PEDAKI_BILLING_NAME: pendingData.billing.name,
+                },
+              },
+              workspace: {
+                id: workspaceId,
+                subdomain: pendingData.subdomain,
+                subscriptionId,
+              },
+            });
+
+            // we expect the server to be created in the next 15 minutes
+            setTimeout(
+              () => {
+                void prisma.workspace.update({
+                  where: {
+                    id: workspaceId,
+                    expectedStatus: 'CREATING',
+                  },
+                  data: {
+                    expectedStatus: 'ACTIVE',
+                  },
+                });
+              },
+              15 * 60 * 1000,
+            );
           }
           break;
         case 'checkout.session.expired':
