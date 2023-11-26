@@ -129,7 +129,10 @@ https://${domain} {
 }
 `;
 
+    const date = Date.now(); // Used to force the script to be reloaded
+
     return pulumi.interpolate`#!/bin/bash
+# ${date}
 set -e -x
 export DEBIAN_FRONTEND=noninteractive
 
