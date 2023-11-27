@@ -1,5 +1,5 @@
 import { logger } from '@pedaki/logger';
-import { VERSION } from '@pedaki/logger/version';
+import { VERSION } from '@pedaki/logger/version.js';
 import * as random from '@pulumi/random';
 import { env } from '~/env.ts';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
