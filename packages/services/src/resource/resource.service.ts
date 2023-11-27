@@ -1,5 +1,5 @@
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { prisma } from '@pedaki/db';
-import { logger } from '@pedaki/logger';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
@@ -7,42 +7,43 @@ import { serverFactory } from '@pedaki/pulumi/factory.js';
 import { TRPCError } from '@trpc/server';
 import { workspaceService } from '~/workspace/workspace.service.js';
 import { backOff } from 'exponential-backoff';
+import { flatten } from 'flat';
 
 class ResourceService {
   async deleteStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    const profiler = logger.startTimer();
-    logger.info(`Deleting stack for workspace '${workspace.subdomain}'...`);
-    const provider = this.getProvider(vpc.provider);
+    const tracer = trace.getTracer('@pedaki/services');
+    return tracer.startActiveSpan(`deleteStack`, async span => {
+      span.setAttributes({
+        workspaceId: workspace.id,
+        provider: vpc.provider,
+      });
+      const provider = this.getProvider(vpc.provider);
 
-    await provider.delete({
-      workspace: {
-        id: workspace.id,
-        subdomain: workspace.subdomain,
-      },
-      region: vpc.region,
-      server,
-      database,
-      dns,
+      await provider.delete({
+        workspace: {
+          id: workspace.id,
+          subdomain: workspace.subdomain,
+        },
+        region: vpc.region,
+        server,
+        database,
+        dns,
+      });
+
+      const response = await prisma.workspaceResource.deleteMany({
+        where: {
+          subscriptionId: workspace.subscriptionId,
+        },
+      });
+
+      span.setAttributes({
+        deletedResources: response.count,
+      });
+
+      span.end();
+
+      return null;
     });
-
-    logger.info(`Stack deleted (provider: ${vpc.provider}) for workspace '${workspace.subdomain}'`);
-
-    logger.info(`Deleting database resources for workspace '${workspace.subdomain}'...`);
-    const deleteResponse = await prisma.workspaceResource.deleteMany({
-      where: {
-        subscriptionId: workspace.subscriptionId,
-      },
-    });
-    logger.info(
-      `Database resources deleted for workspace '${workspace.subdomain}' (deleted: ${deleteResponse.count})`,
-    );
-
-    profiler.done({
-      message: `Stack deleted for workspace '${workspace.subdomain}'`,
-      data: { provider: vpc.provider },
-    });
-
-    return null;
   }
 
   /**
@@ -50,65 +51,78 @@ class ResourceService {
    * And retry if it fails.
    */
   async safeCreateStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    logger.info(`Creating stack for workspace '${workspace.subdomain}'...`);
-    // First check that there is no resource with the same subdomain
-    const existingResource = await prisma.workspaceResource.count({
-      where: {
-        subscriptionId: workspace.subscriptionId,
-      },
-    });
-
-    if (existingResource > 0) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'stack_already_exists',
+    const tracer = trace.getTracer('@pedaki/services');
+    return tracer.startActiveSpan(`safeCreateStack`, async span => {
+      span.setAttributes({
+        workspaceId: workspace.id,
+        provider: vpc.provider,
       });
-    }
 
-    let shouldDeleteStack = false;
-
-    await backOff(
-      async () => {
-        if (shouldDeleteStack) {
-          await this.deleteStack({ workspace, vpc, server, dns, database });
-        }
-        await this.upsertStack({ workspace, vpc, server, dns, database });
-      },
-      {
-        startingDelay: 60_000,
-        numOfAttempts: 4,
-        retry: (e: Error, attempt) => {
-          shouldDeleteStack = false;
-          // TODO: handle error and cancel retry if it's not a retryable error
-          logger.error({
-            error: e,
-            message: e.message,
-            code: e.name,
-          });
-          logger.warn(`Retrying (${attempt}/4)...`);
-
-          // ConcurrentUpdateError: code: -2
-          if (e.name === ConcurrentUpdateError) {
-            // There is already a stack being created, we just have to wait for it to finish
-            return false;
-          }
-          shouldDeleteStack = true;
-          return true;
+      // First check that there is no resource with the same subdomain
+      const existingResource = await prisma.workspaceResource.count({
+        where: {
+          subscriptionId: workspace.subscriptionId,
         },
-      },
-    );
+      });
 
-    // we expect the server to be created in the next 15 minutes
-    setTimeout(
-      () => {
-        void workspaceService.updateExpectedStatus({
-          workspaceId: workspace.id,
-          status: 'ACTIVE',
-          whereStatus: 'CREATING',
+      if (existingResource > 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'stack_already_exists',
         });
-      },
-      15 * 60 * 1000,
-    );
+      }
+
+      let shouldDeleteStack = false;
+
+      await backOff(
+        async () => {
+          if (shouldDeleteStack) {
+            await this.deleteStack({ workspace, vpc, server, dns, database });
+          }
+          await this.upsertStack({ workspace, vpc, server, dns, database });
+        },
+        {
+          startingDelay: 60_000,
+          numOfAttempts: 4,
+          retry: (e: Error, attempt) => {
+            shouldDeleteStack = false;
+            span.setAttributes(
+              flatten({
+                attempt: {
+                  [attempt]: {
+                    error: e.message,
+                    code: e.name,
+                  },
+                },
+              }),
+            );
+            span.setStatus({ code: SpanStatusCode.ERROR, message: e.message });
+
+            // ConcurrentUpdateError: code: -2
+            if (e.name === ConcurrentUpdateError) {
+              // There is already a stack being created, we just have to wait for it to finish
+              return false;
+            }
+            shouldDeleteStack = true;
+            return true;
+          },
+        },
+      );
+
+      // we expect the server to be created in the next 15 minutes
+      setTimeout(
+        () => {
+          void workspaceService.updateExpectedStatus({
+            workspaceId: workspace.id,
+            status: 'ACTIVE',
+            whereStatus: 'CREATING',
+          });
+        },
+        15 * 60 * 1000,
+      );
+
+      span.end();
+    });
   }
 
   /**
@@ -126,63 +140,65 @@ class ResourceService {
    * @param database Customization for the database (size, etc.)
    */
   async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
-    const profiler = logger.startTimer();
-    logger.info(`Upserting stack for workspace '${workspace.subdomain}'...`);
-    const provider = this.getProvider(vpc.provider);
+    const tracer = trace.getTracer('@pedaki/services');
+    return tracer.startActiveSpan(`upsertStack`, async span => {
+      span.setAttributes({
+        workspaceId: workspace.id,
+        provider: vpc.provider,
+      });
 
-    const outputs = await provider.create({
-      workspace: {
-        id: workspace.id,
-        subdomain: workspace.subdomain,
-      },
-      region: vpc.region,
-      server,
-      database,
-      dns,
-    });
+      const provider = this.getProvider(vpc.provider);
 
-    logger.info(`Stack upserted (provider) for workspace '${workspace.subdomain}'`, outputs);
+      const outputs = await provider.create({
+        workspace: {
+          id: workspace.id,
+          subdomain: workspace.subdomain,
+        },
+        region: vpc.region,
+        server,
+        database,
+        dns,
+      });
 
-    // Upsert resource in prisma
-    logger.info(`Upserting database resources for workspace '${workspace.subdomain}'...`);
+      span.setAttributes(
+        flatten({
+          createdResources: outputs,
+        }),
+      );
 
-    await prisma.$transaction([
-      ...outputs.map(resource => {
-        const { id, type, region, provider, ...data } = resource;
+      // Upsert resource in prisma
+      await prisma.$transaction([
+        ...outputs.map(resource => {
+          const { id, type, region, provider, ...data } = resource;
 
-        const upsertData = {
-          region: region,
-          provider: provider,
-          type: type,
-          data: data,
-          subscription: {
-            connect: {
-              id: workspace.subscriptionId,
+          const upsertData = {
+            region: region,
+            provider: provider,
+            type: type,
+            data: data,
+            subscription: {
+              connect: {
+                id: workspace.subscriptionId,
+              },
             },
-          },
-        };
+          };
 
-        return prisma.workspaceResource.upsert({
-          where: {
-            id: id,
-          },
-          create: {
-            id: id,
-            ...upsertData,
-          },
-          update: upsertData,
-        });
-      }),
-    ]);
+          return prisma.workspaceResource.upsert({
+            where: {
+              id: id,
+            },
+            create: {
+              id: id,
+              ...upsertData,
+            },
+            update: upsertData,
+          });
+        }),
+      ]);
 
-    logger.info(`Database resources upserted for workspace '${workspace.subdomain}'`);
-
-    profiler.done({
-      message: `Stack upserted for workspace '${workspace.subdomain}'`,
-      data: { provider: vpc.provider },
+      span.end();
+      return null;
     });
-
-    return null;
   }
 
   private getProvider(providerName: ServerProvider) {
@@ -190,7 +206,6 @@ class ResourceService {
     if (!provider) {
       throw new TRPCError({ code: 'NOT_FOUND', message: `Provider ${providerName} not found` });
     }
-    logger.info(`Using provider ${providerName}`);
     return provider;
   }
 }
