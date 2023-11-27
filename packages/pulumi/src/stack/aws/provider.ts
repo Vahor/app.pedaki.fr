@@ -1,10 +1,10 @@
 import { logger } from '@pedaki/logger';
+import { VERSION } from '@pedaki/logger/version';
 import * as random from '@pulumi/random';
 import { env } from '~/env.ts';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
 import { StackOutputsSchema } from '~/output.ts';
 import type { StackParameters, StackProvider } from '~/type.ts';
-import { VERSION } from '~/utils/docker.ts';
 import { redacted } from '~/utils/redacted.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
