@@ -54,6 +54,7 @@ COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
 COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
 COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
 COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
+COPY --from=builder /app/packages/logger/package.json ./node_modules/@pedaki/package.json
 COPY --from=builder /app/cron/demo-community/dist ./dist
 
 ARG DATABASE_URL
