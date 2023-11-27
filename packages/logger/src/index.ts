@@ -3,8 +3,9 @@ import { BaselimeTransport } from '@baselime/winston-transport';
 import * as api from '@opentelemetry/api';
 import { env } from '~/env.ts';
 import winston from 'winston';
+import { VERSION } from './version.js';
 
-const instanceId = crypto.randomBytes(8).toString('hex');
+export const INSTANCE_ID = crypto.randomBytes(8).toString('hex');
 
 export const logger = winston.createLogger({
   level: env.LOGGER_LEVEL,
@@ -20,8 +21,9 @@ export const logger = winston.createLogger({
       info.service = {
         name: env.LOGGER_SERVICE_NAME,
         namespace: 'internal',
+        instanceId: INSTANCE_ID,
+        version: VERSION,
       };
-      info.instanceId = instanceId;
       return info;
     })(),
     winston.format.json(),
