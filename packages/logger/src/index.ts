@@ -1,8 +1,8 @@
+import crypto from 'crypto';
 import { BaselimeTransport } from '@baselime/winston-transport';
 import * as api from '@opentelemetry/api';
 import { env } from '~/env.ts';
 import winston from 'winston';
-import crypto from 'crypto'
 
 const instanceId = crypto.randomBytes(8).toString('hex');
 
@@ -16,14 +16,12 @@ export const logger = winston.createLogger({
         info.traceId = span.spanContext().traceId;
       }
 
-      // Override service name
-      info.scope = { name: '@pedaki' };
+      // Meta data
+      info.service = {
+        name: env.LOGGER_SERVICE_NAME,
+        namespace: 'internal',
+      };
       info.instanceId = instanceId;
-
-      if (typeof info.durationMs === 'number') {
-        info.durationMS = info.durationMs;
-        delete info.durationMs;
-      }
       return info;
     })(),
     winston.format.json(),
