@@ -1,3 +1,4 @@
+import { VERSION } from '@pedaki/logger/version.js';
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
@@ -75,30 +76,86 @@ export class WebService extends pulumi.ComponentResource {
 version: '3.8'
 name: pedaki
 services:
-    web:
-        image: '${DOCKER_IMAGE}'
-        env_file:
-            - .env
-        restart: unless-stopped  
-        volumes:
-            - /app/certs:/app/certs
-        
-    cli:
-        image: '${CLI_DOCKER_IMAGE}'
-        env_file:
-            - .env
-        volumes:
-            - /app/certs:/app/certs
+  web:
+    image: '${DOCKER_IMAGE}'
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - '/app/certs:/app/certs'
+    depends_on:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 'localhost:24224'
+        tag: 'docker.{{.Name}}'
+        labels: 'io.baselime.service,io.baselime.namespace'
+        fluentd-async: 'true'
+    labels:
+      io.baselime.service: web
+      io.baselime.namespace: '${args.stackParameters.workspace.id}'
 
-    caddy:
-        image: '${CADDY_DOCKER_IMAGE}'
-        restart: unless-stopped
-        ports:
-            - 80:80
-            - 443:443
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - /app/certs:/app/certs
+  cli:
+    image: '${CLI_DOCKER_IMAGE}'
+    env_file:
+      - .env
+    volumes:
+      - '/app/certs:/app/certs'
+    depends_on:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 'localhost:24224'
+        tag: 'docker.{{.Name}}'
+        labels: 'io.baselime.service,io.baselime.namespace'
+        fluentd-async: 'true'
+    labels:
+      io.baselime.service: cli
+      io.baselime.namespace: '${args.stackParameters.workspace.id}'
+
+  caddy:
+    image: '${CADDY_DOCKER_IMAGE}'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - './Caddyfile:/etc/caddy/Caddyfile'
+      - '/app/certs:/app/certs'
+
+  fluentd:
+    image: 'fluentd:latest'
+    ports:
+      - '24224:24224'
+    volumes:
+      - './conf:/fluentd/etc'
+    environment:
+      - FLUENTD_CONF=fluent.conf
+`;
+
+    const fluentdConfig = pulumi.interpolate`
+<filter>
+  @type record_transformer
+  <record>
+    \\"community\\" \\"false\\"
+    \\"version\\" \\"${VERSION}\\"
+    \\"service.namespace\\" \\"${args.stackParameters.workspace.id}\\"
+    \\"service.name\\" \\"fluentd\\"
+  </record>
+</filter>
+
+<match>
+  @type http
+  endpoint https://events.baselime.io/v1/docker-logs
+  headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\", \\"x-service\\": \\"fluentd\\"}
+  open_timeout 5
+  json_array true
+  <format>
+    @type json
+  </format>
+</match>
 `;
 
     const domain = args.stackParameters.workspace.subdomain + '.pedaki.fr';
@@ -110,19 +167,19 @@ services:
 https://${domain} {
     reverse_proxy http://web:8000
     encode zstd gzip
-    
+
     # HSTS (63072000 seconds)
     header / Strict-Transport-Security "max-age=63072000"
-    
+
     # hidden server name
     header -Server
-    
+
     tls /app/certs/cloudflare-ca.pem /app/certs/cloudflare-ca-key.pem {
         client_auth {
              mode require_and_verify
              trusted_ca_cert_file /app/certs/cloudflare-origin-pull-ca.pem
         }
-        
+
         resolvers 1.1.1.1
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
@@ -147,7 +204,9 @@ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Loading env from ssm parameter store
-sudo aws ssm get-parameters --names /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
+sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
+sudo aws ssm get-parameters --names ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
+
 source .env
 
 # Download aws RDS CA certificate
@@ -163,9 +222,12 @@ sudo service docker start
 
 sudo docker login -u $APP_DOCKER_USERNAME -p $APP_DOCKER_PASSWORD ${env.APP_DOCKER_HOST}
 
-
+mkdir -p /app/conf
 echo "${caddyFileContent}" > Caddyfile
 echo "${dockerComposeContent}" > docker-compose.yml
+echo "${fluentdConfig}" > ./conf/fluent.conf
+sed -i "s/BASELIME_API_KEY/$BASELIME_API_KEY/g" ./conf/fluent.conf
+sed -i "s/WORKSPACE_ID/${args.stackParameters.workspace.id}/g" ./conf/fluent.conf
 
 # Increase the maximum number of file descriptors
 # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
@@ -173,6 +235,7 @@ sudo sysctl -w net.core.rmem_max=2500000
 
 sudo /usr/local/bin/docker-compose pull
 
+sudo /usr/local/bin/docker-compose up -d fluentd
 sudo /usr/local/bin/docker-compose run --rm cli CREATING
 sudo /usr/local/bin/docker-compose up -d caddy
 sudo /usr/local/bin/docker-compose run --rm cli ""

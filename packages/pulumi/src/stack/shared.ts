@@ -1,3 +1,4 @@
+import { logger } from '@pedaki/logger';
 import type {
   InlineProgramArgs,
   LocalWorkspaceOptions,
@@ -40,7 +41,7 @@ export class PulumiUtils {
   }
 
   public static async deleteStack(name: string, program: PulumiFn) {
-    console.log(`Deleting stack ${name}...`);
+    logger.info(`Deleting stack ${name}...`);
     let stack;
     try {
       stack = await this.selectStack(name, program);

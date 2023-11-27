@@ -22,9 +22,5 @@ export const isInternal = t.middleware(async ({ ctx, next }) => {
     throw error;
   }
 
-  try {
-    return next();
-  } catch (err) {
-    throw error;
-  }
+  return await next();
 });

@@ -1,9 +1,10 @@
+import { logger } from '@pedaki/logger';
 import { env } from '~/env.ts';
 import type { CreatePaymentInput, CreatePaymentOutput } from '~/stripe/stripe.model.ts';
 import { PendingJWTSchema } from '~/stripe/stripe.model.ts';
 import jwt from 'jsonwebtoken';
 import Stripe from 'stripe';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 // 30 min expiration
 const EXPIRES_AT_DURATION_MINUTES = 30;
@@ -23,7 +24,7 @@ class StripeService {
       expand: ['default_payment_method'],
     });
 
-    console.log(`Subscription info for ${subscriptionId}`, subscription);
+    logger.info(`Subscription info for ${subscriptionId}`, subscription);
 
     return subscription;
   }
@@ -112,12 +113,10 @@ class StripeService {
   }
 
   async createPortalSession({ customerId, returnUrl }: { customerId: string; returnUrl: string }) {
-    const session = await this.stripe.billingPortal.sessions.create({
+    return await this.stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: returnUrl,
     });
-
-    return session;
   }
 
   generatePendingJWT(

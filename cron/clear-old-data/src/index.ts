@@ -1,15 +1,18 @@
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import { env } from '~/env.ts';
 
 const main = async () => {
-  console.log("Starting cron 'clear-old-data'");
+  const profiler = logger.startTimer();
   await removeOldPendingWorkspaceCreations();
   await removeOldWorkspaceTokens();
   await removeOldWorkspaceInvitations();
-  console.log("Finished cron 'clear-old-data'");
+  profiler.done({ message: 'Completed' });
 };
 
 const removeOldPendingWorkspaceCreations = async () => {
+  const profiler = logger.startTimer();
+
   const maxAge = 1000 * 60 * env.PENDING_MAX_AGE;
   const maxDate = new Date(Date.now() - maxAge);
 
@@ -22,10 +25,12 @@ const removeOldPendingWorkspaceCreations = async () => {
   });
 
   const count = result.count;
-  console.log(`[pending] clear-old-data deleted ${count} pending workspaces`);
+  profiler.done({ message: `[pending] clear-old-data deleted ${count} pending workspaces` });
 };
 
 const removeOldWorkspaceTokens = async () => {
+  const profiler = logger.startTimer();
+
   const maxAge = 1000 * 60 * env.TOKEN_MAX_AGE;
   const maxDate = new Date(Date.now() - maxAge);
 
@@ -65,12 +70,12 @@ const removeOldWorkspaceTokens = async () => {
       },
     });
     count += result.count;
-    console.log(
+    logger.info(
       `[tokens] clear-old-data deleted ${result.count} tokens for workspace ${oldestToken.workspaceId}`,
     );
   }
 
-  console.log(`[tokens] clear-old-data deleted ${count} tokens`);
+  profiler.done({ message: `[tokens] clear-old-data deleted ${count} tokens` });
 };
 
 const removeOldWorkspaceInvitations = async () => {
@@ -86,7 +91,7 @@ const removeOldWorkspaceInvitations = async () => {
   });
 
   const count = result.count;
-  console.log(`[invitations] clear-old-data deleted ${count} workspace invitations`);
+  logger.info(`[invitations] clear-old-data deleted ${count} workspace invitations`);
 };
 
 main()

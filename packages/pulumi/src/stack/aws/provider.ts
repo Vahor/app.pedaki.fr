@@ -1,9 +1,10 @@
+import { logger } from '@pedaki/logger';
+import { VERSION } from '@pedaki/logger/version.js';
 import * as random from '@pulumi/random';
 import { env } from '~/env.ts';
 import type { StackOutputs, StackOutputsLike } from '~/output.ts';
 import { StackOutputsSchema } from '~/output.ts';
 import type { StackParameters, StackProvider } from '~/type.ts';
-import { VERSION } from '~/utils/docker.ts';
 import { redacted } from '~/utils/redacted.ts';
 import { PulumiUtils } from '../shared.ts';
 import * as backend from './resources/backend.ts';
@@ -22,7 +23,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     const tags = this.tags(params);
     await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
-    console.log(`Creating/updating stack '${params.workspace.id}'...`);
+    logger.info(`Creating/updating stack '${params.workspace.id}'...`);
     const upRes = await stack.up();
 
     // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}

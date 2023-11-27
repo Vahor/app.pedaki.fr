@@ -1,8 +1,13 @@
+import { BetterHttpInstrumentation, StripePlugin } from '@baselime/node-opentelemetry';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import { FastifyInstrumentation } from '@opentelemetry/instrumentation-fastify';
 import { prisma } from '@pedaki/db';
-import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
-// eslint-disable-next-line node/file-extension-in-import
+import { logger } from '@pedaki/logger';
+import { initTelemetry } from '@pedaki/logger/telemetry.js';
+import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js'; // eslint-disable-next-line node/file-extension-in-import
+
+import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { openApiDocument } from '~/openapi.ts';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -83,8 +88,16 @@ export function createServer() {
       await init();
       await server.listen({ port, host: '0.0.0.0' });
       await seedDatabase();
-      console.log(`Server listening on http://localhost:${port}`);
-      console.log(`Will use docker image: ${DOCKER_IMAGE}`);
+      logger.info(`Server listening on http://localhost:${port}`);
+      logger.info(`Will use docker image: ${DOCKER_IMAGE}`);
+
+      initTelemetry([
+        new BetterHttpInstrumentation({
+          plugins: [new StripePlugin()],
+        }),
+        new FastifyInstrumentation(),
+        new PrismaInstrumentation(),
+      ]);
     } catch (err) {
       console.error(err);
       throw err;

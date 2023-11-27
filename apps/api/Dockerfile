@@ -18,6 +18,7 @@ COPY apps/api/package.json ./apps/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/models/package.json ./packages/models/
 COPY packages/services/package.json ./packages/services/
+COPY packages/logger/package.json ./packages/logger/
 COPY packages/pulumi/package.json ./packages/pulumi/
 
 RUN --mount=type=cache,id=s/cab6c3b8-fdd3-400e-be64-4ed3d5840452-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -56,6 +57,8 @@ COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
 COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
 COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
+COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
+COPY --from=builder /app/packages/logger/package.json ./node_modules/@pedaki/package.json
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 
 ## Load public env vars
@@ -69,6 +72,13 @@ ARG STRIPE_SECRET_KEY
 ARG API_INTERNAL_SECRET
 ARG API_ENCRYPTION_KEY
 
+# Logger
+ARG BASELIME_API_KEY
+ARG LOGGER_SERVICE_NAME=api
+ARG LOGGER_LEVEL
+
+###
+
 ENV PORT=$PORT
 ENV PULUMI_ACCESS_TOKEN=$PULUMI_ACCESS_TOKEN
 ENV RESEND_API_KEY=$RESEND_API_KEY
@@ -80,6 +90,11 @@ ENV API_ENCRYPTION_KEY=$API_ENCRYPTION_KEY
 
 ENV NODE_ENV=production
 ENV SKIP_SERVER_ENV_CHECK=true
+
+# Logger
+ENV BASELIME_API_KEY=$BASELIME_API_KEY
+ENV LOGGER_SERVICE_NAME=$LOGGER_SERVICE_NAME
+ENV LOGGER_LEVEL=$LOGGER_LEVEL
 
 EXPOSE $PORT
 

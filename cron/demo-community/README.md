@@ -19,6 +19,5 @@ Cron: `0 0 * * 0`
    APP_DOCKER_HOST="ghcr.io"
    APP_DOCKER_ORGANISATION="pedakihq"
    APP_DOCKER_PACKAGE_NAME="pedaki-premium"
-   APP_DOCKER_IMAGE_VERSION="latest"
    PULUMI_ACCESS_TOKEN
 ```
