@@ -15,6 +15,7 @@ import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
 import { env } from './env.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
+import { PrismaInstrumentation } from '@prisma/instrumentation';
 
 export function createServer() {
   const port = env.PORT;
@@ -93,7 +94,8 @@ export function createServer() {
         new BetterHttpInstrumentation({
           plugins: [new StripePlugin()],
         }),
-        new FastifyInstrumentation({}),
+        new FastifyInstrumentation(),
+        new PrismaInstrumentation(),
       ]);
     } catch (err) {
       console.error(err);
