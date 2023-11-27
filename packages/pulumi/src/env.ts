@@ -11,7 +11,8 @@ export const env = createEnv({
     APP_DOCKER_HOST: z.string(),
     APP_DOCKER_ORGANISATION: z.string(),
     APP_DOCKER_PACKAGE_NAME: z.string(),
-    APP_DOCKER_IMAGE_VERSION: z.string(),
+
+    APP_VERSION: z.string().optional(),
 
     CLOUDFLARE_API_TOKEN: z.string(),
     CLOUDFLARE_ZONE_ID: z.string(),

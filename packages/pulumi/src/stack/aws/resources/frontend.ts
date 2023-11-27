@@ -1,3 +1,4 @@
+import { VERSION } from '@pedaki/logger/version.js';
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { env } from '~/env.ts';
@@ -135,10 +136,20 @@ services:
 `;
 
     const fluentdConfig = pulumi.interpolate`
+<filter>
+  @type record_transformer
+  <record>
+    \\"community\\" \\"false\\"
+    \\"version\\" \\"${VERSION}\\"
+    \\"service.namespace\\" \\"${args.stackParameters.workspace.id}\\"
+    \\"service.name\\" \\"fluentd\\"
+  </record>
+</filter>
+
 <match>
   @type http
   endpoint https://events.baselime.io/v1/docker-logs
-  headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\", \\"x-service\\": \\"WORKSPACE_ID-fluentd\\"}
+  headers {\\"x-api-key\\": \\"BASELIME_API_KEY\\", \\"x-service\\": \\"fluentd\\"}
   open_timeout 5
   json_array true
   <format>

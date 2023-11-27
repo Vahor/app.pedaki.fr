@@ -7,6 +7,8 @@ export const env = createEnv({
 
     BASELIME_API_KEY: z.string(),
 
+    APP_VERSION: z.string().optional(),
+
     LOGGER_SERVICE_NAME: z.string().min(1),
     LOGGER_LEVEL: z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly']).default('info'),
   },
