@@ -20,7 +20,7 @@ export const logger = winston.createLogger({
       // Meta data
       info.service = {
         name: env.LOGGER_SERVICE_NAME,
-        namespace: 'internal',
+        namespace: env.LOGGER_NAMESPACE,
         instanceId: INSTANCE_ID,
         version: VERSION,
       };
