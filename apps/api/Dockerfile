@@ -58,6 +58,7 @@ COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
 COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
 COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
 COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
+COPY /app/packages/logger/package.json ./node_modules/@pedaki/logger/package.json
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 
 ## Load public env vars
