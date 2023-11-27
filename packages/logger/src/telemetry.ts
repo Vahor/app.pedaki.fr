@@ -8,5 +8,8 @@ export const initTelemetry = (instrumentations: any[]) => {
     instrumentations: instrumentations,
   });
 
-  sdk.start();
+  const provider = sdk.start();
+
+  provider.resource.attributes['service.name'] = env.LOGGER_SERVICE_NAME;
+  provider.resource.attributes['service.namespace'] = env.LOGGER_NAMESPACE;
 };

@@ -10,6 +10,7 @@ export const env = createEnv({
     APP_VERSION: z.string().optional(),
 
     LOGGER_SERVICE_NAME: z.string().min(1),
+    LOGGER_NAMESPACE: z.string().default('internal'),
     LOGGER_LEVEL: z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly']).default('info'),
   },
   runtimeEnv: process.env,
