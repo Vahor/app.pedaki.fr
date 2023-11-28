@@ -28,6 +28,7 @@ COPY packages ./packages
 COPY scripts ./scripts
 
 ENV NODE_ENV=production
+ENV NODE_OPTIONS="--experimental-modules"
 RUN pnpm build --filter cron-demo-community
 
 # Copy node_modules/.prisma to a tmp folder

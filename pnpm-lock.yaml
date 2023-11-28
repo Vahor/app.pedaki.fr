@@ -90,6 +90,9 @@ importers:
       '@fastify/cors':
         specifier: ^8.4.1
         version: 8.4.1
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.7.0
       '@opentelemetry/instrumentation-fastify':
         specifier: ^0.32.4
         version: 0.32.4(@opentelemetry/api@1.7.0)
