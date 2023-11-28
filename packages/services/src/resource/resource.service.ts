@@ -1,5 +1,6 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { prisma } from '@pedaki/db';
+import { logger } from '@pedaki/logger';
 import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
@@ -38,6 +39,14 @@ class ResourceService {
 
       span.setAttributes({
         deletedResources: response.count,
+      });
+
+      logger.info({
+        message: `Deleted ${response.count} resources for workspace ${workspace.id}`,
+        data: {
+          workspaceId: workspace.id,
+          subscriptionId: workspace.subscriptionId,
+        },
       });
 
       span.end();
@@ -121,6 +130,14 @@ class ResourceService {
         15 * 60 * 1000,
       );
 
+      logger.info({
+        message: `Created stack for workspace ${workspace.id}`,
+        data: {
+          workspaceId: workspace.id,
+          subscriptionId: workspace.subscriptionId,
+        },
+      });
+
       span.end();
     });
   }
@@ -195,6 +212,14 @@ class ResourceService {
           });
         }),
       ]);
+
+      logger.info({
+        message: `Created ${outputs.length} resources for workspace ${workspace.id}`,
+        data: {
+          workspaceId: workspace.id,
+          subscriptionId: workspace.subscriptionId,
+        },
+      });
 
       span.end();
       return null;
