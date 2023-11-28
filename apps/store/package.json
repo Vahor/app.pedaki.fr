@@ -44,12 +44,12 @@
     "react-wrap-balancer": "^1.1.0",
     "sharp": "^0.32.6",
     "zod": "^3.22.4",
-    "zustand": "^4.4.6"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@pedaki/eslint-config": "^0.1.2",
     "@pedaki/prettier-config": "^0.0.5",
-    "@types/react": "^18.2.38",
+    "@types/react": "^18.2.39",
     "@types/sanitize-html": "^2.9.5",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31"

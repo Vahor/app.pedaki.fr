@@ -89,7 +89,6 @@ ENV API_INTERNAL_SECRET=$API_INTERNAL_SECRET
 ENV API_ENCRYPTION_KEY=$API_ENCRYPTION_KEY
 
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--experimental-modules"
 ENV SKIP_SERVER_ENV_CHECK=true
 
 # Logger
@@ -104,4 +103,4 @@ RUN pulumi plugin install resource aws
 RUN pulumi plugin install resource random
 RUN pulumi plugin install resource cloudflare
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "--no-warnings=ExperimentalWarning", "dist/index.js"]

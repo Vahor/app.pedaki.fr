@@ -29,40 +29,46 @@ const telemetryAttributes = (params: StackParameters<'aws'>): Attributes =>
 export class AwsServerProvider implements StackProvider<'aws'> {
   public async create(params: StackParameters<'aws'>): Promise<StackOutputs> {
     const tracer = trace.getTracer('@pedaki/pulumi');
-    return tracer.startActiveSpan(`create`, async span => {
-      span.setAttributes(telemetryAttributes(params));
+    return tracer.startActiveSpan(
+      `create with aws - ${params.workspace.id} (${params.dns.subdomain})`,
+      async span => {
+        span.setAttributes(telemetryAttributes(params));
 
-      const stack = await PulumiUtils.createOrSelectStack(
-        params.workspace.id,
-        this.program(params),
-      );
-      await stack.setConfig('aws:region', { value: params.region });
+        const stack = await PulumiUtils.createOrSelectStack(
+          params.workspace.id,
+          this.program(params),
+        );
+        await stack.setConfig('aws:region', { value: params.region });
 
-      const tags = this.tags(params);
-      await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
+        const tags = this.tags(params);
+        await Promise.all(Object.entries(tags).map(([key, value]) => stack.setTag(key, value)));
 
-      const upRes = await stack.up();
+        const upRes = await stack.up();
 
-      // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
-      const formattedOutputs = Object.values(upRes.outputs).reduce((acc, output) => {
-        acc.push(output.value);
-        return acc;
-      }, [] as unknown[]);
+        // Pulumi transform the array into an object {0: {value: ...}, 1: {value: ...}, ...}
+        const formattedOutputs = Object.values(upRes.outputs).reduce((acc, output) => {
+          acc.push(output.value);
+          return acc;
+        }, [] as unknown[]);
 
-      const response = StackOutputsSchema.parse(formattedOutputs);
+        const response = StackOutputsSchema.parse(formattedOutputs);
 
-      span.end();
-      return response;
-    });
+        span.end();
+        return response;
+      },
+    );
   }
 
   public async delete(params: StackParameters<'aws'>): Promise<void> {
     const tracer = trace.getTracer('@pedaki/pulumi');
-    return tracer.startActiveSpan(`delete`, async span => {
-      span.setAttributes(telemetryAttributes(params));
-      await PulumiUtils.deleteStack(params.workspace.id, this.program(params));
-      span.end();
-    });
+    return tracer.startActiveSpan(
+      `delete with aws - ${params.workspace.id} (${params.dns.subdomain})`,
+      async span => {
+        span.setAttributes(telemetryAttributes(params));
+        await PulumiUtils.deleteStack(params.workspace.id, this.program(params));
+        span.end();
+      },
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

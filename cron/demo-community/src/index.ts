@@ -1,12 +1,13 @@
+import type { BasicTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
+import { initTelemetry } from '@pedaki/logger/telemetry.js';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
+import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { env } from '~/env.ts';
-// import { PrismaInstrumentation } from '@prisma/instrumentation';
-import { initTelemetry } from '@pedaki/logger/telemetry.js';
 
 const WORKSPACE_SUBDOMAIN = 'demo';
 const PEDAKI_BILLING_EMAIL = 'demo@pedaki.fr';
@@ -55,11 +56,9 @@ const stackParameters = (workspaceId: string, subscriptionId: number, authToken:
     },
   }) as const;
 
-const main = async () => {
-  initTelemetry([
-    // new PrismaInstrumentation(),
-  ]);
+let provider: BasicTracerProvider;
 
+const main = async () => {
   const profiler = logger.startTimer();
 
   logger.info(
@@ -67,6 +66,10 @@ const main = async () => {
     `This will use the ${DOCKER_IMAGE} docker image`,
   );
   await prisma.$connect();
+
+  provider = initTelemetry([
+      new PrismaInstrumentation()
+  ]);
 
   const response = await workspaceService.getLatestSubscription(WORKSPACE_SUBDOMAIN);
 
@@ -150,6 +153,7 @@ const main = async () => {
 void main()
   .catch(logger.error)
   .finally(() => void prisma.$disconnect())
-  .then(() => {
+  .then(async () => {
     logger.info("Exiting cron 'cron-demo-community'");
+    await provider.shutdown();
   });

@@ -21,7 +21,7 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@opentelemetry/api": "1.6.0",
+    "@opentelemetry/api": "1.7.0",
     "@pedaki/db": "workspace:*",
     "@pedaki/logger": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.18",
-    "tsx": "^4.5.0"
+    "tsx": "^4.6.0"
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0",

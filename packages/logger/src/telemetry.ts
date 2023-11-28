@@ -1,18 +1,14 @@
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
-import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import { Resource } from '@opentelemetry/resources';
 import { BatchSpanProcessor, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { env } from '~/env.ts';
 import { INSTANCE_ID } from '~/index.ts';
 import { VERSION } from '~/version.ts';
-import * as api from "@opentelemetry/api";
-import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
-export const initTelemetry = (instrumentations: any[]) => {
-  const collectorUrl = 'https://otel.baselime.io/v1';
 
-  const contextManager = new AsyncHooksContextManager().enable();
-  api.context.setGlobalContextManager(contextManager);
+export const initTelemetry = (instrumentations: any[]): NodeTracerProvider => {
+  const collectorUrl = 'https://otel.baselime.io/v1';
 
   const provider = new NodeTracerProvider({
     resource: new Resource({

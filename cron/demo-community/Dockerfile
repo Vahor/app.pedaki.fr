@@ -28,7 +28,6 @@ COPY packages ./packages
 COPY scripts ./scripts
 
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--experimental-modules"
 RUN pnpm build --filter cron-demo-community
 
 # Copy node_modules/.prisma to a tmp folder
@@ -104,4 +103,4 @@ ENV LOGGER_LEVEL=$LOGGER_LEVEL
 
 RUN pulumi org set-default pedaki
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "--no-warnings=ExperimentalWarning", "dist/index.js"]

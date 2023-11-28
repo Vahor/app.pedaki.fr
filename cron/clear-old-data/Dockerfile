@@ -62,7 +62,6 @@ ARG LOGGER_LEVEL
 
 ENV PORT=$PORT
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--experimental-modules"
 ENV DATABASE_URL=$DATABASE_URL
 ENV PRISMA_ENCRYPTION_KEY=$PRISMA_ENCRYPTION_KEY
 ENV PENDING_MAX_AGE=$PENDING_MAX_AGE
@@ -74,4 +73,4 @@ ENV LOGGER_LEVEL=$LOGGER_LEVEL
 
 EXPOSE $PORT
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "--no-warnings=ExperimentalWarning", "dist/index.js"]
