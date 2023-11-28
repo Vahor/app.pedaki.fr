@@ -7,7 +7,7 @@ import { logger } from '@pedaki/logger';
 import { initTelemetry } from '@pedaki/logger/telemetry.js';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js'; // eslint-disable-next-line node/file-extension-in-import
 
-import { PrismaInstrumentation } from '@prisma/instrumentation';
+// import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { openApiDocument } from '~/openapi.ts';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -96,7 +96,7 @@ export function createServer() {
           plugins: [new StripePlugin()],
         }),
         new FastifyInstrumentation(),
-        new PrismaInstrumentation(),
+        // new PrismaInstrumentation(),
       ]);
     } catch (err) {
       console.error(err);

@@ -21,10 +21,12 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
+    "@opentelemetry/api": "1.6.0",
     "@pedaki/db": "workspace:*",
-    "@pedaki/services": "workspace:*",
     "@pedaki/logger": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
+    "@pedaki/services": "workspace:*",
+    "@prisma/instrumentation": "^5.6.0",
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
   },

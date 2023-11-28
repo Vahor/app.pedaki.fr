@@ -5,6 +5,8 @@ import { invitationService } from '@pedaki/services/invitation/invitation.servic
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { env } from '~/env.ts';
+// import { PrismaInstrumentation } from '@prisma/instrumentation';
+import { initTelemetry } from '@pedaki/logger/telemetry.js';
 
 const WORKSPACE_SUBDOMAIN = 'demo';
 const PEDAKI_BILLING_EMAIL = 'demo@pedaki.fr';
@@ -54,6 +56,10 @@ const stackParameters = (workspaceId: string, subscriptionId: number, authToken:
   }) as const;
 
 const main = async () => {
+  initTelemetry([
+    // new PrismaInstrumentation(),
+  ]);
+
   const profiler = logger.startTimer();
 
   logger.info(
