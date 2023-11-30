@@ -9,7 +9,7 @@ const stepIndicatorVariants = cva('w-5 h-5 items-center flex justify-center roun
     status: {
       active: 'bg-primary-base text-white',
       completed: '',
-      pending: 'border text-sub bg-white',
+      pending: 'border text-soft bg-white',
     }
   },
   defaultVariants: {
