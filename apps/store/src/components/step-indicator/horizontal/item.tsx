@@ -6,7 +6,7 @@ import * as React from 'react';
 
 
 const stepIndicatorVariants = cva(
-  'w-5 h-5 items-center flex justify-center rounded-full p-0.5 font-medium text-xs leading-[20px]',
+  'w-5 h-5 items-center flex justify-center rounded-full p-0.5 font-medium text-p-sm leading-[20px]',
   {
     variants: {
       status: {

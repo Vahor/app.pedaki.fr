@@ -1,12 +1,14 @@
-import FormWrapper from '~/app/new/form-wrapper.tsx';
-import OpenOldPayment from '~/app/new/open-old-payment.tsx';
+import PageHeader from "~/components/page-header";
+import { IconAccountPin } from "@pedaki/design/ui/icons";
 
-export default function NewWorkspacePage() {
+export default function BuyerDetailsPage() {
   return (
     <>
-      <OpenOldPayment />
-      <h1 className="text-2xl font-bold">Création du workspace</h1>
-      <FormWrapper />
+      <PageHeader
+        icon={IconAccountPin}
+        title="Informations personnelles"
+        description="Veuillez renseigner vos informations personnelles"
+        />
     </>
   );
 }
