@@ -30,7 +30,7 @@
     "@opentelemetry/api": "1.7.0",
     "@opentelemetry/instrumentation-fastify": "^0.32.4",
     "@opentelemetry/sdk-trace-node": "^1.18.1",
-    "@pedaki/common": "0.4.2-beta.10",
+    "@pedaki/common": "^0.4.2-beta.11",
     "@pedaki/db": "workspace:*",
     "@pedaki/logger": "workspace:*",
     "@pedaki/mailer": "^0.0.8",

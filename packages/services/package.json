@@ -20,7 +20,7 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@pedaki/common": "0.4.2-beta.10",
+    "@pedaki/common": "^0.4.2-beta.11",
     "@pedaki/db": "workspace:*",
     "@pedaki/logger": "workspace:*",
     "@pedaki/models": "workspace:*",
@@ -34,7 +34,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@prisma/client": "^5.6.0",
+    "@prisma/client": "^5.7.0",
     "@trpc/server": "10.44.1",
     "@types/jsonwebtoken": "^9.0.5"
   },
