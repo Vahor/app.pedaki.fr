@@ -67,9 +67,7 @@ const main = async () => {
   );
   await prisma.$connect();
 
-  provider = initTelemetry([
-      new PrismaInstrumentation()
-  ]);
+  provider = initTelemetry([new PrismaInstrumentation()]);
 
   const response = await workspaceService.getLatestSubscription(WORKSPACE_SUBDOMAIN);
 

@@ -1,11 +1,10 @@
 import { Button } from '@pedaki/design/ui/button';
+import { IconBookText } from '@pedaki/design/ui/icons';
 import CurrentPage from '~/components/header/current-page.tsx';
 import Logo from '~/components/header/logo.tsx';
 import { env } from '~/env.mjs';
 import Link from 'next/link';
 import React from 'react';
-import { IconBookText } from '@pedaki/design/ui/icons';
-
 
 const Header = () => {
   return (
@@ -19,7 +18,7 @@ const Header = () => {
             <Button variant="lighter-primary" asChild>
               <Link href={env.NEXT_PUBLIC_DOCS_URL}>
                 <span>Documentation</span>
-                <IconBookText className="h-4"/>
+                <IconBookText className="h-4" />
               </Link>
             </Button>
           </div>

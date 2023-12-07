@@ -12,8 +12,10 @@ import IconCheck from '@pedaki/design/ui/icons/IconCheck';
 import { cn } from '@pedaki/design/utils';
 import { StepIndicatorHorizontal } from '~/components/step-indicator/horizontal';
 import { StepIndicatorHorizontalItem } from '~/components/step-indicator/horizontal/item.tsx';
-import { usePathname } from 'next/navigation';
+import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
+import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
+import { toast } from 'sonner';
 
 const page_mapping = [
   {
@@ -21,7 +23,7 @@ const page_mapping = [
     translationKey: 'Informations',
   },
   {
-    path: '/new/pending',
+    path: '/new/subscription',
     translationKey: 'Abonnement',
   },
   {
@@ -51,8 +53,19 @@ const status = (index: number, activeIndex: number) => {
 
 const CurrentPage = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const activeIndex = page_mapping.findIndex(page => page.path === pathname);
   const currentPage = activeIndex !== -1 ? page_mapping[activeIndex]! : unknown_page;
+
+  const getValidStep = useWorkspaceFormStore(store => store.getValidStep);
+  const validStep = getValidStep();
+
+  React.useEffect(() => {
+    if (activeIndex != -1 && validStep < activeIndex) {
+      router.push('/new');
+      toast.error("Vous devez suivre les étapes dans l'ordre");
+    }
+  }, [validStep, activeIndex, router]);
 
   return (
     <div>

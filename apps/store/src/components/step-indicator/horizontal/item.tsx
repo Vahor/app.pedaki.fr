@@ -4,14 +4,13 @@ import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
-
 const stepIndicatorVariants = cva(
   'w-5 h-5 items-center flex justify-center rounded-full p-0.5 font-medium text-p-sm leading-[20px]',
   {
     variants: {
       status: {
         active: 'bg-primary-base text-white',
-        completed: 'bg-state-success text-white',
+        completed: 'bg-primary-light text-white',
         pending: 'border text-soft bg-white',
       },
     },
@@ -43,9 +42,7 @@ const StepIndicatorHorizontalItem = ({
     >
       {status === 'completed' ? <IconCheck className="h-3 w-3" /> : number}
     </div>
-    <span className={cn(status === 'active' ? 'text-main' : 'text-sub')}>
-        {text}
-    </span>
+    <span className={cn(status === 'active' ? 'text-main' : 'text-sub')}>{text}</span>
   </div>
 );
 StepIndicatorHorizontalItem.displayName = 'StepIndicatorHorizontalItem';

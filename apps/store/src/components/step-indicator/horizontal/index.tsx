@@ -4,7 +4,6 @@ import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
-
 const stepIndicatorVariants = cva('flex flex-row justify-center items-center gap-4', {
   variants: {},
   defaultVariants: {},

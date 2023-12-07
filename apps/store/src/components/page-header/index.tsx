@@ -1,29 +1,19 @@
-import { type IconType } from '@pedaki/design/ui/icons';
-import { cn } from '@pedaki/design/utils';
+import { Separator } from '@pedaki/design/ui/separator';
 import React from 'react';
 
 interface PageHeaderProps {
-  icon: IconType;
   title: string;
   description: string;
 }
 
-const PageHeader = ({ icon: Icon, title, description }: PageHeaderProps) => {
+const PageHeader = ({ title, description }: PageHeaderProps) => {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="bg-gradient-to-b from-neutral-200/50 to-white flex items-center justify-center p-4 w-max border-t rounded-full  mx-auto">
-        <div className="rounded-full border p-3.5 bg-white shadow-sm">
-          <Icon className={cn('h-8 w-8 text-sub ')} />
-        </div>
-      </div>
+    <div className="flex flex-col items-center">
       <div>
-      <h1 className="text-main text-title-5">
-        {title}
-      </h1>
-        <p className="text-sub">
-            {description}
-        </p>
+        <h1 className="text-center text-title-5 text-main">{title}</h1>
+        <p className="text-center text-sub">{description}</p>
       </div>
+      <Separator orientation="horizontal" className="my-6 bg-stroke-soft" />
     </div>
   );
 };

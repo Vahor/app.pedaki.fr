@@ -96,6 +96,9 @@ importers:
       '@opentelemetry/instrumentation-fastify':
         specifier: ^0.32.4
         version: 0.32.4(@opentelemetry/api@1.7.0)
+      '@opentelemetry/sdk-trace-node':
+        specifier: ^1.18.1
+        version: 1.18.1(@opentelemetry/api@1.7.0)
       '@pedaki/common':
         specifier: 0.4.2-beta.10
         version: 0.4.2-beta.10(bcryptjs@2.4.3)(memory-cache@0.2.0)(nanoid@5.0.1)(sonner@1.0.3)
@@ -8784,7 +8787,7 @@ packages:
     resolution: {integrity: sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: false

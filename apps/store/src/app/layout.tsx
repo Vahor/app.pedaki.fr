@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactElement 
       <body>
         <Header />
         <Providers>
-          <main className="container py-8">{children}</main>
+          <main className="container relative py-8">{children}</main>
         </Providers>
       </body>
     </html>
