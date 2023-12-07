@@ -6,7 +6,7 @@ import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 class InvitationService {
-  async addPendingInvite(workspaceId: string, email: string, name: string): Promise<void> {
+  async addPendingInvite(workspaceId: string, email: string): Promise<void> {
     const workspace = await prisma.workspace.findUnique({
       where: { id: workspaceId },
       select: { billingEmail: true, expectedStatus: true },
@@ -31,7 +31,6 @@ class InvitationService {
     try {
       await prisma.pendingWorkspaceInvite.create({
         data: {
-          name: name,
           email: email,
           workspaceId: workspaceId,
         },
@@ -53,11 +52,11 @@ class InvitationService {
     });
   }
 
-  async getAllInvites(workspaceId: string): Promise<{ email: string; name: string }[]> {
+  async getAllInvites(workspaceId: string): Promise<{ email: string }[]> {
     return await prisma.pendingWorkspaceInvite.findMany({
       where: { workspaceId: workspaceId },
       orderBy: { createdAt: 'asc' },
-      select: { email: true, name: true },
+      select: { email: true },
     });
   }
 

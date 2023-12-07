@@ -22,7 +22,20 @@ export interface WorkspaceFormStore {
   setSubscriptionData: (subscriptionData: WorkspaceFormStore['subscriptionData']) => void;
 
   getValidStep: () => number;
+
+  reset: () => void;
 }
+
+export const DEFAULT_USER_DATA: WorkspaceFormStore['userData'] = {
+  name: '',
+  email: '',
+} as const;
+
+export const DEFAULT_SUBSCRIPTION_DATA: WorkspaceFormStore['subscriptionData'] = {
+  name: '',
+  subdomain: '',
+  yearly: false,
+} as const;
 
 const isValidPaymentUrl = (paymentUrl: unknown, updatedAt: number) => {
   if (
@@ -52,33 +65,32 @@ export const useWorkspaceFormStore = create<WorkspaceFormStore>()(
         return null;
       },
 
-      userData: {
-        name: '',
-        email: '',
-      },
+      userData: DEFAULT_USER_DATA,
       setUserData: userData => {
         set({ userData });
       },
 
-      subscriptionData: {
-        name: '',
-        subdomain: '',
-        yearly: false,
-      },
+      subscriptionData: DEFAULT_SUBSCRIPTION_DATA,
 
       setSubscriptionData: subscriptionData => {
         set({ subscriptionData });
       },
 
       getValidStep: () => {
-        const { paymentUrl, userData } = get();
-        if (paymentUrl) {
-          return 2;
-        }
+        const { userData } = get();
         if (userData.name && userData.email) {
           return 1;
         }
         return 0;
+      },
+
+      reset: () => {
+        set({
+          paymentUrl: null,
+          updatedAt: 0,
+          userData: DEFAULT_USER_DATA,
+          subscriptionData: DEFAULT_SUBSCRIPTION_DATA,
+        });
       },
     }),
     {

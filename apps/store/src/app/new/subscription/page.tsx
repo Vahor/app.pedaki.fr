@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function SubscriptionDetailsPage() {
   return (
     <>
-      <Button className="absolute top-8 text-sub" variant="stroke-primary-gray" asChild>
+      <Button className="absolute top-8" variant="stroke-primary-main" asChild>
         <Link href="/new">
           <IconArrowRight className="h-3 w-3 rotate-180" />
           <span>Retour</span>

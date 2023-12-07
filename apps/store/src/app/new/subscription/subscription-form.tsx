@@ -19,7 +19,7 @@ import { Separator } from '@pedaki/design/ui/separator';
 import { StyledLink } from '@pedaki/design/ui/styled-link';
 import { env } from '~/env.mjs';
 import { api } from '~/server/api/clients/client.ts';
-import { useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
+import { DEFAULT_SUBSCRIPTION_DATA, useWorkspaceFormStore } from '~/store/workspace-form.store.ts';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -46,11 +46,7 @@ export const SubscriptionForm = () => {
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(Schema),
     mode: 'onChange',
-    defaultValues: {
-      name: '',
-      subdomain: '',
-      yearly: false,
-    },
+    defaultValues: DEFAULT_SUBSCRIPTION_DATA,
   });
 
   useEffect(() => {
@@ -89,12 +85,13 @@ export const SubscriptionForm = () => {
         title: '🎉 Redirection vers la page de paiement en cours',
       },
       errorProps: error => {
-        const title =
+        const description =
           error.message === 'ALREADY_EXISTS'
             ? 'Un workspace existe déjà avec cet URL de workspace'
             : 'Une erreur est survenue lors de la création de la page de paiement';
         return {
-          title,
+          title: 'Creation de paiement',
+          description,
         };
       },
       throwOnError: true,
@@ -108,7 +105,7 @@ export const SubscriptionForm = () => {
       });
   }
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, isValid } = form.formState;
 
   return (
     <Form {...form}>
@@ -152,12 +149,12 @@ export const SubscriptionForm = () => {
                   {...field}
                 />
               </FormControl>
-              <FormMessage className="flex items-center space-x-1">
+              <FormMessage>
                 <IconInfoCircleFill className="h-4 w-4" />
                 <span className="text-p-sm" suppressHydrationWarning>
                   {field.value?.length > 0 ? (
                     <>
-                      Votre workspace sera accéssible sur{' '}
+                      Votre workspace sera accessible sur{' '}
                       <span suppressHydrationWarning={true} className="text-main">
                         {field.value}.pedaki.fr
                       </span>
@@ -211,7 +208,7 @@ export const SubscriptionForm = () => {
             <Button
               variant="filled-primary"
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isValid}
               className="w-full"
               suppressHydrationWarning
             >

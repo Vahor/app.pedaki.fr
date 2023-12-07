@@ -11,9 +11,11 @@ export default function RootLayout({ children }: { children: React.ReactElement 
   return (
     <html lang="fr" className={cn(fontClassName)} suppressHydrationWarning>
       <body>
-        <Header />
         <Providers>
-          <main className="container relative py-8">{children}</main>
+          <>
+            <Header />
+            <main className="container relative py-8">{children}</main>
+          </>
         </Providers>
       </body>
     </html>

@@ -39,7 +39,7 @@ export const UserInfoForm = () => {
     router.push('/new/subscription');
   };
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, isValid } = form.formState;
 
   return (
     <Form {...form}>
@@ -91,7 +91,12 @@ export const UserInfoForm = () => {
           )}
         />
 
-        <Button variant="filled-primary" type="submit" disabled={isSubmitting} className="w-full">
+        <Button
+          variant="filled-primary"
+          type="submit"
+          disabled={isSubmitting || !isValid}
+          className="w-full"
+        >
           {isSubmitting && <IconSpinner className="mr-2 h-4 w-4 animate-spin" />}
           Choisir son abonnement
         </Button>

@@ -1,4 +1,5 @@
 import PageHeader from '~/components/page-header';
+import OpenOldPayment from './open-old-payment';
 import { UserInfoForm } from './user-info-form';
 
 export default function BuyerDetailsPage() {
@@ -9,6 +10,7 @@ export default function BuyerDetailsPage() {
         description="Veuillez renseigner vos informations personnelles"
       />
       <UserInfoForm />
+      <OpenOldPayment />
     </div>
   );
 }

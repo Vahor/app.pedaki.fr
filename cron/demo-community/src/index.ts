@@ -139,7 +139,7 @@ const main = async () => {
   }
 
   try {
-    await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr', 'Developers');
+    await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr');
   } catch (error) {
     logger.error('Error while adding pending invite', error);
   }

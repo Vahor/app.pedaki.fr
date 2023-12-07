@@ -13,7 +13,7 @@ import React, { useEffect } from 'react';
 import Balancer from 'react-wrap-balancer';
 
 interface InvitedEmailsProps {
-  initialEmails: { name: string; email: string }[];
+  initialEmails: { email: string }[];
   token: string;
 }
 
@@ -39,41 +39,33 @@ export function InvitedEmails({ initialEmails, token }: Readonly<InvitedEmailsPr
 
   if (!emails || emails.length === 0)
     return (
-      <div className="relative flex h-full flex-col items-center">
-        <div className="relative -z-10 -mb-28 flex h-[300px] w-full items-center justify-center">
-          <div
-            className="absolute -z-10 h-full w-full bgi-grid-gray-500"
-            style={{
-              maskImage: 'radial-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0))',
-              WebkitMaskImage: 'radial-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0))',
-              backgroundPositionY: '-16px',
-              backgroundPositionX: '-16px',
-            }}
-          ></div>
-          <div className="z-1 rounded-md border bg-white">
-            <IconMailSearch className="h-12 w-12 p-3 text-grayA-11" />
-          </div>
+      <div className="relative mt-6 flex h-full flex-col items-center gap-2">
+        <div className="z-1 rounded-md border bg-white">
+          <IconMailSearch className="h-12 w-12 p-3 text-sub" />
         </div>
-        <h1 className="text-2xl font-bold">Aucun collaborateur invité</h1>
-        <Balancer className="mb-8 mt-4 max-w-screen-sm text-secondary">
-          Utilisez le formulaire ci-contre pour inviter des collaborateurs.
-        </Balancer>
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-title-6 font-bold">Aucun collaborateur invité</h1>
+          <Balancer className="max-w-screen-sm text-p-sm text-sub">
+            Utilisez le formulaire ci-dessus pour inviter des collaborateurs.
+          </Balancer>
+        </div>
       </div>
     );
 
   return (
     <div>
+      <h2 className="mb-4 text-label-sm text-main">Collaborateurs invités</h2>
       <ul className="space-y-2">
         {emails.map(info => (
           <li key={info.email}>
             <Card className="flex items-center gap-2 bg-white p-3">
               <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-gray-12 text-sm font-medium text-white">
-                  {twoLettersFromEmail(info.name)}
+                <AvatarFallback className="text-sm select-none bg-surface font-medium text-white">
+                  {twoLettersFromEmail(info.email)}
                 </AvatarFallback>
               </Avatar>
               <span
-                className="max-w-[40ch] overflow-hidden text-ellipsis text-base text-secondary"
+                className="max-w-[40ch] overflow-hidden text-ellipsis text-p-sm text-sub"
                 title={info.email}
               >
                 {info.email}
@@ -133,12 +125,12 @@ const RemoveInvitedEmailButton = ({ email, token }: { email: string; token: stri
   return (
     <Button
       size="sm"
-      variant="red"
+      variant="filled-error"
       onClick={() => handleRemoveEmail(email)}
       disabled={isSubmitting}
     >
       {isSubmitting && <IconSpinner className="mr-2 h-4 w-4 animate-spin" />}
-      <span className="hidden md:inline">Supprimer</span>
+      <span className="hidden md:inline">Retirer</span>
       <IconX className="h-4 w-4 md:hidden" />
     </Button>
   );

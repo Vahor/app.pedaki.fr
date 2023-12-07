@@ -9,7 +9,6 @@ export default function ErrorPage() {
   return (
     <StatusWrapper
       titleKey="Une erreur est survenue"
-      descriptionKey={'Une erreur est survenue.'}
       icon={IconX}
       buttons={
         <>

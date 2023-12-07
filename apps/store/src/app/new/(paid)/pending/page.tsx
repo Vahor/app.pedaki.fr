@@ -15,12 +15,7 @@ export default async function PendingPaymentPage({
 
   if (initialIsPaid.status === 'invalid') {
     return (
-      <StatusWrapper
-        titleKey="Identifiant invalide"
-        descriptionKey="L'identifiant de paiement est invalide."
-        icon={IconX}
-        iconClassName="text-red-9"
-      />
+      <StatusWrapper titleKey="Identifiant invalide" icon={IconX} iconClassName="text-red-9" />
     );
   }
 
@@ -28,7 +23,6 @@ export default async function PendingPaymentPage({
     return (
       <StatusWrapper
         titleKey="Identifiant expiré"
-        descriptionKey="L'identifiant de paiement est expiré."
         icon={IconCalendarX}
         iconClassName="text-red-9"
       />

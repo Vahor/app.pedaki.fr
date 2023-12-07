@@ -30,10 +30,6 @@ const page_mapping = [
     path: '/new/invitations',
     translationKey: 'Invitations',
   },
-  {
-    path: '/new/ready',
-    translationKey: 'Ready',
-  },
 ] as const;
 
 // Ex: 404 page
@@ -61,9 +57,12 @@ const CurrentPage = () => {
   const validStep = getValidStep();
 
   React.useEffect(() => {
-    if (activeIndex != -1 && validStep < activeIndex) {
+    // Only works for the first two pages as after this we are passing a token in the url
+    if (activeIndex != -1 && activeIndex < 2 && validStep < activeIndex) {
+      toast.error("Vous devez suivre les étapes dans l'ordre", {
+        id: 'current-page',
+      });
       router.push('/new');
-      toast.error("Vous devez suivre les étapes dans l'ordre");
     }
   }, [validStep, activeIndex, router]);
 

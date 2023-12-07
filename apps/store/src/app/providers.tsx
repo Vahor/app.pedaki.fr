@@ -12,7 +12,7 @@ interface Props {
 export const Providers = ({ children }: Props) => {
   return (
     <>
-      <Toaster />
+      <Toaster closeButton />
       <TrpcProvider>
         <BalancerProvider>{children}</BalancerProvider>
       </TrpcProvider>
