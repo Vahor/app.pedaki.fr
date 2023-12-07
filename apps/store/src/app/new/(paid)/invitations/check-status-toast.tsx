@@ -11,6 +11,8 @@ interface CheckStatusBannerProps {
   baseUrl: string;
 }
 
+const MIN_SUCCESS_COUNT = 4;
+
 export const CheckStatusToast: React.FC<CheckStatusBannerProps> = ({ subdomain, baseUrl }) => {
   const router = useRouter();
 
@@ -21,7 +23,7 @@ export const CheckStatusToast: React.FC<CheckStatusBannerProps> = ({ subdomain, 
     {
       refetchInterval: () => {
         // We want to make sure that the workspace is active for at least 3 checks
-        if (successCount >= 3) {
+        if (successCount >= MIN_SUCCESS_COUNT) {
           return false;
         }
 
@@ -39,7 +41,7 @@ export const CheckStatusToast: React.FC<CheckStatusBannerProps> = ({ subdomain, 
   }, [data]);
 
   useEffect(() => {
-    if (successCount >= 3) {
+    if (successCount >= MIN_SUCCESS_COUNT) {
       toast.success('Votre workspace est prêt !', {
         id: 'workspace-creation',
         action: {

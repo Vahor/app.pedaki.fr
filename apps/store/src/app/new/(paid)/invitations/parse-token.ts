@@ -35,13 +35,6 @@ export const parseToken = (token: unknown): ParseTokenOutput => {
       status: 'valid',
     };
   } catch (e) {
-    return {
-      subdomain: 'hello',
-      workspaceId: 'parsed.workspaceId',
-      workspaceUrl: 'parsed.workspaceUrl',
-      expiresAt: new Date(),
-      status: 'valid',
-    };
-    // return { status: 'invalid' };
+    return { status: 'invalid' };
   }
 };
