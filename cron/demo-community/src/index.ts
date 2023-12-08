@@ -67,9 +67,7 @@ const main = async () => {
   );
   await prisma.$connect();
 
-  provider = initTelemetry([
-      new PrismaInstrumentation()
-  ]);
+  provider = initTelemetry([new PrismaInstrumentation()]);
 
   const response = await workspaceService.getLatestSubscription(WORKSPACE_SUBDOMAIN);
 
@@ -141,7 +139,7 @@ const main = async () => {
   }
 
   try {
-    await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr', 'Developers');
+    await invitationService.addPendingInvite(workspaceId, 'developers@pedaki.fr');
   } catch (error) {
     logger.error('Error while adding pending invite', error);
   }

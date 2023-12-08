@@ -16,9 +16,9 @@ type ToOutput<T> = {
   [K in keyof T]: T[K] extends Record<any, any>
     ? ToOutput<T[K]>
     : T[K] extends (infer U)[]
-    ? ToOutput<U>[]
-    : T[K] extends string
-    ? Output<T[K]> | T[K]
-    : T[K];
+      ? ToOutput<U>[]
+      : T[K] extends string
+        ? Output<T[K]> | T[K]
+        : T[K];
 };
 export type StackOutputsLike = ToOutput<StackOutputs>;

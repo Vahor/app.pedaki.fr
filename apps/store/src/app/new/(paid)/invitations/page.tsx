@@ -1,9 +1,11 @@
 import { IconCalendarX, IconX } from '@pedaki/design/ui/icons';
-import { CheckStatusBanner } from '~/app/new/(paid)/invitations/check-status-banner.tsx';
+import { Separator } from '@pedaki/design/ui/separator';
+import { CheckStatusToast } from '~/app/new/(paid)/invitations/check-status-toast.tsx';
 import { InviteForm } from '~/app/new/(paid)/invitations/invite-form.tsx';
 import { InvitedEmails } from '~/app/new/(paid)/invitations/invited-emails.tsx';
 import { parseToken } from '~/app/new/(paid)/invitations/parse-token.ts';
 import StatusWrapper from '~/app/status-wrapper.tsx';
+import PageHeader from '~/components/page-header';
 import { api } from '~/server/api/clients/server.ts';
 import React from 'react';
 
@@ -19,10 +21,10 @@ export default async function InvitationPage({
   if (data.status === 'invalid') {
     return (
       <StatusWrapper
+        // TODO: ne pas parler de token, un moldu ne sait pas ce que c'est
         titleKey="Le token est invalide"
-        descriptionKey="Le token est invalide."
         icon={IconX}
-        iconClassName="text-red-9"
+        iconClassName="text-state-error"
       />
     );
   }
@@ -30,10 +32,10 @@ export default async function InvitationPage({
   if (data.status === 'expired') {
     return (
       <StatusWrapper
+        // TODO: ne pas parler de token, un moldu ne sait pas ce que c'est
         titleKey="Le token est expiré"
-        descriptionKey="Le token est expiré."
         icon={IconCalendarX}
-        iconClassName="text-red-9"
+        iconClassName="text-state-error"
       />
     );
   }
@@ -45,13 +47,15 @@ export default async function InvitationPage({
   if (data.status === 'valid') {
     return (
       <>
-        <h1 className="text-2xl font-bold">Inviter des collaborateurs</h1>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="flex flex-col gap-4">
+        <CheckStatusToast subdomain={data.subdomain} baseUrl={data.workspaceUrl} />
+        <div className="mx-auto mt-16 flex max-w-screen-sm flex-col">
+          <PageHeader
+            title="Inviter des collaborateurs"
+            description="Un mail leur sera envoyé dès que le workspace sera créé"
+          />
+          <div className="flex flex-col gap-3.5">
             <InviteForm rawToken={token!} />
-            <CheckStatusBanner subdomain={data.subdomain} baseUrl={data.workspaceUrl} />
-          </div>
-          <div className="md:mt-8">
+            <Separator orientation="horizontal" className="bg-stroke-soft" />
             <InvitedEmails initialEmails={invitations} token={token!} />
           </div>
         </div>

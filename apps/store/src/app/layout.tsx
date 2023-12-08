@@ -2,6 +2,7 @@ import React from 'react';
 import '@pedaki/design/tailwind/index.css';
 import '~/styles/index.css';
 import { cn } from '@pedaki/design/utils';
+import Footer from '~/app/footer.tsx';
 import Header from '~/app/header.tsx';
 import { Providers } from '~/app/providers';
 import { fontClassName } from '~/config/font';
@@ -11,9 +12,10 @@ export default function RootLayout({ children }: { children: React.ReactElement 
   return (
     <html lang="fr" className={cn(fontClassName)} suppressHydrationWarning>
       <body>
-        <Header />
         <Providers>
-          <main className="container py-8">{children}</main>
+          <Header />
+          <main className="container relative flex-1 py-8">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>

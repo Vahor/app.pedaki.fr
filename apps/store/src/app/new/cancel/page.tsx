@@ -10,9 +10,9 @@ export default async function NewWorkspaceCancelPage({
 }) {
   const token = searchParams.token;
 
-  if (token && typeof token === 'string') {
+  if (token) {
     await api.stripe.cancelCheckoutSession.mutate({ token });
   }
 
-  redirect('/new?cancel');
+  redirect('/new?cancel=true');
 }

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
 interface EmailInfo {
-  name: string;
   email: string;
 }
 

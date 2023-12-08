@@ -13,7 +13,7 @@ export const workspaceInvitationRouter = router({
     .mutation(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
-      await invitationService.addPendingInvite(workspaceId, input.email, input.name);
+      await invitationService.addPendingInvite(workspaceId, input.email);
     }),
 
   delete: publicProcedure
@@ -26,7 +26,7 @@ export const workspaceInvitationRouter = router({
 
   getMany: publicProcedure
     .input(z.object({ token: z.string() }))
-    .output(z.object({ invitations: z.array(z.object({ email: z.string(), name: z.string() })) }))
+    .output(z.object({ invitations: z.array(z.object({ email: z.string() })) }))
     .query(async ({ input }) => {
       const { workspaceId } = pendingWorkspaceService.decryptToken(input.token);
 
@@ -37,7 +37,7 @@ export const workspaceInvitationRouter = router({
 
   getManyInWorkspace: workspaceProcedure
     .input(z.object({ workspaceId: z.string() }))
-    .output(z.object({ invitations: z.array(z.object({ email: z.string(), name: z.string() })) }))
+    .output(z.object({ invitations: z.array(z.object({ email: z.string() })) }))
     .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/invitations' } })
     .query(async ({ input, ctx }) => {
       // TODO: currently we can read invites of our own workspace

@@ -11,7 +11,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormSubLabel,
 } from '@pedaki/design/ui/form';
+import { IconInfoCircleFill, IconUser } from '@pedaki/design/ui/icons';
 import IconSpinner from '@pedaki/design/ui/icons/IconSpinner';
 import { Input } from '@pedaki/design/ui/input';
 import { CreateWorkspaceInvitationInput } from '@pedaki/models/pending-workspace/api-invitation.model';
@@ -25,7 +27,7 @@ interface InviteFormProps {
   rawToken: string;
 }
 
-const Schema = CreateWorkspaceInvitationInput.pick({ email: true, name: true });
+const Schema = CreateWorkspaceInvitationInput.pick({ email: true });
 
 type InviteFormValues = z.infer<typeof Schema>;
 
@@ -34,13 +36,12 @@ export function InviteForm({ rawToken }: InviteFormProps) {
     resolver: zodResolver(Schema),
     mode: 'onBlur',
     defaultValues: {
-      name: 'bidule',
-      email: 'test@email.com',
+      email: '',
     },
   });
   const addEmail = useWorkspaceInvitationStore(state => state.addEmail);
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, isValid } = form.formState;
   const createInvitationMutation = api.workspace.invitation.create.useMutation();
 
   function onSubmit(values: InviteFormValues) {
@@ -50,7 +51,6 @@ export function InviteForm({ rawToken }: InviteFormProps) {
           createInvitationMutation.mutateAsync({
             email: values.email,
             token: rawToken,
-            name: values.name,
           }),
           200,
         ),
@@ -74,7 +74,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
       },
     )
       .then(() => {
-        addEmail({ name: values.name, email: values.email });
+        addEmail({ email: values.email });
       })
       .catch(() => {
         // ignore
@@ -84,50 +84,44 @@ export function InviteForm({ rawToken }: InviteFormProps) {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nom</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="john@example.com"
-                    type="text"
-                    disabled={isSubmitting}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col items-start gap-4 md:flex-row"
+        >
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Adresse mail</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>
+                  <span>Inviter un membre</span>
+                  <FormSubLabel>(Optionel)</FormSubLabel>
+                </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="john@example.com"
+                    icon={IconUser}
+                    placeholder="tony@example.com"
                     type="email"
                     autoComplete="email"
                     disabled={isSubmitting}
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="flex items-center space-x-1">
+                  <IconInfoCircleFill className="h-4 w-4" />
+                  <span className="text-p-sm">De base il n&apos;aura aucune permission</span>
+                </FormMessage>
               </FormItem>
             )}
           />
-          <div className="grid gap-2">
-            <Button disabled={isSubmitting} className="mt-2" type="submit">
-              {isSubmitting && <IconSpinner className="mr-2 h-4 w-4 animate-spin" />}
-              Inviter
-            </Button>
-          </div>
+          <Button
+            disabled={isSubmitting || !isValid}
+            className="w-full md:mt-6 md:w-[8ch]"
+            type="submit"
+          >
+            {isSubmitting && <IconSpinner className="mr-2 h-4 w-4 animate-spin" />}
+            {!isSubmitting && 'Inviter'}
+          </Button>
         </form>
       </Form>
     </div>
