@@ -6,7 +6,7 @@ import { Provider as BalancerProvider } from 'react-wrap-balancer';
 import { Toaster } from 'sonner';
 
 interface Props {
-  children: React.ReactElement;
+  children: React.ReactElement | React.ReactElement[];
 }
 
 export const Providers = ({ children }: Props) => {
