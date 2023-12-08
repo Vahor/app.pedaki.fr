@@ -1,6 +1,3 @@
-import React from 'react';
-import '@pedaki/design/tailwind/index.css';
-import '~/styles/index.css';
 import { cn } from '@pedaki/design/utils';
 import Footer from '~/app/[locale]/footer.tsx';
 import Header from '~/app/[locale]/header.tsx';
@@ -10,6 +7,7 @@ import type { LocaleCode } from '~/locales/server';
 import { locales } from '~/locales/shared';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import React from 'react';
 
 export default function RootLayout({
   children,
