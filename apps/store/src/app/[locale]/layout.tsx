@@ -1,22 +1,37 @@
-import BaseLayout from '~/components/BaseLayout.tsx';
+import { cn } from '@pedaki/design/utils';
+import Footer from '~/app/[locale]/footer.tsx';
+import Header from '~/app/[locale]/header.tsx';
+import { Providers } from '~/app/providers';
+import { fontClassName } from '~/config/font';
 import type { LocaleCode } from '~/locales/server';
 import { locales } from '~/locales/shared';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
+import { redirect } from 'next/navigation'
 
 export default function RootLayout({
   children,
-  params,
+  params: { locale },
 }: {
   children: React.ReactElement;
   params: { locale: LocaleCode };
 }) {
-  if (!locales.includes(params.locale)) {
-    return notFound();
+  if (!locales.includes(locale)) {
+    redirect('/fr')
   }
 
-  return <BaseLayout children={children} params={params} />;
+  return (
+    <html lang={locale} className={cn(fontClassName)} suppressHydrationWarning>
+      <body>
+        <Providers locale={locale}>
+          <Header />
+          <main className="container relative flex-1 py-8">{children}</main>
+          <Footer />
+        </Providers>
+      </body>
+    </html>
+  );
 }
 
 export const viewport = {

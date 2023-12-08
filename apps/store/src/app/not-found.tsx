@@ -1,9 +1,7 @@
-import NotFoundComponent from '~/components/NotFound';
-import { fallbackLocale } from '~/locales/shared';
-import { setStaticParamsLocale } from 'next-international/server';
+import { redirect } from 'next/navigation';
+
 
 export default function NotFound() {
-  setStaticParamsLocale(fallbackLocale);
-
-  return <NotFoundComponent />;
+  redirect('/fr')
+  return null;
 }
