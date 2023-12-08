@@ -51,12 +51,19 @@ export const CheckStatusToast: React.FC<CheckStatusBannerProps> = ({ subdomain, 
           },
         },
       });
+    } else if (successCount > 0) {
+      toast.loading('Création du workspace en cours', {
+        id: 'workspace-creation',
+        description: 'Votre workspace est bientôt prêt',
+        duration: Infinity,
+      });
     }
   }, [successCount, router, baseUrl]);
 
   useEffect(() => {
     toast.loading('Création du workspace en cours', {
       id: 'workspace-creation',
+      description: 'Cela prend environ 6 minutes',
       duration: Infinity,
     });
   }, []);
