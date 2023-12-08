@@ -2,17 +2,30 @@ import React from 'react';
 import '@pedaki/design/tailwind/index.css';
 import '~/styles/index.css';
 import { cn } from '@pedaki/design/utils';
-import Footer from '~/app/footer.tsx';
-import Header from '~/app/header.tsx';
+import Footer from '~/app/[locale]/footer.tsx';
+import Header from '~/app/[locale]/header.tsx';
 import { Providers } from '~/app/providers';
 import { fontClassName } from '~/config/font';
+import type { LocaleCode } from '~/locales/server';
+import { locales } from '~/locales/shared';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-export default function RootLayout({ children }: { children: React.ReactElement }) {
+export default function RootLayout({
+  children,
+  params: { locale },
+}: {
+  children: React.ReactElement;
+  params: { locale: LocaleCode };
+}) {
+  if (!locales.includes(locale)) {
+    return notFound();
+  }
+
   return (
-    <html lang="fr" className={cn(fontClassName)} suppressHydrationWarning>
+    <html lang={locale} className={cn(fontClassName)} suppressHydrationWarning>
       <body>
-        <Providers>
+        <Providers locale={locale}>
           <Header />
           <main className="container relative flex-1 py-8">{children}</main>
           <Footer />
