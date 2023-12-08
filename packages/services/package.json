@@ -30,7 +30,7 @@
     "flat": "^6.0.1",
     "@opentelemetry/api": "1.7.0",
     "jsonwebtoken": "^9.0.2",
-    "stripe": "^14.7.0",
+    "stripe": "^14.8.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

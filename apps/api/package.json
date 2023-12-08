@@ -28,7 +28,7 @@
     "@fastify/cookie": "^9.2.0",
     "@fastify/cors": "^8.4.2",
     "@opentelemetry/api": "1.7.0",
-    "@opentelemetry/instrumentation-fastify": "^0.32.4",
+    "@opentelemetry/instrumentation-fastify": "^0.32.5",
     "@opentelemetry/sdk-trace-node": "^1.18.1",
     "@pedaki/common": "^0.4.2-beta.11",
     "@pedaki/db": "workspace:*",

@@ -25,9 +25,9 @@
     "@pedaki/common": "^0.4.2-beta.11",
     "@pedaki/logger": "workspace:*",
     "@pedaki/models": "workspace:*",
-    "@pulumi/aws": "^6.13.1",
+    "@pulumi/aws": "^6.13.2",
     "@pulumi/cloudflare": "^5.16.0",
-    "@pulumi/pulumi": "^3.95.0",
+    "@pulumi/pulumi": "^3.96.1",
     "@pulumi/random": "^4.14.0",
     "@t3-oss/env-core": "^0.7.1",
     "zod": "^3.22.4"
