@@ -6,9 +6,9 @@ import type { BasicTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
 import { initTelemetry } from '@pedaki/logger/telemetry.js';
-import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js'; // eslint-disable-next-line node/file-extension-in-import
-
-import { PrismaInstrumentation } from '@prisma/instrumentation';
+import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
+import PrismaInstrumentationPkg from '@prisma/instrumentation';
+// eslint-disable-next-line node/file-extension-in-import
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { openApiDocument } from '~/openapi.ts';
 import { seedDatabase } from '~/seeds/seeds.ts';
@@ -18,6 +18,8 @@ import { fastifyTRPCOpenApiPlugin } from 'trpc-openapi';
 import { env } from './env.ts';
 import { createContext } from './router/context.ts';
 import { appRouter } from './router/router.ts';
+
+const { PrismaInstrumentation } = PrismaInstrumentationPkg;
 
 export function createServer() {
   const port = env.PORT;

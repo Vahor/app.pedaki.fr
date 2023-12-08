@@ -48,19 +48,6 @@ RUN cp -r tmp/.prisma node_modules
 FROM base  AS runner
 WORKDIR /app
 
-# Install pulumi
-RUN curl -fsSL https://get.pulumi.com | sh
-ENV PATH="/root/.pulumi/bin:$PATH"
-
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
-COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
-COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
-COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
-COPY --from=builder /app/packages/logger/package.json ./node_modules/@pedaki/package.json
-COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
-
 ## Load public env vars
 ARG PORT=8080
 
@@ -96,11 +83,24 @@ ENV BASELIME_API_KEY=$BASELIME_API_KEY
 ENV LOGGER_SERVICE_NAME=$LOGGER_SERVICE_NAME
 ENV LOGGER_LEVEL=$LOGGER_LEVEL
 
-EXPOSE $PORT
+# Install pulumi
+RUN curl -fsSL https://get.pulumi.com | sh
+ENV PATH="/root/.pulumi/bin:$PATH"
 
-RUN pulumi org set-default pedaki
-RUN pulumi plugin install resource aws
-RUN pulumi plugin install resource random
-RUN pulumi plugin install resource cloudflare
+#RUN pulumi org set-default pedaki
+#RUN pulumi plugin install resource aws
+#RUN pulumi plugin install resource random
+#RUN pulumi plugin install resource cloudflare
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/packages/models/dist ./node_modules/@pedaki/models
+COPY --from=builder /app/packages/services/dist ./node_modules/@pedaki/services
+COPY --from=builder /app/packages/pulumi/dist ./node_modules/@pedaki/pulumi
+COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
+COPY --from=builder /app/packages/logger/package.json ./node_modules/@pedaki/package.json
+COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
+
+EXPOSE $PORT
 
 CMD ["node", "--no-warnings=ExperimentalWarning", "dist/index.js"]
