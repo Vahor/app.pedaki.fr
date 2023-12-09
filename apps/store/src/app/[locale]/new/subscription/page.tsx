@@ -1,10 +1,13 @@
 import { Button } from '@pedaki/design/ui/button';
 import { IconArrowRight } from '@pedaki/design/ui/icons';
-import { SubscriptionForm } from '~/app/new/subscription/subscription-form.tsx';
+import { SubscriptionForm } from '~/app/[locale]/new/subscription/subscription-form.tsx';
 import PageHeader from '~/components/page-header';
+import { setStaticParamsLocale } from 'next-international/server';
 import Link from 'next/link';
 
-export default function SubscriptionDetailsPage() {
+export default function SubscriptionDetailsPage({ params }: { params: { locale: string } }) {
+  setStaticParamsLocale(params.locale);
+
   return (
     <>
       <Button className="absolute top-8" variant="stroke-primary-main" asChild>

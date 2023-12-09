@@ -1,19 +1,24 @@
 import { IconCalendarX, IconX } from '@pedaki/design/ui/icons';
 import { Separator } from '@pedaki/design/ui/separator';
-import { CheckStatusToast } from '~/app/new/(paid)/invitations/check-status-toast.tsx';
-import { InviteForm } from '~/app/new/(paid)/invitations/invite-form.tsx';
-import { InvitedEmails } from '~/app/new/(paid)/invitations/invited-emails.tsx';
-import { parseToken } from '~/app/new/(paid)/invitations/parse-token.ts';
+import { CheckStatusToast } from '~/app/[locale]/new/(paid)/invitations/check-status-toast.tsx';
+import { InviteForm } from '~/app/[locale]/new/(paid)/invitations/invite-form.tsx';
+import { InvitedEmails } from '~/app/[locale]/new/(paid)/invitations/invited-emails.tsx';
+import { parseToken } from '~/app/[locale]/new/(paid)/invitations/parse-token.ts';
 import StatusWrapper from '~/app/status-wrapper.tsx';
 import PageHeader from '~/components/page-header';
 import { api } from '~/server/api/clients/server.ts';
+import { setStaticParamsLocale } from 'next-international/server';
 import React from 'react';
 
 export default async function InvitationPage({
   searchParams,
+  params,
 }: {
   searchParams: Record<string, string>;
+  params: { locale: string };
 }) {
+  setStaticParamsLocale(params.locale);
+
   const token = searchParams.token;
   const data = parseToken(token);
 
