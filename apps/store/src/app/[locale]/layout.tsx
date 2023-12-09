@@ -1,4 +1,6 @@
 import { cn } from '@pedaki/design/utils';
+import '@pedaki/design/tailwind/index.css';
+import '~/styles/index.css';
 import Footer from '~/app/[locale]/footer.tsx';
 import Header from '~/app/[locale]/header.tsx';
 import { Providers } from '~/app/providers';
@@ -8,7 +10,6 @@ import { locales } from '~/locales/shared';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
-import { redirect } from 'next/navigation'
 
 export default function RootLayout({
   children,
@@ -18,7 +19,8 @@ export default function RootLayout({
   params: { locale: LocaleCode };
 }) {
   if (!locales.includes(locale)) {
-    redirect('/fr')
+    notFound();
+    return null;
   }
 
   return (
