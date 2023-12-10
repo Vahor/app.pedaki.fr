@@ -84,7 +84,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     const dbPassword = new random.RandomPassword(`${params.workspace.id}-db-password`, {
       length: 32,
       special: true,
-      overrideSpecial: '_%',
+      overrideSpecial: '_',
     }).result;
 
     const db = new backend.Db(
