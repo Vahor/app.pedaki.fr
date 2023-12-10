@@ -207,6 +207,12 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
 sudo aws ssm get-parameters --names ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
 
+sudo aws ssm get-parameter-history --name ${args.secrets.dbKeyParameter} --with-decryption | jq -r '.Parameters | .[0]' | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
+
+# Select old versions of the db encryption key and store it in decryption keys
+KEYS=$(sudo aws ssm get-parameter-history --name ${args.secrets.dbKeyParameter} --with-decryption | jq -r '.Parameters | .[1:]' | jq -r '.[] | .Value' | jq -r 'values[]'| tr '\\n' ',')
+echo "PRISMA_DECRYPTION_KEYS=$KEYS" >> .env
+
 source .env
 
 # Download aws RDS CA certificate
