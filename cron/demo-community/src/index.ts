@@ -6,12 +6,14 @@ import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
-import { PrismaInstrumentation } from '@prisma/instrumentation';
+import PrismaInstrumentationPkg from '@prisma/instrumentation';
 import { env } from '~/env.ts';
 
 const WORKSPACE_SUBDOMAIN = 'demo';
 const PEDAKI_BILLING_EMAIL = 'demo@pedaki.fr';
 const PEDAKI_BILLING_NAME = 'Pedaki';
+
+const { PrismaInstrumentation } = PrismaInstrumentationPkg;
 
 const BASE_PARAMETERS = {
   subdomain: WORKSPACE_SUBDOMAIN,
