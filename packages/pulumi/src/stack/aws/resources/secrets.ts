@@ -68,7 +68,7 @@ export class Secrets extends pulumi.ComponentResource {
         .apply(([passwordSalt, authSecret]) => {
           return JSON.stringify({
             PASSWORD_SALT: passwordSalt,
-            NEXTAUTH_SECRET: authSecret,
+            AUTH_SECRET: authSecret,
           });
         }),
       args.tags,
