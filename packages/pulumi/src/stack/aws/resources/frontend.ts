@@ -204,8 +204,8 @@ sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Loading env from ssm parameter store
-sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
-sudo aws ssm get-parameters --names ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
+sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\'\\\'\'\\(.[$k])\'\\\'\'\"' > .env
+sudo aws ssm get-parameters --names ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\'\\\'\'\\(.[$k])\'\\\'\'\"' > .env
 
 source .env
 
