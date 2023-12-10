@@ -64,11 +64,12 @@ export class Secrets extends pulumi.ComponentResource {
       `${args.stackParameters.workspace.id}-auth`,
       'Authentication credentials',
       pulumi
-        .all([args.auth.passwordSalt, args.auth.authSecret])
-        .apply(([passwordSalt, authSecret]) => {
+        .all([args.auth.passwordSalt, args.auth.authSecret, args.pedaki.subdomain])
+        .apply(([passwordSalt, authSecret, subdomain]) => {
           return JSON.stringify({
             PASSWORD_SALT: passwordSalt,
             AUTH_SECRET: authSecret,
+            AUTH_URL: `https://${subdomain}.pedaki.fr`,
           });
         }),
       args.tags,
