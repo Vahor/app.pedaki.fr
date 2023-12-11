@@ -56,6 +56,14 @@ export class InstanceProfile extends pulumi.ComponentResource {
                 `arn:aws:ssm:*:*:parameter/shared/*`,
               ],
             },
+            {
+              Sid: 'ReadHistoryParameterStore',
+              Action: ['ssm:GetParameterHistory'],
+              Effect: 'Allow',
+              Resource: [
+                `arn:aws:ssm:*:*:parameter/${prefixWithSlash}${args.stackParameters.workspace.id}*`,
+              ],
+            },
           ],
         },
         tags: args.tags,
