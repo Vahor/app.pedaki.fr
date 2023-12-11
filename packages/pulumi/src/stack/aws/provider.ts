@@ -1,5 +1,5 @@
-import { trace } from '@opentelemetry/api';
 import type { Attributes } from '@opentelemetry/api';
+import { trace } from '@opentelemetry/api';
 import { VERSION } from '@pedaki/logger/version.js';
 import * as random from '@pulumi/random';
 import { env } from '~/env.ts';
@@ -105,16 +105,12 @@ export class AwsServerProvider implements StackProvider<'aws'> {
     );
 
     // Keys generation
-    const encryptionKey = new key.EncryptionKey(
-      `${params.workspace.id}-encryption-key`,
-      {},
-      { dependsOn: [db] },
-    );
-    const passwordSalt = new key.EncryptionKey(
-      `${params.workspace.id}-password-salt`,
-      {},
-      { dependsOn: [db] },
-    );
+    const encryptionKey = new key.EncryptionKey(`${params.workspace.id}-encryption-key`, {}, {});
+    const passwordSalt = new random.RandomPassword(`${params.workspace.id}-password-salt`, {
+      length: 32,
+      special: true,
+      overrideSpecial: '_',
+    });
     const authSecret = new key.EncryptionKey(`${params.workspace.id}-auth-secret`);
 
     const secret = new secrets.Secrets(
@@ -129,7 +125,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
           encryptionKey: encryptionKey.key,
         },
         auth: {
-          passwordSalt: passwordSalt.key,
+          passwordSalt: passwordSalt.result,
           authSecret: authSecret.key,
         },
         pedaki: {

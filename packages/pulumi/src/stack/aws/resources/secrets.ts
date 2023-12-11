@@ -13,7 +13,7 @@ export interface SecretsArgs {
     encryptionKey: string;
   };
   auth: {
-    passwordSalt: string;
+    passwordSalt: pulumi.Output<string>;
     authSecret: string;
   };
   pedaki: {
