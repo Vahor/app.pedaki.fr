@@ -210,7 +210,7 @@ sudo aws ssm get-parameters --names ${args.secrets.dbKeyParameter} ${args.secret
 # Select the previous version of the db encryption key and store it in decryption keys
 # We only need one as we will rotate the key
 KEYS=$(sudo aws ssm get-parameter-history --name ${args.secrets.dbKeyParameter} --with-decryption | jq -r '.Parameters | .[-2]')
-if [[ ! -z "$KEYS" && "$KEYS" != "null" ]; then
+if [[ ! -z "$KEYS" && "$KEYS" != "null" ]]; then
     KEYS=$(echo "$KEYS" | jq -r '.Value ' | jq -r 'values[]')
     echo "PRISMA_DECRYPTION_KEY=$KEYS" >> .env
 fi
