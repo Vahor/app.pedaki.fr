@@ -212,7 +212,7 @@ sudo aws ssm get-parameters --names ${args.secrets.dbKeyParameter} ${args.secret
 KEYS=$(sudo aws ssm get-parameter-history --name ${args.secrets.dbKeyParameter} --with-decryption | jq -r '.Parameters | .[-2]')
 if [[ ! -z "$KEYS" && "$KEYS" != "null" ]; then
     KEYS=$(echo "$KEYS" | jq -r '.Value ' | jq -r 'values[]')
-    echo "PRISMA_DECRYPTION_KEYS=$KEYS" >> .env
+    echo "PRISMA_DECRYPTION_KEY=$KEYS" >> .env
 fi
 
 source .env
