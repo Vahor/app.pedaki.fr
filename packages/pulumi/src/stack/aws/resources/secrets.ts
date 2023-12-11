@@ -30,6 +30,7 @@ export interface SecretsArgs {
 
 export class Secrets extends pulumi.ComponentResource {
   public readonly dbParameter: pulumi.Output<string>;
+  public readonly dbKeyParameter: pulumi.Output<string>;
   public readonly authParameter: pulumi.Output<string>;
   public readonly pedakiParameter: pulumi.Output<string>;
   public readonly envParameter: pulumi.Output<string>;
@@ -37,26 +38,27 @@ export class Secrets extends pulumi.ComponentResource {
   constructor(name: string, args: SecretsArgs, opts?: pulumi.ComponentResourceOptions) {
     super('custom:resource:Secrets', name, args, opts);
 
-    // create aws secrets for db, auth
-
     this.dbParameter = this.createSecret(
       `${args.stackParameters.workspace.id}-db`,
       'Database credentials',
       pulumi
-        .all([
-          args.db.host,
-          args.db.name,
-          args.db.user,
-          args.db.password,
-          args.db.port,
-          args.db.encryptionKey,
-        ])
-        .apply(([host, name, user, password, port, encryptionKey]) => {
+        .all([args.db.host, args.db.name, args.db.user, args.db.password, args.db.port])
+        .apply(([host, name, user, password, port]) => {
           return JSON.stringify({
             DATABASE_URL: `mysql://${user}:${password}@${host}:${port}/${name}?sslcert\=/app/certs/rds-combined-ca-bundle.pem`,
-            PRISMA_ENCRYPTION_KEY: encryptionKey,
           });
         }),
+      args.tags,
+    );
+
+    this.dbKeyParameter = this.createSecret(
+      `${args.stackParameters.workspace.id}-db-key`,
+      'Database encryption key',
+      pulumi.all([args.db.encryptionKey]).apply(([encryptionKey]) => {
+        return JSON.stringify({
+          PRISMA_ENCRYPTION_KEY: encryptionKey,
+        });
+      }),
       args.tags,
     );
 

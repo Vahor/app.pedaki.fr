@@ -205,7 +205,15 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # Loading env from ssm parameter store
 sudo aws ssm get-parameters --names /shared/baselime /shared/resend /shared/docker /shared/cloudflare /shared/cloudflare-ca /shared/cloudflare-ca-key /shared/cloudflare-origin-ca --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' > .env
-sudo aws ssm get-parameters --names ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
+sudo aws ssm get-parameters --names ${args.secrets.dbKeyParameter} ${args.secrets.dbParameter} ${args.secrets.authParameter} ${args.secrets.pedakiParameter} ${args.secrets.envParameter} --with-decryption | jq -r '.Parameters | .[] | .Value ' | jq -r 'keys[] as $k | "\\($k)=\\"\\(.[$k])\\""' >> .env
+
+# Select the previous version of the db encryption key and store it in decryption keys
+# We only need one as we will rotate the key
+KEYS=$(sudo aws ssm get-parameter-history --name ${args.secrets.dbKeyParameter} --with-decryption | jq -r '.Parameters | .[1]')
+if [ -z "$KEYS" ]; then
+    KEYS=$(echo "$KEYS" | jq -r '.Value ' | jq -r 'values[]')
+    echo "PRISMA_DECRYPTION_KEYS=$KEYS" >> .env
+fi
 
 source .env
 
