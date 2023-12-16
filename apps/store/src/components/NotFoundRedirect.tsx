@@ -4,6 +4,7 @@ import { fallbackLocale, locales } from '~/locales/shared';
 import { getCookie } from 'cookies-next';
 import { redirect, usePathname } from 'next/navigation';
 
+// https://github.com/QuiiBz/next-international/blob/main/packages/next-international/src/common/constants.ts#L2
 const LOCALE_COOKIE = 'Next-Locale';
 
 const NotFoundRedirectComponent = () => {
