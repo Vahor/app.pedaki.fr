@@ -1,17 +1,15 @@
-import { cn } from '@pedaki/design/utils';
 import '@pedaki/design/tailwind/index.css';
 import '~/styles/index.css';
 import Footer from '~/app/[locale]/footer.tsx';
 import Header from '~/app/[locale]/header.tsx';
 import { Providers } from '~/app/providers';
-import { fontClassName } from '~/config/font';
 import type { LocaleCode } from '~/locales/server';
 import { locales } from '~/locales/shared';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
-export default function RootLayout({
+export default function Layout({
   children,
   params: { locale },
 }: {
@@ -24,15 +22,11 @@ export default function RootLayout({
   }
 
   return (
-    <html lang={locale} className={cn(fontClassName)} suppressHydrationWarning>
-      <body>
-        <Providers locale={locale}>
-          <Header />
-          <main className="container relative flex-1 py-8">{children}</main>
-          <Footer />
-        </Providers>
-      </body>
-    </html>
+    <Providers locale={locale}>
+      <Header />
+      <main className="container relative flex-1 py-8">{children}</main>
+      <Footer />
+    </Providers>
   );
 }
 
