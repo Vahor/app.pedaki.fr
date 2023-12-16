@@ -12,8 +12,8 @@ export const initTelemetry = (instrumentations: any[]): NodeTracerProvider => {
 
   const provider = new NodeTracerProvider({
     resource: new Resource({
-      'service.instanceId': INSTANCE_ID,
-      'service.community': false,
+      'pedaki.instanceId': INSTANCE_ID,
+      'pedaki.community': false,
       [SemanticResourceAttributes.SERVICE_NAME]: env.LOGGER_SERVICE_NAME,
       [SemanticResourceAttributes.SERVICE_NAMESPACE]: env.LOGGER_NAMESPACE,
       [SemanticResourceAttributes.SERVICE_VERSION]: VERSION,

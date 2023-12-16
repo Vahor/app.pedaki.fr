@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@planetscale/database": "^1.11.0",
+    "@planetscale/database": "^1.13.0",
     "@prisma/adapter-planetscale": "5.7.0",
     "@prisma/client": "^5.7.0",
     "@prisma/instrumentation": "^5.7.0",
