@@ -2,12 +2,11 @@ import { Button } from '@pedaki/design/ui/button';
 import { IconSearch } from '@pedaki/design/ui/icons';
 import StatusWrapper from '~/app/status-wrapper';
 import { getScopedI18n } from '~/locales/server';
-import { fallbackLocale, locales } from '~/locales/shared';
-import { setStaticParamsLocale } from 'next-international/server';
+import { setStaticParamsLocale } from '~/locales/utils';
 import Link from 'next/link';
 
 export default async function NotFound({ params }: { params: { locale: string } }) {
-  setStaticParamsLocale(locales.includes(params.locale) ? params.locale : fallbackLocale);
+  setStaticParamsLocale(params.locale);
   const t = await getScopedI18n('components.notFound');
 
   return (

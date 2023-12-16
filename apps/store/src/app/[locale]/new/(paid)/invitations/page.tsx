@@ -6,8 +6,8 @@ import { InvitedEmails } from '~/app/[locale]/new/(paid)/invitations/invited-ema
 import { parseToken } from '~/app/[locale]/new/(paid)/invitations/parse-token.ts';
 import StatusWrapper from '~/app/status-wrapper.tsx';
 import PageHeader from '~/components/page-header';
+import { setStaticParamsLocale } from '~/locales/utils';
 import { api } from '~/server/api/clients/server.ts';
-import { setStaticParamsLocale } from 'next-international/server';
 import React from 'react';
 
 export default async function InvitationPage({

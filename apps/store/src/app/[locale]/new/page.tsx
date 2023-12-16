@@ -1,10 +1,11 @@
 import PageHeader from '~/components/page-header';
 import { getScopedI18n } from '~/locales/server';
-import { setStaticParamsLocale } from 'next-international/server';
+import { setStaticParamsLocale } from '~/locales/utils';
 import OpenOldPayment from './open-old-payment';
 import { UserInfoForm } from './user-info-form';
 
-export const generateMetadata = async () => {
+export const generateMetadata = async ({ params }: { params: { locale: string } }) => {
+  setStaticParamsLocale(params.locale);
   const homeT = await getScopedI18n('pages.new.home');
 
   return {

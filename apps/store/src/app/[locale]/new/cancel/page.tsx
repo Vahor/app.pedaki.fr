@@ -1,7 +1,7 @@
 'use server';
 
+import { setStaticParamsLocale } from '~/locales/utils';
 import { api } from '~/server/api/clients/server.ts';
-import { setStaticParamsLocale } from 'next-international/server';
 import { redirect } from 'next/navigation';
 
 export default async function NewWorkspaceCancelPage({
