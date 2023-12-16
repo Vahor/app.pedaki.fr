@@ -36,6 +36,7 @@
     "@trpc/next": "10.44.1",
     "@trpc/react-query": "10.44.1",
     "@trpc/server": "10.44.1",
+    "cookies-next": "^4.1.0",
     "dayjs": "^1.11.10",
     "million": "^2.6.4",
     "next": "14.0.4",

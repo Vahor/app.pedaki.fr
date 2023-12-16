@@ -1,12 +1,17 @@
 'use client';
 
-import { fallbackLocale } from '~/locales/shared';
+import { fallbackLocale, locales } from '~/locales/shared';
+import { getCookie } from 'cookies-next';
 import { redirect, usePathname } from 'next/navigation';
 
+const LOCALE_COOKIE = 'Next-Locale';
+
 const NotFoundRedirectComponent = () => {
+  const cookieLocale = getCookie(LOCALE_COOKIE);
+  const locale = cookieLocale && locales.includes(cookieLocale) ? cookieLocale : fallbackLocale;
   const pathname = usePathname();
 
-  redirect(`/${fallbackLocale}${pathname}`);
+  redirect(`/${locale}${pathname}`);
   return null;
 };
 
