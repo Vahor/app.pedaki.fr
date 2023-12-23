@@ -24,7 +24,7 @@ const BASE_PARAMETERS = {
   server: {
     size: 'small',
     environment_variables: {
-      IS_DEMO: 'true',
+      NEXT_PUBLIC_IS_DEMO: 'true',
       PEDAKI_BILLING_EMAIL: PEDAKI_BILLING_EMAIL,
       PEDAKI_BILLING_NAME: PEDAKI_BILLING_NAME,
       PEDAKI_BILLING_PASSWORD: 'demo',
