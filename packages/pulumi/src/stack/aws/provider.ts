@@ -129,6 +129,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
           authSecret: authSecret.key,
         },
         pedaki: {
+          name: params.workspace.name,
           subdomain: params.workspace.subdomain,
           workspaceId: params.workspace.id,
           authToken: params.server.environment_variables.PEDAKI_AUTH_TOKEN,

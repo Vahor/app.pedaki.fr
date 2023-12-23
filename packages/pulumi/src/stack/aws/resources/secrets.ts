@@ -17,6 +17,7 @@ export interface SecretsArgs {
     authSecret: string;
   };
   pedaki: {
+    name: string;
     subdomain: string;
     workspaceId: string;
     authToken: string;
@@ -82,14 +83,16 @@ export class Secrets extends pulumi.ComponentResource {
       'Pedaki credentials',
       pulumi
         .all([
+          args.pedaki.name,
           args.pedaki.subdomain,
           args.pedaki.workspaceId,
           args.pedaki.authToken,
           args.pedaki.host,
           args.pedaki.version,
         ])
-        .apply(([subdomain, workspaceId, authToken, domain, version]) => {
+        .apply(([name, subdomain, workspaceId, authToken, domain, version]) => {
           return JSON.stringify({
+            NEXT_PUBLIC_PEDAKI_NAME: name,
             NEXT_PUBLIC_PEDAKI_DOMAIN: domain,
             PEDAKI_TAG: version, // TODO: remove
             NEXT_PUBLIC_PEDAKI_VERSION: version,

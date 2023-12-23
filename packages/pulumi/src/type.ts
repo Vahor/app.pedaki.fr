@@ -20,6 +20,7 @@ export interface StackParameters<SP extends ServerProvider> {
   workspace: {
     id: string;
     subdomain: string;
+    name: string;
   };
   region: ServerRegion<SP>;
   server: ServerResourceInput;

@@ -12,6 +12,7 @@ export interface WorkspaceData {
     id: string;
     subdomain: string;
     subscriptionId: number;
+    name: string;
   };
   vpc: VpcResourceInput;
   server: ServerResourceInput;

@@ -167,6 +167,7 @@ export const stripeRouter = router({
               workspace: {
                 id: workspaceId,
                 subdomain: pendingData.subdomain,
+                name: pendingData.name,
                 subscriptionId,
               },
             });

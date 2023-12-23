@@ -24,6 +24,7 @@ class ResourceService {
 
         await provider.delete({
           workspace: {
+            name: workspace.name,
             id: workspace.id,
             subdomain: workspace.subdomain,
           },
@@ -176,6 +177,7 @@ class ResourceService {
 
         const outputs = await provider.create({
           workspace: {
+            name: workspace.name,
             id: workspace.id,
             subdomain: workspace.subdomain,
           },

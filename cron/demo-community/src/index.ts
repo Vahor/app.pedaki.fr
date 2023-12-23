@@ -47,6 +47,7 @@ const stackParameters = (workspaceId: string, subscriptionId: number, authToken:
     workspace: {
       ...BASE_PARAMETERS.workspace,
       id: workspaceId,
+      name: 'Demo',
       subscriptionId,
     },
     server: {
