@@ -90,8 +90,9 @@ export class Secrets extends pulumi.ComponentResource {
         ])
         .apply(([subdomain, workspaceId, authToken, domain, version]) => {
           return JSON.stringify({
-            PEDAKI_DOMAIN: domain,
-            PEDAKI_VERSION: version,
+            NEXT_PUBLIC_PEDAKI_DOMAIN: domain,
+            PEDAKI_TAG: version, // TODO: remove
+            NEXT_PUBLIC_PEDAKI_VERSION: version,
             PEDAKI_AUTH_TOKEN: authToken,
             PEDAKI_WORKSPACE_ID: workspaceId,
             PEDAKI_WORKSPACE_SUBDOMAIN: subdomain,
