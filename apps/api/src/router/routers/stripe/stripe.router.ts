@@ -130,7 +130,7 @@ export const stripeRouter = router({
                 workspace: {
                   name: pendingData.name,
                   subdomain: pendingData.subdomain,
-                  defaultLanguage: 'fr', // TODO: get the language from the user (ex: if he creates the pending workspace from /en/new use 'en')
+                  defaultLanguage: pendingData.defaultLanguage,
                   billing: {
                     name: pendingData.billing.name,
                     email: pendingData.billing.email,

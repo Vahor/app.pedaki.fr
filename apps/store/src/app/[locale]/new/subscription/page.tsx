@@ -19,7 +19,7 @@ export default function SubscriptionDetailsPage({ params }: { params: { locale: 
 
       <div className="mx-auto mt-16 flex max-w-screen-sm flex-col">
         <PageHeader title="Workspace" description="Informations sur le workspace" />
-        <SubscriptionForm />
+        <SubscriptionForm locale={params.locale} />
       </div>
     </>
   );
