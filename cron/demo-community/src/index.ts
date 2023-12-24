@@ -5,6 +5,7 @@ import { initTelemetry } from '@pedaki/logger/telemetry.js';
 import { DOCKER_IMAGE } from '@pedaki/pulumi/utils/docker.js';
 import { invitationService } from '@pedaki/services/invitation/invitation.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
+import { DEFAULT_MAINTENANCE_WINDOW } from '@pedaki/services/workspace/constants.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import PrismaInstrumentationPkg from '@prisma/instrumentation';
 import { env } from '~/env.ts';
@@ -49,6 +50,7 @@ const stackParameters = (workspaceId: string, subscriptionId: number, authToken:
       id: workspaceId,
       name: 'Demo',
       subscriptionId,
+      maintenanceWindow: DEFAULT_MAINTENANCE_WINDOW,
     },
     server: {
       ...BASE_PARAMETERS.server,
@@ -122,6 +124,7 @@ const main = async () => {
       workspace: {
         creationData: BASE_PARAMETERS,
         subdomain: WORKSPACE_SUBDOMAIN,
+        defaultLanguage: 'fr',
         billing: {
           email: PEDAKI_BILLING_EMAIL,
           name: PEDAKI_BILLING_NAME,

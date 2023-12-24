@@ -11,6 +11,7 @@ import {
   CustomerSubscriptionSchema,
 } from '@pedaki/services/stripe/stripe.model.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
+import { DEFAULT_MAINTENANCE_WINDOW } from '@pedaki/services/workspace/constants.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -129,6 +130,7 @@ export const stripeRouter = router({
                 workspace: {
                   name: pendingData.name,
                   subdomain: pendingData.subdomain,
+                  defaultLanguage: 'fr', // TODO: get the language from the user (ex: if he creates the pending workspace from /en/new use 'en')
                   billing: {
                     name: pendingData.billing.name,
                     email: pendingData.billing.email,
@@ -168,6 +170,7 @@ export const stripeRouter = router({
                 id: workspaceId,
                 subdomain: pendingData.subdomain,
                 name: pendingData.name,
+                maintenanceWindow: DEFAULT_MAINTENANCE_WINDOW,
                 subscriptionId,
               },
             });
