@@ -1,6 +1,9 @@
 import { prisma } from '@pedaki/db';
 import { NotYourWorkspaceError, WorkspaceNotFoundError } from '@pedaki/models/errors/index.js';
-import { WorkspaceStatusSchema } from '@pedaki/models/workspace/workspace.model.js';
+import {
+  WorkspacePropertiesSchema,
+  WorkspaceStatusSchema,
+} from '@pedaki/models/workspace/workspace.model.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { z } from 'zod';
 import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
@@ -63,5 +66,60 @@ export const workspaceDataRouter = router({
         expected: response.expectedStatus,
         current: response.currentStatus,
       };
+    }),
+
+  updateSettings: workspaceProcedure
+    .input(
+      z.object({
+        workspaceId: z.string(),
+        settings: WorkspacePropertiesSchema.partial(),
+      }),
+    )
+    .output(z.boolean())
+    .meta({ openapi: { method: 'POST', path: '/workspace/{workspaceId}/settings' } })
+    .mutation(async ({ input, ctx }) => {
+      // The param is only here to respect the REST API
+      // But we don't need it as we already have the workspaceId in the context
+      if (ctx.workspace.id !== input.workspaceId) {
+        throw new NotYourWorkspaceError();
+      }
+
+      await workspaceService.updateSettings({
+        workspaceId: ctx.workspace.id,
+        settings: input.settings,
+      });
+
+      return true;
+    }),
+
+  getSettings: workspaceProcedure
+    .input(
+      z.object({
+        workspaceId: z.string(),
+      }),
+    )
+    .output(WorkspacePropertiesSchema)
+    .meta({ openapi: { method: 'GET', path: '/workspace/{workspaceId}/settings' } })
+    .query(async ({ input, ctx }) => {
+      // The param is only here to respect the REST API
+      // But we don't need it as we already have the workspaceId in the context
+      if (ctx.workspace.id !== input.workspaceId) {
+        throw new NotYourWorkspaceError();
+      }
+
+      return await prisma.workspace.findUniqueOrThrow({
+        where: {
+          id: ctx.workspace.id,
+        },
+        select: {
+          name: true,
+          contactEmail: true,
+          contactName: true,
+          logoUrl: true,
+          defaultLanguage: true,
+          maintenanceWindow: true,
+          currentMaintenanceWindow: true,
+        },
+      });
     }),
 });

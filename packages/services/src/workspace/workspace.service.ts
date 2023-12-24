@@ -2,7 +2,11 @@ import { generateToken } from '@pedaki/common/utils/random.js';
 import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
-import type { WorkspaceData, WorkspaceStatus } from '@pedaki/models/workspace/workspace.model.js';
+import type {
+  WorkspaceData,
+  WorkspaceProperties,
+  WorkspaceStatus,
+} from '@pedaki/models/workspace/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { ProductType } from '@prisma/client';
 import { DEFAULT_LOGO_URL, DEFAULT_MAINTENANCE_WINDOW } from '~/workspace/constants.ts';
@@ -304,6 +308,32 @@ class WorkspaceService {
       data: {
         expectedStatus: status,
       },
+    });
+  }
+
+  async updateSettings({
+    workspaceId,
+    settings,
+  }: {
+    workspaceId: string;
+    settings: Partial<WorkspaceProperties>;
+  }) {
+    logger.info(`Updating workspace settings '${workspaceId}'...`);
+    if (Object.keys(settings).length === 0) {
+      throw new Error('No settings provided');
+    }
+
+    const newSettings = {
+      ...settings,
+      maintenanceWindow: undefined, // we don't want to update this field now
+      currentMaintenanceWindow: settings.maintenanceWindow,
+    };
+
+    await prisma.workspace.update({
+      where: {
+        id: workspaceId,
+      },
+      data: newSettings,
     });
   }
 
