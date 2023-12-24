@@ -21,6 +21,7 @@ export interface StackParameters<SP extends ServerProvider> {
     id: string;
     subdomain: string;
     name: string;
+    maintenanceWindow: string;
   };
   region: ServerRegion<SP>;
   server: ServerResourceInput;

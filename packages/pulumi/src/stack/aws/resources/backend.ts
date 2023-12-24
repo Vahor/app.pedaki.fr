@@ -47,7 +47,7 @@ export class Db extends pulumi.ComponentResource {
         password: args.dbPassword,
         vpcSecurityGroupIds: args.securityGroupIds,
         dbSubnetGroupName: rdsSubnetGroup.name,
-        allocatedStorage: 20,
+        allocatedStorage: 20, // TODO: make this configurable
         engine: 'mysql',
         engineVersion: '8.0',
         instanceClass: this.instanceClass(args.stackParameters.database.size),
@@ -58,7 +58,7 @@ export class Db extends pulumi.ComponentResource {
         deleteAutomatedBackups: true,
         port: args.dbPort,
         multiAz: false, // TODO: make this configurable, 2x price at least
-        maintenanceWindow: 'SAT:02:00-SAT:05:00', // TODO: add this in the docs,
+        maintenanceWindow: args.stackParameters.workspace.maintenanceWindow,
         parameterGroupName: 'rds-pedaki', // created in pedaki/infrastructure repo
         tags: {
           ...args.tags,

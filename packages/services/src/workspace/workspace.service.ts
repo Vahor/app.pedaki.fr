@@ -5,6 +5,7 @@ import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspac
 import type { WorkspaceData, WorkspaceStatus } from '@pedaki/models/workspace/workspace.model.js';
 import type { Prisma } from '@prisma/client';
 import { ProductType } from '@prisma/client';
+import { DEFAULT_LOGO_URL, DEFAULT_MAINTENANCE_WINDOW } from '~/workspace/constants.ts';
 
 const WORKSPACE_CREATION_METADATA_VERSION = 1;
 
@@ -86,6 +87,8 @@ class WorkspaceService {
       creationData: Omit<WorkspaceData, 'workspace' | 'server'> & {
         server: Omit<WorkspaceData['server'], 'environment_variables'>;
       };
+    } & {
+      defaultLanguage: string;
     };
     subscription: {
       customerId: string;
@@ -101,8 +104,14 @@ class WorkspaceService {
       data: {
         name: workspace.name,
         subdomain: workspace.subdomain,
-        billingEmail: workspace.billing.email,
-        billingName: workspace.billing.name,
+
+        contactEmail: workspace.billing.email,
+        contactName: workspace.billing.name,
+        defaultLanguage: workspace.defaultLanguage,
+        maintenanceWindow: DEFAULT_MAINTENANCE_WINDOW,
+        currentMaintenanceWindow: DEFAULT_MAINTENANCE_WINDOW,
+        logoUrl: DEFAULT_LOGO_URL,
+
         stripeCustomerId: subscription.customerId,
         expectedStatus: 'CREATING',
         members: {
