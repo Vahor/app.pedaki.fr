@@ -11,4 +11,5 @@ export const s3Client = new S3Client({
 
 export const STATIC_BUCKET_NAME = 'static.pedaki.fr';
 export const FILES_BUCKET_NAME = 'files.pedaki.fr';
+export const ENCRYPTED_BUCKET_NAME = 'encrypted.pedaki.fr';
 export const workspacePrefix = (workspaceId: string) => `w/${workspaceId}`;

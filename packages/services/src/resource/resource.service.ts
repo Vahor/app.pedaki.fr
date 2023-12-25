@@ -1,5 +1,10 @@
 import type { ListObjectsV2CommandOutput } from '@aws-sdk/client-s3';
-import { DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import {
+  CopyObjectCommand,
+  DeleteObjectsCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+} from '@aws-sdk/client-s3';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
@@ -7,7 +12,13 @@ import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
-import { FILES_BUCKET_NAME, s3Client, workspacePrefix } from '@pedaki/pulumi/utils/aws.js';
+import {
+  ENCRYPTED_BUCKET_NAME,
+  FILES_BUCKET_NAME,
+  s3Client,
+  STATIC_BUCKET_NAME,
+  workspacePrefix,
+} from '@pedaki/pulumi/utils/aws.js';
 import { TRPCError } from '@trpc/server';
 import { workspaceService } from '~/workspace/workspace.service.js';
 import { backOff } from 'exponential-backoff';
@@ -38,7 +49,8 @@ class ResourceService {
           dns,
         });
 
-        await this.#cleanFilesBucket(workspace.id);
+        await this.#cleanFilesBucket(FILES_BUCKET_NAME, workspace.id);
+        await this.#cleanFilesBucket(ENCRYPTED_BUCKET_NAME, workspace.id);
 
         const response = await prisma.workspaceResource.deleteMany({
           where: {
@@ -65,47 +77,134 @@ class ResourceService {
     );
   }
 
-  async #cleanFilesBucket(workspaceId: string) {
-    logger.info({
-      message: `Cleaning files bucket for workspace ${workspaceId}`,
-      data: {
-        workspaceId: workspaceId,
-      },
-    });
+  /**
+   * The upsertStack function is responsible for creating a new stack in the cloud provider.
+   * Or updating it if it already exists.
+   *
+   * This will also update the corresponding resource on our database.
+   *
+   * @param workspace Identify the workspace that is being created
+   *  Used to link the resources in our database and the cloud provider
+   *  The identifier is used as a prefix for the resources and as the subdomain for the DNS
+   * @param vpc Customization for the VPC (region, provider, etc.)
+   * @param server Customization for the servers (size, etc.)
+   * @param dns Customization for the DNS (subdomain, etc.)
+   * @param database Customization for the database (size, etc.)
+   */
+  async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+    const tracer = trace.getTracer('@pedaki/services');
+    return tracer.startActiveSpan(
+      `upsertStack - ${workspace.id} (${workspace.subdomain})`,
+      async span => {
+        span.setAttributes({
+          workspaceId: workspace.id,
+          provider: vpc.provider,
+        });
 
-    let count = 0;
-    let response: ListObjectsV2CommandOutput | undefined;
-    do {
-      response = await s3Client.send(
-        new ListObjectsV2Command({
-          Bucket: FILES_BUCKET_NAME,
-          Prefix: workspacePrefix(workspaceId),
-        }),
-      );
+        const provider = this.getProvider(vpc.provider);
 
-      const { Contents } = response;
-      if (!Contents || Contents.length === 0) {
-        break;
-      }
-      count += Contents.length;
-
-      const objects = Contents.map(content => ({ Key: content.Key }));
-      await s3Client.send(
-        new DeleteObjectsCommand({
-          Bucket: FILES_BUCKET_NAME,
-          Delete: {
-            Objects: objects,
+        const outputs = await provider.create({
+          workspace: {
+            name: workspace.name,
+            id: workspace.id,
+            subdomain: workspace.subdomain,
+            maintenanceWindow: workspace.maintenanceWindow,
           },
-        }),
-      );
-    } while (response.IsTruncated);
+          region: vpc.region,
+          server,
+          database,
+          dns,
+        });
 
-    logger.info({
-      message: `Cleaned files bucket for workspace ${workspaceId}`,
-      data: {
-        workspaceId: workspaceId,
-        size: count,
+        span.setAttributes(
+          flatten({
+            createdResources: outputs,
+          }),
+        );
+
+        // Upsert resource in prisma
+        await prisma.$transaction([
+          ...outputs.map(resource => {
+            const { id, type, region, provider, ...data } = resource;
+
+            const upsertData = {
+              region: region,
+              provider: provider,
+              type: type,
+              data: data,
+              subscription: {
+                connect: {
+                  id: workspace.subscriptionId,
+                },
+              },
+            };
+
+            return prisma.workspaceResource.upsert({
+              where: {
+                id: id,
+              },
+              create: {
+                id: id,
+                ...upsertData,
+              },
+              update: upsertData,
+            });
+          }),
+        ]);
+
+        logger.info({
+          message: `Created ${outputs.length} resources for workspace ${workspace.id}`,
+          data: {
+            workspaceId: workspace.id,
+            subscriptionId: workspace.subscriptionId,
+          },
+        });
+
+        await this.#uploadBaseFiles(workspace.id);
+
+        span.end();
+        return null;
       },
+    );
+  }
+
+  async #cleanFilesBucket(bucket: string, workspaceId: string) {
+    const tracer = trace.getTracer('@pedaki/services');
+    return tracer.startActiveSpan(`cleanFilesBucket - ${workspaceId} - ${bucket}`, async span => {
+      span.setAttributes({
+        workspaceId: workspaceId,
+      });
+
+      let count = 0;
+      let response: ListObjectsV2CommandOutput | undefined;
+      do {
+        response = await s3Client.send(
+          new ListObjectsV2Command({
+            Bucket: bucket,
+            Prefix: workspacePrefix(workspaceId),
+          }),
+        );
+
+        const { Contents } = response;
+        if (!Contents || Contents.length === 0) {
+          break;
+        }
+        count += Contents.length;
+
+        const objects = Contents.map(content => ({ Key: content.Key }));
+        await s3Client.send(
+          new DeleteObjectsCommand({
+            Bucket: bucket,
+            Delete: {
+              Objects: objects,
+            },
+          }),
+        );
+      } while (response.IsTruncated);
+
+      span.setAttributes({
+        size: count,
+      });
     });
   }
 
@@ -199,93 +298,53 @@ class ResourceService {
     );
   }
 
-  /**
-   * The upsertStack function is responsible for creating a new stack in the cloud provider.
-   * Or updating it if it already exists.
-   *
-   * This will also update the corresponding resource on our database.
-   *
-   * @param workspace Identify the workspace that is being created
-   *  Used to link the resources in our database and the cloud provider
-   *  The identifier is used as a prefix for the resources and as the subdomain for the DNS
-   * @param vpc Customization for the VPC (region, provider, etc.)
-   * @param server Customization for the servers (size, etc.)
-   * @param dns Customization for the DNS (subdomain, etc.)
-   * @param database Customization for the database (size, etc.)
-   */
-  async upsertStack({ workspace, vpc, server, dns, database }: WorkspaceData) {
+  async #uploadBaseFiles(workspaceId: string) {
     const tracer = trace.getTracer('@pedaki/services');
-    return tracer.startActiveSpan(
-      `upsertStack - ${workspace.id} (${workspace.subdomain})`,
-      async span => {
-        span.setAttributes({
-          workspaceId: workspace.id,
-          provider: vpc.provider,
-        });
+    return tracer.startActiveSpan(`uploadBaseFiles - ${workspaceId}`, async span => {
+      span.setAttributes({
+        workspaceId: workspaceId,
+      });
 
-        const provider = this.getProvider(vpc.provider);
+      const copy_files = ['/logo/logo-192x192.png', '/logo/favicon-32x32.png'];
 
-        const outputs = await provider.create({
-          workspace: {
-            name: workspace.name,
-            id: workspace.id,
-            subdomain: workspace.subdomain,
-            maintenanceWindow: workspace.maintenanceWindow,
-          },
-          region: vpc.region,
-          server,
-          database,
-          dns,
-        });
+      for (const file of copy_files) {
+        const newFile = `${workspacePrefix(workspaceId)}${file}`;
+        const fromFileFull = `${STATIC_BUCKET_NAME}${file}`;
+        const toFileFull = `${FILES_BUCKET_NAME}/${newFile}`;
+        try {
+          const exists = await s3Client.send(
+            new HeadObjectCommand({
+              Bucket: FILES_BUCKET_NAME,
+              Key: newFile,
+            }),
+          );
 
-        span.setAttributes(
-          flatten({
-            createdResources: outputs,
-          }),
-        );
-
-        // Upsert resource in prisma
-        await prisma.$transaction([
-          ...outputs.map(resource => {
-            const { id, type, region, provider, ...data } = resource;
-
-            const upsertData = {
-              region: region,
-              provider: provider,
-              type: type,
-              data: data,
-              subscription: {
-                connect: {
-                  id: workspace.subscriptionId,
-                },
-              },
-            };
-
-            return prisma.workspaceResource.upsert({
-              where: {
-                id: id,
-              },
-              create: {
-                id: id,
-                ...upsertData,
-              },
-              update: upsertData,
+          if (exists) {
+            logger.info({
+              message: `File ${toFileFull} already exists`,
             });
-          }),
-        ]);
+          }
+        } catch (error) {
+          if ((error as Error).name === 'NotFound') {
+            await s3Client.send(
+              new CopyObjectCommand({
+                CopySource: fromFileFull,
+                Bucket: FILES_BUCKET_NAME,
+                Key: newFile,
+                TaggingDirective: 'REPLACE',
+                Tagging: 'public=true',
+              }),
+            );
 
-        logger.info({
-          message: `Created ${outputs.length} resources for workspace ${workspace.id}`,
-          data: {
-            workspaceId: workspace.id,
-            subscriptionId: workspace.subscriptionId,
-          },
-        });
-
-        span.end();
-        return null;
-      },
-    );
+            logger.info({
+              message: `Copied file ${fromFileFull} to ${toFileFull}`,
+            });
+          } else {
+            throw error;
+          }
+        }
+      }
+    });
   }
 
   private getProvider(providerName: ServerProvider) {

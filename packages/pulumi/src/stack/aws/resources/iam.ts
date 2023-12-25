@@ -73,6 +73,9 @@ export class InstanceProfile extends pulumi.ComponentResource {
                 `arn:aws:s3:::files.pedaki.fr/${workspacePrefix(
                   args.stackParameters.workspace.id,
                 )}/*`,
+                `arn:aws:s3:::encrypted.pedaki.fr/${workspacePrefix(
+                  args.stackParameters.workspace.id,
+                )}/*`,
               ],
             },
           ],
