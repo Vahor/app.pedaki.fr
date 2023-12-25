@@ -41,6 +41,8 @@ export const CreateWorkspaceInput = z.object({
     subscriptionInterval: z.enum(['monthly', 'yearly']),
   }),
 
+  defaultLanguage: z.string().max(3),
+
   server: ServerResourceSchema.pick({ region: true, provider: true, size: true }).refine(
     value => {
       return value.region && isValidServerRegion(value.provider, value.region);

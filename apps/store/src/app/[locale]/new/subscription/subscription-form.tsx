@@ -37,7 +37,7 @@ const priceMap = {
   yearly: 16 * 12,
 };
 
-export const SubscriptionForm = () => {
+export const SubscriptionForm = ({ locale }: { locale: string }) => {
   const userData = useWorkspaceFormStore(store => store.userData);
   const subscriptionData = useWorkspaceFormStore(store => store.subscriptionData);
   const setSubscriptionData = useWorkspaceFormStore(store => store.setSubscriptionData);
@@ -69,6 +69,7 @@ export const SubscriptionForm = () => {
         name: userData.name,
         subscriptionInterval: values.yearly ? 'yearly' : 'monthly',
       },
+      defaultLanguage: locale,
 
       server: {
         provider: 'aws',

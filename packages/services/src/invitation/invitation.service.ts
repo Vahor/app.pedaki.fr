@@ -9,14 +9,14 @@ class InvitationService {
   async addPendingInvite(workspaceId: string, email: string): Promise<void> {
     const workspace = await prisma.workspace.findUnique({
       where: { id: workspaceId },
-      select: { billingEmail: true, expectedStatus: true },
+      select: { contactEmail: true, expectedStatus: true },
     });
 
     if (!workspace) {
       throw new WorkspaceNotFoundError();
     }
 
-    if (workspace.billingEmail === email) {
+    if (workspace.contactEmail === email) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
         message: 'MAIN_EMAIL',
