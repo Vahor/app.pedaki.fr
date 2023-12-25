@@ -27,7 +27,7 @@ const getAuthorizationToken = (
 
   const [workspaceId, token] = header.split(':', 2);
   if (!workspaceId || !token) {
-    throw error;
+    throw missingToken;
   }
 
   return [workspaceId, token];

@@ -9,7 +9,7 @@ const error = new TRPCError({
 
 const missingSignature = new TRPCError({
   code: 'UNAUTHORIZED',
-  message: 'MISSING_SIGNATURE',
+  message: 'MISSING_SECRET',
 });
 
 export const isInternal = t.middleware(async ({ ctx, next }) => {
