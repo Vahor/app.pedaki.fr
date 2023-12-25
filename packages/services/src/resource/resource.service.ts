@@ -125,7 +125,7 @@ class ResourceService {
           },
         );
 
-        // we expect the server to be created in the next 15 minutes
+        // we expect the server to be created in the next 5 minutes
         setTimeout(
           () => {
             void workspaceService.updateExpectedStatus({
@@ -134,7 +134,7 @@ class ResourceService {
               whereStatus: 'CREATING',
             });
           },
-          15 * 60 * 1000,
+          5 * 60 * 1000,
         );
 
         logger.info({
