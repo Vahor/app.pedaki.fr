@@ -36,7 +36,7 @@ model Workspace {
   stripeCustomerId String @map("stripe_customer_id")
 
   // These informations are cloned from the workspace
-  name                     String @db.VarChar(50)
+  name                     String @db.VarChar(30)
   contactEmail             String @map("contact_email") @db.VarChar(255) // Might be different from the stripe email
   contactName              String @map("contact_name") @db.VarChar(128) // Might be different from the stripe name
   logoUrl                  String @map("logo_url") @db.VarChar(1024) // maybe too big but we'll see

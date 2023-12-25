@@ -76,7 +76,7 @@ const MaintenanceWindowSchema = z.string().refine(
 );
 
 export const WorkspacePropertiesSchema = z.object({
-  name: z.string().max(50),
+  name: z.string().max(30),
   contactEmail: z.string().email(),
   contactName: z.string().max(128),
   logoUrl: z.string().url().max(1024),
