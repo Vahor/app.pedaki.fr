@@ -19,15 +19,15 @@ import { toast } from 'sonner';
 
 const page_mapping = [
   {
-    path: '/new',
+    path: ['/new'],
     translationKey: 'Informations',
   },
   {
-    path: '/new/subscription',
+    path: ['/new/subscription', '/new/pending'],
     translationKey: 'Abonnement',
   },
   {
-    path: '/new/invitations',
+    path: ['/new/invitations'],
     translationKey: 'Invitations',
   },
 ] as const;
@@ -50,7 +50,9 @@ const status = (index: number, activeIndex: number) => {
 const CurrentPage = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const activeIndex = page_mapping.findIndex(page => pathname.endsWith(page.path));
+  const activeIndex = page_mapping.findIndex(page =>
+    page.path.some(path => pathname.endsWith(path)),
+  );
   const currentPage = activeIndex !== -1 ? page_mapping[activeIndex]! : unknown_page;
 
   const getValidStep = useWorkspaceFormStore(store => store.getValidStep);

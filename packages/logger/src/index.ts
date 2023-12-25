@@ -7,6 +7,16 @@ import { VERSION } from './version.js';
 
 export const INSTANCE_ID = crypto.randomBytes(8).toString('hex');
 
+const transports = [
+  env.NODE_ENV === 'production'
+    ? new BaselimeTransport({
+        baselimeApiKey: env.BASELIME_API_KEY,
+        service: env.LOGGER_SERVICE_NAME,
+      })
+    : null,
+  new winston.transports.Console({ level: 'debug' }),
+].filter(Boolean) as winston.transport[];
+
 export const logger = winston.createLogger({
   level: env.LOGGER_LEVEL,
   format: winston.format.combine(
@@ -29,11 +39,5 @@ export const logger = winston.createLogger({
     winston.format.json(),
   ),
   exitOnError: false,
-  transports: [
-    new BaselimeTransport({
-      baselimeApiKey: env.BASELIME_API_KEY,
-      service: env.LOGGER_SERVICE_NAME,
-    }),
-    new winston.transports.Console({ level: 'debug' }),
-  ],
+  transports: transports,
 });
