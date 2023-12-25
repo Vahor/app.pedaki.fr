@@ -325,8 +325,7 @@ class WorkspaceService {
 
     const newSettings = {
       ...settings,
-      maintenanceWindow: undefined, // we don't want to update this field now
-      currentMaintenanceWindow: settings.maintenanceWindow,
+      currentMaintenanceWindow: undefined, // We don't want to update this field
     };
 
     await prisma.workspace.update({
