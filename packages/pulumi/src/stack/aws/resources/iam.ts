@@ -64,6 +64,12 @@ export class InstanceProfile extends pulumi.ComponentResource {
                 `arn:aws:ssm:*:*:parameter/${prefixWithSlash}${args.stackParameters.workspace.id}*`,
               ],
             },
+            {
+              Sid: 'UseFilesBucket',
+              Action: ['s3:GetObject', 's3:PutObject'],
+              Effect: 'Allow',
+              Resource: [`arn:aws:s3:::files.pedaki.fr/w/${args.stackParameters.workspace.id}/*`],
+            },
           ],
         },
         tags: args.tags,
