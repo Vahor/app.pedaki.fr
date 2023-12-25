@@ -1,3 +1,5 @@
+import type { ListObjectsV2CommandOutput } from '@aws-sdk/client-s3';
+import { DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
@@ -5,6 +7,7 @@ import type { ServerProvider } from '@pedaki/models/resource/provider.model.js';
 import type { WorkspaceData } from '@pedaki/models/workspace/workspace.model.js';
 import { ConcurrentUpdateError } from '@pedaki/pulumi/errors.js';
 import { serverFactory } from '@pedaki/pulumi/factory.js';
+import { FILES_BUCKET_NAME, s3Client, workspacePrefix } from '@pedaki/pulumi/utils/aws.js';
 import { TRPCError } from '@trpc/server';
 import { workspaceService } from '~/workspace/workspace.service.js';
 import { backOff } from 'exponential-backoff';
@@ -35,6 +38,8 @@ class ResourceService {
           dns,
         });
 
+        await this.#cleanFilesBucket(workspace.id);
+
         const response = await prisma.workspaceResource.deleteMany({
           where: {
             subscriptionId: workspace.subscriptionId,
@@ -58,6 +63,50 @@ class ResourceService {
         return null;
       },
     );
+  }
+
+  async #cleanFilesBucket(workspaceId: string) {
+    logger.info({
+      message: `Cleaning files bucket for workspace ${workspaceId}`,
+      data: {
+        workspaceId: workspaceId,
+      },
+    });
+
+    let count = 0;
+    let response: ListObjectsV2CommandOutput | undefined;
+    do {
+      response = await s3Client.send(
+        new ListObjectsV2Command({
+          Bucket: FILES_BUCKET_NAME,
+          Prefix: workspacePrefix(workspaceId),
+        }),
+      );
+
+      const { Contents } = response;
+      if (!Contents || Contents.length === 0) {
+        break;
+      }
+      count += Contents.length;
+
+      const objects = Contents.map(content => ({ Key: content.Key }));
+      await s3Client.send(
+        new DeleteObjectsCommand({
+          Bucket: FILES_BUCKET_NAME,
+          Delete: {
+            Objects: objects,
+          },
+        }),
+      );
+    } while (response.IsTruncated);
+
+    logger.info({
+      message: `Cleaned files bucket for workspace ${workspaceId}`,
+      data: {
+        workspaceId: workspaceId,
+        size: count,
+      },
+    });
   }
 
   /**

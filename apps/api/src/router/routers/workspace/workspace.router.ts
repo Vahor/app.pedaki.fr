@@ -4,6 +4,7 @@ import {
   WorkspacePropertiesSchema,
   WorkspaceStatusSchema,
 } from '@pedaki/models/workspace/workspace.model.js';
+import type { WorkspaceProperties } from '@pedaki/models/workspace/workspace.model.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { z } from 'zod';
 import { publicProcedure, router, workspaceProcedure } from '../../trpc.ts';
@@ -107,7 +108,7 @@ export const workspaceDataRouter = router({
         throw new NotYourWorkspaceError();
       }
 
-      return await prisma.workspace.findUniqueOrThrow({
+      const settings = await prisma.workspace.findUniqueOrThrow({
         where: {
           id: ctx.workspace.id,
         },
@@ -121,5 +122,10 @@ export const workspaceDataRouter = router({
           currentMaintenanceWindow: true,
         },
       });
+
+      return {
+        ...settings,
+        defaultLanguage: settings.defaultLanguage as WorkspaceProperties['defaultLanguage'],
+      };
     }),
 });

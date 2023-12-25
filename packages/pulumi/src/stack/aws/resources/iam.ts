@@ -2,6 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { prefixWithSlash } from '~/stack/constants.ts';
 import type { StackParameters } from '~/type.ts';
+import { workspacePrefix } from '~/utils/aws.ts';
 
 export interface IamArgs {
   tags: Record<string, string>;
@@ -68,7 +69,11 @@ export class InstanceProfile extends pulumi.ComponentResource {
               Sid: 'UseFilesBucket',
               Action: ['s3:GetObject', 's3:PutObject'],
               Effect: 'Allow',
-              Resource: [`arn:aws:s3:::files.pedaki.fr/w/${args.stackParameters.workspace.id}/*`],
+              Resource: [
+                `arn:aws:s3:::files.pedaki.fr/${workspacePrefix(
+                  args.stackParameters.workspace.id,
+                )}/*`,
+              ],
             },
           ],
         },
