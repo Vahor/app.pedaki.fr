@@ -95,6 +95,7 @@ export class Secrets extends pulumi.ComponentResource {
           return JSON.stringify({
             NEXT_PUBLIC_PEDAKI_NAME: name,
             NEXT_PUBLIC_PEDAKI_DOMAIN: domain,
+            NEXT_PUBLIC_PEDAKI_SUBDOMAIN: subdomain,
             NEXT_PUBLIC_PUBLIC_FILES_HOST: `https://files.pedaki.fr/${workspacePrefix(
               workspaceId,
             )}`,
@@ -105,7 +106,7 @@ export class Secrets extends pulumi.ComponentResource {
             NEXT_PUBLIC_PEDAKI_VERSION: version,
             PEDAKI_AUTH_TOKEN: authToken,
             PEDAKI_WORKSPACE_ID: workspaceId,
-            PEDAKI_WORKSPACE_SUBDOMAIN: subdomain,
+            PEDAKI_WORKSPACE_SUBDOMAIN: subdomain, // TODO: remove
           });
         }),
       args.tags,
