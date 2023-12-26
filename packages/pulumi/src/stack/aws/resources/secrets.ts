@@ -106,7 +106,6 @@ export class Secrets extends pulumi.ComponentResource {
             PEDAKI_AUTH_TOKEN: authToken,
             PEDAKI_WORKSPACE_ID: workspaceId,
             PEDAKI_WORKSPACE_SUBDOMAIN: subdomain,
-            NEXT_PUBLIC_IS_PREMIUM: 'true',
           });
         }),
       args.tags,
