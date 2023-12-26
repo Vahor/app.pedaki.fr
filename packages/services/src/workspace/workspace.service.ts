@@ -114,7 +114,6 @@ class WorkspaceService {
         defaultLanguage: workspace.defaultLanguage,
         maintenanceWindow: DEFAULT_MAINTENANCE_WINDOW,
         currentMaintenanceWindow: DEFAULT_MAINTENANCE_WINDOW,
-        logoUrl: DEFAULT_LOGO_URL,
 
         stripeCustomerId: subscription.customerId,
         expectedStatus: 'CREATING',

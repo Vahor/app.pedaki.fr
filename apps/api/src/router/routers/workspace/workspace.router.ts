@@ -116,7 +116,6 @@ export const workspaceDataRouter = router({
           name: true,
           contactEmail: true,
           contactName: true,
-          logoUrl: true,
           defaultLanguage: true,
           maintenanceWindow: true,
           currentMaintenanceWindow: true,

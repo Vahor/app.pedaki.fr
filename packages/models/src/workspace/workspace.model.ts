@@ -79,7 +79,6 @@ export const WorkspacePropertiesSchema = z.object({
   name: z.string().max(30),
   contactEmail: z.string().email(),
   contactName: z.string().max(128),
-  logoUrl: z.string().url().max(1024),
   defaultLanguage: z.enum(['en', 'fr']), // TODO: sync with the languages in the frontend
   maintenanceWindow: MaintenanceWindowSchema,
   currentMaintenanceWindow: MaintenanceWindowSchema.optional(), // TODO: add a regex to validate the format
