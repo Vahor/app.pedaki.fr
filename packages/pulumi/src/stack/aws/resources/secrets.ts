@@ -91,10 +91,10 @@ export class Secrets extends pulumi.ComponentResource {
           args.pedaki.host,
           args.pedaki.version,
         ])
-        .apply(([name, subdomain, workspaceId, authToken, domain, version]) => {
+        .apply(([name, subdomain, workspaceId, authToken, hostname, version]) => {
           return JSON.stringify({
             NEXT_PUBLIC_PEDAKI_NAME: name,
-            NEXT_PUBLIC_PEDAKI_DOMAIN: domain,
+            NEXT_PUBLIC_PEDAKI_HOSTNAME: hostname,
             NEXT_PUBLIC_PEDAKI_SUBDOMAIN: subdomain,
             NEXT_PUBLIC_PUBLIC_FILES_HOST: `https://files.pedaki.fr/${workspacePrefix(
               workspaceId,
