@@ -2,6 +2,7 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import { prefixWithSlash } from '~/stack/constants.ts';
 import type { StackParameters } from '~/type.ts';
+import { workspacePrefix } from '~/utils/aws.ts';
 
 export interface SecretsArgs {
   db: {
@@ -94,6 +95,12 @@ export class Secrets extends pulumi.ComponentResource {
           return JSON.stringify({
             NEXT_PUBLIC_PEDAKI_NAME: name,
             NEXT_PUBLIC_PEDAKI_DOMAIN: domain,
+            NEXT_PUBLIC_PUBLIC_FILES_HOST: `https://files.pedaki.fr/${workspacePrefix(
+              workspaceId,
+            )}`,
+            NEXT_PUBLIC_ENCRYPTED_FILES_HOST: `https://encrypted.pedaki.fr/${workspacePrefix(
+              workspaceId,
+            )}`,
             PEDAKI_TAG: version, // TODO: remove
             NEXT_PUBLIC_PEDAKI_VERSION: version,
             PEDAKI_AUTH_TOKEN: authToken,
