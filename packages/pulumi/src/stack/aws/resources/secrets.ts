@@ -107,6 +107,12 @@ export class Secrets extends pulumi.ComponentResource {
             PEDAKI_AUTH_TOKEN: authToken,
             PEDAKI_WORKSPACE_ID: workspaceId,
             PEDAKI_WORKSPACE_SUBDOMAIN: subdomain, // TODO: remove
+
+            FILE_STORAGE: 's3',
+            FILE_STORAGE_S3_REGION: args.stackParameters.region,
+            FILE_STORAGE_S3_PUBLIC_BUCKET: 'files.pedaki.fr',
+            FILE_STORAGE_S3_PRIVATE_BUCKET: 'encrypted.pedaki.fr',
+            FILE_STORAGE_S3_PREFIX: workspacePrefix(workspaceId),
           });
         }),
       args.tags,
