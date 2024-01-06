@@ -112,6 +112,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
       overrideSpecial: '_',
     });
     const authSecret = new key.EncryptionKey(`${params.workspace.id}-auth-secret`);
+    const apiSecret = new key.EncryptionKey(`${params.workspace.id}-api-secret`);
 
     const secret = new secrets.Secrets(
       `${params.workspace.id}-secrets`,
@@ -135,6 +136,7 @@ export class AwsServerProvider implements StackProvider<'aws'> {
           authToken: params.server.environment_variables.PEDAKI_AUTH_TOKEN,
           host: `${params.workspace.subdomain}.pedaki.fr`,
           version: VERSION,
+          apiSecret: apiSecret.key,
         },
         environment_variables: params.server.environment_variables,
         tags,

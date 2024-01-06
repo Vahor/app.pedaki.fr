@@ -22,6 +22,7 @@ export interface SecretsArgs {
     subdomain: string;
     workspaceId: string;
     authToken: string;
+    apiSecret: string;
     host: string;
     version: string;
   };
@@ -90,8 +91,9 @@ export class Secrets extends pulumi.ComponentResource {
           args.pedaki.authToken,
           args.pedaki.host,
           args.pedaki.version,
+          args.pedaki.apiSecret,
         ])
-        .apply(([name, subdomain, workspaceId, authToken, hostname, version]) => {
+        .apply(([name, subdomain, workspaceId, authToken, hostname, version, secret]) => {
           return JSON.stringify({
             NEXT_PUBLIC_PEDAKI_NAME: name,
             NEXT_PUBLIC_PEDAKI_HOSTNAME: hostname,
@@ -107,6 +109,8 @@ export class Secrets extends pulumi.ComponentResource {
             PEDAKI_AUTH_TOKEN: authToken,
             PEDAKI_WORKSPACE_ID: workspaceId,
             PEDAKI_WORKSPACE_SUBDOMAIN: subdomain, // TODO: remove
+
+            API_INTERNAL_SECRET: secret,
 
             FILE_STORAGE: 's3',
             FILE_STORAGE_S3_REGION: args.stackParameters.region,
