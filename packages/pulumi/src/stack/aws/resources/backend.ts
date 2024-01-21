@@ -85,7 +85,7 @@ export class Db extends pulumi.ComponentResource {
   private instanceClass = (size: StackParameters<'aws'>['database']['size']) => {
     switch (size) {
       case 'small':
-        return 'db.t2.micro';
+        return 'db.t4g.micro';
     }
   };
 }

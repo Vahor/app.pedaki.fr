@@ -48,7 +48,7 @@ export class Secrets extends pulumi.ComponentResource {
         .all([args.db.host, args.db.name, args.db.user, args.db.password, args.db.port])
         .apply(([host, name, user, password, port]) => {
           return JSON.stringify({
-            DATABASE_URL: `mysql://${user}:${password}@${host}:${port}/${name}?sslcert\=/app/certs/rds-combined-ca-bundle.pem`,
+            DATABASE_URL: `postgresql://${user}:${password}@${host}:${port}/${name}?sslcert\=/app/certs/rds-combined-ca-bundle.pem`,
           });
         }),
       args.tags,
