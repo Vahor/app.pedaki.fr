@@ -48,11 +48,15 @@ export class Db extends pulumi.ComponentResource {
         vpcSecurityGroupIds: args.securityGroupIds,
         dbSubnetGroupName: rdsSubnetGroup.name,
         allocatedStorage: 20, // TODO: make this configurable
-        engine: 'mysql',
-        engineVersion: '8.0',
+        maxAllocatedStorage: 200, // TODO: make this configurable
+        // monitoringInterval: 60, // TODO: make this configurable
+        // monitoringRoleArn: args.userArn,
+        engine: 'postgres',
+        engineVersion: '16.1',
         instanceClass: this.instanceClass(args.stackParameters.database.size),
         storageType: 'gp3',
         skipFinalSnapshot: true,
+        autoMinorVersionUpgrade: true,
         publiclyAccessible: false,
         copyTagsToSnapshot: true,
         deleteAutomatedBackups: true,

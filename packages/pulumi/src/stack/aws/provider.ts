@@ -75,6 +75,11 @@ export class AwsServerProvider implements StackProvider<'aws'> {
   private program = (params: StackParameters<'aws'>) => async (): Promise<StackOutputsLike> => {
     const tags = this.tags(params);
 
+    const user = new iam.InstanceProfile(`${params.workspace.id}-user`, {
+      tags,
+      stackParameters: params,
+    });
+
     // Create vpc for the whole stack
     const vpc = new network.Vpc(`${params.workspace.id}-net`, {
       stackParameters: params,
@@ -144,17 +149,6 @@ export class AwsServerProvider implements StackProvider<'aws'> {
       },
       {
         dependsOn: [db, encryptionKey, passwordSalt, authSecret],
-      },
-    );
-
-    const user = new iam.InstanceProfile(
-      `${params.workspace.id}-user`,
-      {
-        tags,
-        stackParameters: params,
-      },
-      {
-        dependsOn: [secret],
       },
     );
 
