@@ -26,12 +26,12 @@
     "@pedaki/logger": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
     "@pedaki/services": "workspace:*",
-    "@prisma/instrumentation": "^5.7.1",
-    "@t3-oss/env-core": "^0.7.1",
+    "@prisma/instrumentation": "^5.8.1",
+    "@t3-oss/env-core": "^0.7.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^18.19.3",
+    "@types/node": "^18.19.8",
     "tsx": "^4.7.0"
   },
   "engines": {

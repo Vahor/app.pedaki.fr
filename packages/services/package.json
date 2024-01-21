@@ -20,24 +20,24 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.478.0",
+    "@aws-sdk/client-s3": "^3.496.0",
     "@opentelemetry/api": "1.7.0",
     "@pedaki/common": "^0.4.2",
     "@pedaki/db": "workspace:*",
     "@pedaki/logger": "workspace:*",
     "@pedaki/models": "workspace:*",
     "@pedaki/pulumi": "workspace:*",
-    "@t3-oss/env-core": "^0.7.1",
+    "@t3-oss/env-core": "^0.7.3",
     "exponential-backoff": "^3.1.1",
     "flat": "^6.0.1",
     "jsonwebtoken": "^9.0.2",
-    "stripe": "^14.10.0",
+    "stripe": "^14.13.0",
     "throat": "^6.0.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@prisma/client": "^5.7.1",
-    "@trpc/server": "10.44.1",
+    "@prisma/client": "^5.8.1",
+    "@trpc/server": "10.45.0",
     "@types/jsonwebtoken": "^9.0.5"
   },
   "engines": {
