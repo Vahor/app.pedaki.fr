@@ -239,8 +239,9 @@ export const stripeRouter = router({
     .output(
       z.object({
         createdAt: z.date(),
-        cancelAt: z.date().nullable(),
         canceledAt: z.date().nullable(),
+        cancelAt: z.date().nullable(),
+        currentPeriodEnd: z.date().nullable(),
       }),
     )
     .meta({ openapi: { method: 'GET', path: '/stripe/{subdomain}/subscription/latest' } })
@@ -267,6 +268,7 @@ export const stripeRouter = router({
           createdAt: true,
           cancelAt: true,
           canceledAt: true,
+          currentPeriodEnd: true,
         },
       });
 
@@ -276,8 +278,9 @@ export const stripeRouter = router({
 
       return {
         createdAt: data.createdAt,
-        cancelAt: data.cancelAt,
         canceledAt: data.canceledAt,
+        cancelAt: data.cancelAt,
+        currentPeriodEnd: data.currentPeriodEnd,
       };
     }),
 
