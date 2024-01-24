@@ -2,6 +2,7 @@ import { prisma } from '@pedaki/db';
 import { logger } from '@pedaki/logger';
 import { NotYourWorkspaceError } from '@pedaki/models/errors/NotYourWorkspaceError.js';
 import { PendingNotFoundError } from '@pedaki/models/errors/PendingNotFoundError.js';
+import { SubscriptionNotFoundError } from '@pedaki/models/errors/SubscriptionNotFoundError.js';
 import type { CreateWorkspaceInput } from '@pedaki/models/workspace/api-workspace.model.js';
 import { pendingWorkspaceService } from '@pedaki/services/pending-workspace/pending-workspace.service.js';
 import { resourceService } from '@pedaki/services/resource/resource.service.js';
@@ -231,6 +232,55 @@ export const stripeRouter = router({
       }
 
       await stripeService.expireCheckoutSession({ sessionId: pending.stripePaymentId });
+    }),
+
+  getLatestSubscriptionData: workspaceProcedure
+    .input(z.object({ subdomain: z.string(), type: z.string() }))
+    .output(
+      z.object({
+        createdAt: z.date(),
+        canceledAt: z.date().nullable(),
+        cancelAt: z.date().nullable(),
+        currentPeriodEnd: z.date().nullable(),
+      }),
+    )
+    .meta({ openapi: { method: 'GET', path: '/stripe/{subdomain}/subscription/{type}/latest' } })
+    .query(async ({ input, ctx }) => {
+      // TODO: type is currently always considered as 'HOSTING' (ProductType)
+
+      if (ctx.workspace.subdomain !== input.subdomain) {
+        throw new NotYourWorkspaceError();
+      }
+
+      const { subscriptionId } =
+        (await workspaceService.getLatestSubscription(input.subdomain)) ?? {};
+
+      if (!subscriptionId) {
+        throw new SubscriptionNotFoundError();
+      }
+
+      const data = await prisma.workspaceSubscription.findUnique({
+        where: {
+          id: subscriptionId,
+        },
+        select: {
+          createdAt: true,
+          cancelAt: true,
+          canceledAt: true,
+          currentPeriodEnd: true,
+        },
+      });
+
+      if (!data) {
+        throw new SubscriptionNotFoundError();
+      }
+
+      return {
+        createdAt: data.createdAt,
+        canceledAt: data.canceledAt,
+        cancelAt: data.cancelAt,
+        currentPeriodEnd: data.currentPeriodEnd,
+      };
     }),
 
   getCustomerPortalUrl: workspaceProcedure
