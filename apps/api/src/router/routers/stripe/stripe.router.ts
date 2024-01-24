@@ -235,7 +235,7 @@ export const stripeRouter = router({
     }),
 
   getLatestSubscriptionData: workspaceProcedure
-    .input(z.object({ subdomain: z.string() }))
+    .input(z.object({ subdomain: z.string(), type: z.string() }))
     .output(
       z.object({
         createdAt: z.date(),
@@ -244,10 +244,9 @@ export const stripeRouter = router({
         currentPeriodEnd: z.date().nullable(),
       }),
     )
-    .meta({ openapi: { method: 'GET', path: '/stripe/{subdomain}/subscription/latest' } })
+    .meta({ openapi: { method: 'GET', path: '/stripe/{subdomain}/subscription/{type}/latest' } })
     .query(async ({ input, ctx }) => {
-      // TODO: currently we can only update the status of our own workspace
-      //  we might want to update this in the future to allow admins to generate a portal url for any workspace
+      // TODO: type is currently always considered as 'HOSTING' (ProductType)
 
       if (ctx.workspace.subdomain !== input.subdomain) {
         throw new NotYourWorkspaceError();
