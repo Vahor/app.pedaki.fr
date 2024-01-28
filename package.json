@@ -32,12 +32,12 @@
     "@pedaki/prettier-config": "^0.4.2",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^18.19.8",
-    "@vitest/coverage-v8": "^1.2.1",
+    "@types/node": "^18.19.10",
+    "@vitest/coverage-v8": "^1.2.2",
     "cpy": "^11.0.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "latest",
-    "esbuild": "^0.19.11",
+    "esbuild": "^0.20.0",
     "esbuild-plugin-file-path-extensions": "^2.0.0",
     "execa": "^8.0.1",
     "expect-type": "^0.17.3",
@@ -48,7 +48,7 @@
     "tsup": "^8.0.1",
     "turbo": "^1.11.3",
     "typescript": "^5.3.3",
-    "vitest": "^1.2.1"
+    "vitest": "^1.2.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
