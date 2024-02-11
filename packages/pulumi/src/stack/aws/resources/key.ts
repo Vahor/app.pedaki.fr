@@ -7,7 +7,9 @@ export class EncryptionKey extends pulumi.ComponentResource {
   constructor(name: string, args?: {}, opts?: pulumi.ComponentResourceOptions) {
     super('custom:resource:aes-gcm', name, args, opts);
 
-    this.key = generateKey();
+    do {
+      this.key = generateKey();
+    } while (this.key.length !== 32);
 
     this.registerOutputs({});
   }
