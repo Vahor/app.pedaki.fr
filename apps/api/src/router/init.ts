@@ -11,7 +11,8 @@ export const t = initTRPC
   .create({
     transformer: superjson,
     errorFormatter({ error, shape }) {
-      logger.error({ error, shape });
+      logger.error('TRPC error', error);
+      logger.error('TRPC shape', shape);
       if (error.code === 'INTERNAL_SERVER_ERROR' && env.NODE_ENV === 'production') {
         return { ...shape, message: 'Internal server error' };
       }

@@ -6,8 +6,10 @@ import { products } from '@pedaki/services/stripe/products.js';
 import { stripeService } from '@pedaki/services/stripe/stripe.service.js';
 import { workspaceService } from '@pedaki/services/workspace/workspace.service.js';
 import { ProductType } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { publicProcedure, router } from '../../trpc.ts';
+
 
 export const workspaceReservationRouter = router({
   create: publicProcedure
@@ -19,6 +21,16 @@ export const workspaceReservationRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
+
+      // TODO: I don't want to be poor
+      const count = await prisma.workspace.count();
+      if (count >= 2) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'TOO_MANY_WORKSPACES',
+        });
+      }
+
       const pendingId = await pendingWorkspaceService.create(input);
       const payment = await stripeService.createPayment({
         product: {
