@@ -25,7 +25,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "husky": "^8.0.3"
+    "husky": "^9.0.10"
   },
   "devDependencies": {
     "@pedaki/eslint-config": "^0.4.2",
@@ -42,11 +42,11 @@
     "execa": "^8.0.1",
     "expect-type": "^0.17.3",
     "fs-extra": "^11.2.0",
-    "lint-staged": "^15.2.0",
+    "lint-staged": "^15.2.2",
     "rimraf": "latest",
     "tsconfig-replace-paths": "^0.0.14",
-    "tsup": "^8.0.1",
-    "turbo": "^1.11.3",
+    "tsup": "^8.0.2",
+    "turbo": "^1.12.3",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2"
   },

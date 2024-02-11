@@ -69,7 +69,7 @@ export class Db extends pulumi.ComponentResource {
           Name: rdsName,
         },
       },
-      { parent: this },
+      { parent: this, dependsOn: [rdsSubnetGroup] },
     );
 
     this.host = db.address;

@@ -26,7 +26,7 @@ export class PulumiUtils {
 
   public static async createOrSelectStack(name: string, program: PulumiFn) {
     const finalName = stackName(name);
-    logger.info(`Creating or selecting stack ${finalName}...`)
+    logger.info(`Creating or selecting stack ${finalName}...`);
     return await LocalWorkspace.createOrSelectStack(
       this.prepareInlineProgram(finalName, program),
       this.prepareStackOptions(program),
