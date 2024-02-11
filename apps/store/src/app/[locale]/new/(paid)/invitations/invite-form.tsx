@@ -95,7 +95,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
               <FormItem className="w-full">
                 <FormLabel>
                   <span>Inviter un membre</span>
-                  <FormSubLabel>(Optionel)</FormSubLabel>
+                  <FormSubLabel>(Optionnel)</FormSubLabel>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -115,7 +115,7 @@ export function InviteForm({ rawToken }: InviteFormProps) {
             )}
           />
           <Button
-            disabled={isSubmitting || !isValid}
+            disabled={isSubmitting || !isValid || createInvitationMutation.isLoading}
             className="w-full md:mt-6 md:w-[8ch]"
             type="submit"
           >

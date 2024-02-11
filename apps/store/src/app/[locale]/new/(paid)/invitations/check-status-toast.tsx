@@ -63,7 +63,7 @@ export const CheckStatusToast: React.FC<CheckStatusBannerProps> = ({ subdomain, 
   useEffect(() => {
     toast.loading('Création du workspace en cours', {
       id: 'workspace-creation',
-      description: 'Cela prend environ 6 minutes',
+      description: 'Cela prend environ 10 minutes',
       duration: Infinity,
     });
   }, []);

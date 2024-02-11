@@ -65,7 +65,7 @@ export function InvitedEmails({ initialEmails, token }: Readonly<InvitedEmailsPr
                 </AvatarFallback>
               </Avatar>
               <span
-                className="max-w-[40ch] overflow-hidden text-ellipsis text-p-sm text-sub"
+                className="max-w-[38ch] overflow-hidden text-ellipsis text-p-sm text-sub"
                 title={info.email}
               >
                 {info.email}
