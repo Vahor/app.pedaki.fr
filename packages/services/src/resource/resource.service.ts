@@ -101,7 +101,9 @@ class ResourceService {
           provider: vpc.provider,
         });
 
+        logger.info(`Creating stack for workspace ${workspace.id}...`);
         const provider = this.getProvider(vpc.provider);
+        logger.info(`Provider: ${vpc.provider}`);
 
         const outputs = await provider.create({
           workspace: {
@@ -228,6 +230,8 @@ class ResourceService {
             subscriptionId: workspace.subscriptionId,
           },
         });
+
+        logger.info(`Existing resource count: ${existingResource} for workspace ${workspace.id}`);
 
         if (existingResource > 0) {
           throw new TRPCError({
