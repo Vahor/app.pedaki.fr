@@ -58,7 +58,7 @@ export function InvitedEmails({ initialEmails, token }: Readonly<InvitedEmailsPr
       <ul className="space-y-2">
         {emails.map(info => (
           <li key={info.email}>
-            <Card className="flex items-center gap-2 bg-white p-3">
+            <Card className="flex items-center gap-2 bg-white p-3 flex-row">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="text-sm select-none bg-surface font-medium text-white">
                   {twoLettersFromEmail(info.email)}
