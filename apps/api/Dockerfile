@@ -87,10 +87,10 @@ ENV LOGGER_LEVEL=$LOGGER_LEVEL
 RUN curl -fsSL https://get.pulumi.com | sh
 ENV PATH="/root/.pulumi/bin:$PATH"
 
-#RUN pulumi org set-default pedaki
-#RUN pulumi plugin install resource aws
-#RUN pulumi plugin install resource random
-#RUN pulumi plugin install resource cloudflare
+RUN pulumi org set-default pedaki
+RUN pulumi plugin install resource aws
+RUN pulumi plugin install resource random
+RUN pulumi plugin install resource cloudflare
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./dist
