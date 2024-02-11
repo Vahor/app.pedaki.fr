@@ -27,7 +27,7 @@ import { z } from 'zod';
 
 const Schema = z.object({
   name: z.string().nonempty({ message: 'Vous devez renseigner un nom' }),
-  subdomain: z.string().nonempty({ message: 'Vous devez renseigner un nom de domaine' }),
+  subdomain: z.string().min(3).nonempty({ message: 'Vous devez renseigner un nom de domaine' }),
   yearly: z.boolean(),
 });
 export type SubscriptionFormValues = z.infer<typeof Schema>;
