@@ -209,7 +209,7 @@ export const SubscriptionForm = ({ locale }: { locale: string }) => {
             <Button
               variant="filled-primary"
               type="submit"
-              disabled={isSubmitting || !isValid}
+              disabled={isSubmitting || !isValid || createReservationMutation.isLoading}
               className="w-full"
               suppressHydrationWarning
             >
