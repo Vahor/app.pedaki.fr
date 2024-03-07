@@ -20,10 +20,10 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/api": "^1.7.0",
     "@baselime/winston-transport": "^0.1.2",
     "@t3-oss/env-core": "^0.9.2",
-    "winston": "^3.12.0",
+    "winston": "^3.11.0",
     "zod": "^3.22.4"
   },
   "engines": {
