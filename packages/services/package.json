@@ -36,7 +36,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@prisma/client": "^5.9.1",
+    "@prisma/client": "^5.10.2",
     "@trpc/server": "10.45.1",
     "@types/jsonwebtoken": "^9.0.5"
   },
