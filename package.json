@@ -28,8 +28,8 @@
     "husky": "^9.0.11"
   },
   "devDependencies": {
-    "@pedaki/eslint-config": "^0.4.2",
-    "@pedaki/prettier-config": "^0.4.2",
+    "@pedaki/eslint-config": "^0.5.2-beta.11",
+    "@pedaki/prettier-config": "^0.5.2-beta.11",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^18.19.22",

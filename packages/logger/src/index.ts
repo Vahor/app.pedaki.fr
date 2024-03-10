@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { BaselimeTransport } from '@baselime/winston-transport';
+// import { BaselimeTransport } from '@baselime/winston-transport';
 import * as api from '@opentelemetry/api';
 import { env } from '~/env.ts';
 import winston from 'winston';
@@ -8,12 +8,12 @@ import { VERSION } from './version.js';
 export const INSTANCE_ID = crypto.randomBytes(8).toString('hex');
 
 const transports = [
-  env.NODE_ENV === 'production'
-    ? new BaselimeTransport({
-        baselimeApiKey: env.BASELIME_API_KEY,
-        service: env.LOGGER_SERVICE_NAME,
-      })
-    : null,
+  // env.NODE_ENV === 'production'
+  //   ? new BaselimeTransport({
+  //       baselimeApiKey: env.BASELIME_API_KEY,
+  //       service: env.LOGGER_SERVICE_NAME,
+  //     })
+  //   : null,
   new winston.transports.Console({ level: 'debug' }),
 ].filter(Boolean) as winston.transport[];
 

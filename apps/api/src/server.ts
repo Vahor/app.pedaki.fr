@@ -1,4 +1,4 @@
-import { BetterHttpInstrumentation, StripePlugin } from '@baselime/node-opentelemetry';
+// import { BetterHttpInstrumentation, StripePlugin } from '@baselime/node-opentelemetry';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import { FastifyInstrumentation } from '@opentelemetry/instrumentation-fastify';
@@ -99,9 +99,9 @@ export function createServer() {
       logger.info(`Will use docker image: ${DOCKER_IMAGE}`);
 
       provider = initTelemetry([
-        new BetterHttpInstrumentation({
-          plugins: [new StripePlugin()],
-        }),
+        // new BetterHttpInstrumentation({
+        //   plugins: [new StripePlugin()],
+        // }),
         new FastifyInstrumentation(),
         new PrismaInstrumentation(),
       ]);
