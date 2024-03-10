@@ -98,9 +98,10 @@ const CurrentPage = () => {
           <DropdownMenuContent align="start" side="top">
             {page_mapping.map((page, index) => {
               const s = status(index, activeIndex);
+              const key = page.path.join();
               return (
                 <DropdownMenuLabel
-                  key={page.path}
+                  key={key}
                   className="flex h-8 items-center justify-start gap-2 font-normal"
                 >
                   <div className="flex h-5 w-3 items-center text-sub">
