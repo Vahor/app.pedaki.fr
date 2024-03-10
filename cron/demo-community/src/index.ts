@@ -159,5 +159,7 @@ void main()
   .finally(() => void prisma.$disconnect())
   .then(async () => {
     logger.info("Exiting cron 'cron-demo-community'");
-    await provider.shutdown();
+    if (provider) {
+      await provider.shutdown();
+    }
   });
