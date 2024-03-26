@@ -30,21 +30,6 @@ COPY scripts ./scripts
 ENV NODE_ENV=production
 RUN pnpm build --filter cron-demo-community
 
-WORKDIR /app/packages/db
-RUN pnpm prisma generate
-WORKDIR /app
-
-# Copy node_modules/.prisma to a tmp folder
-RUN mkdir -p tmp
-RUN cp -r node_modules/.prisma tmp/.prisma
-
-# Delete node_modules and reinstall only production dependencies
-RUN npx rimraf --glob ./**/node_modules
-RUN --mount=type=cache,id=s/abdf597f-fa85-4c66-a7e0-b512707bd711-/pnpm,target=/pnpm/store pnpm install --frozen-lockfile --production --filter cron-demo-community
-
-# Copy back node_modules/.prisma
-RUN cp -r tmp/.prisma node_modules
-
 FROM base AS runner
 WORKDIR /app
 
