@@ -30,6 +30,10 @@ COPY scripts ./scripts
 ENV NODE_ENV=production
 RUN pnpm build --filter cron-demo-community
 
+WORKDIR /app/packages/db
+RUN pnpm prisma generate
+WORKDIR /app
+
 # Copy node_modules/.prisma to a tmp folder
 RUN mkdir -p tmp
 RUN cp -r node_modules/.prisma tmp/.prisma

@@ -20,9 +20,9 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.529.1",
+    "@aws-sdk/client-s3": "^3.540.0",
     "@opentelemetry/api": "1.8.0",
-    "@pedaki/common": "^0.5.2-beta.11",
+    "@pedaki/common": "0.5.2-beta.11",
     "@pedaki/db": "workspace:*",
     "@pedaki/logger": "workspace:*",
     "@pedaki/models": "workspace:*",
@@ -31,13 +31,13 @@
     "exponential-backoff": "^3.1.1",
     "flat": "^6.0.1",
     "jsonwebtoken": "^9.0.2",
-    "stripe": "^14.20.0",
+    "stripe": "^14.22.0",
     "throat": "^6.0.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@prisma/client": "^5.10.2",
-    "@trpc/server": "10.45.1",
+    "@prisma/client": "^5.11.0",
+    "@trpc/server": "10.45.2",
     "@types/jsonwebtoken": "^9.0.6"
   },
   "engines": {
