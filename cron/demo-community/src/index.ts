@@ -155,7 +155,6 @@ const main = async () => {
   profiler.done({ message: "Finished cron 'cron-demo-community'" });
 };
 void main()
-  .catch(logger.error)
   .finally(() => void prisma.$disconnect())
   .then(async () => {
     logger.info("Exiting cron 'cron-demo-community'");
