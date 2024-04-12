@@ -29,6 +29,7 @@ COPY scripts ./scripts
 
 ENV NODE_ENV=production
 RUN pnpm build --filter cron-demo-community
+RUN cd packages/db && pnpm prisma generate
 
 FROM base AS runner
 WORKDIR /app
