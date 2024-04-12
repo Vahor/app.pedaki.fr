@@ -33,7 +33,7 @@
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^18.19.26",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^1.5.0",
     "cpy": "^11.0.1",
     "cross-env": "^7.0.3",
     "dotenv-cli": "latest",
@@ -46,9 +46,9 @@
     "rimraf": "latest",
     "tsconfig-replace-paths": "^0.0.14",
     "tsup": "^8.0.2",
-    "turbo": "^1.13.0",
+    "turbo": "^1.13.2",
     "typescript": "~5.3.3",
-    "vitest": "^1.4.0"
+    "vitest": "^1.5.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

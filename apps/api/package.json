@@ -23,13 +23,13 @@
   "author": "Nathan David <me@vahor.fr>",
   "license": "MIT",
   "dependencies": {
-    "@auth/prisma-adapter": "^1.5.1",
-    "@baselime/node-opentelemetry": "^0.4.8",
+    "@auth/prisma-adapter": "^1.6.0",
+    "@baselime/node-opentelemetry": "^0.5.8",
     "@fastify/cookie": "^9.3.1",
     "@fastify/cors": "^9.0.1",
     "@opentelemetry/api": "1.8.0",
-    "@opentelemetry/instrumentation-fastify": "^0.34.0",
-    "@opentelemetry/sdk-trace-node": "^1.22.0",
+    "@opentelemetry/instrumentation-fastify": "^0.35.0",
+    "@opentelemetry/sdk-trace-node": "^1.23.0",
     "@pedaki/common": "0.5.2-beta.11",
     "@pedaki/db": "workspace:*",
     "@pedaki/logger": "workspace:*",
@@ -51,7 +51,7 @@
     "@types/node": "^18.19.26",
     "esbuild-plugin-tsconfig-paths": "^1.0.1",
     "preview-email": "^3.0.19",
-    "tsx": "^4.7.1"
+    "tsx": "^4.7.2"
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0",

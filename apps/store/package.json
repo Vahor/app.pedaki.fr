@@ -23,7 +23,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^1.5.1",
+    "@auth/prisma-adapter": "^1.6.0",
     "@hookform/resolvers": "^3.3.4",
     "@pedaki/api": "workspace:*",
     "@pedaki/common": "0.5.2-beta.11",
@@ -40,7 +40,7 @@
     "cookies-next": "^4.1.1",
     "dayjs": "^1.11.10",
     "million": "^3.0.6",
-    "next": "14.1.4",
+    "next": "14.2.0",
     "next-international": "^1.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@pedaki/eslint-config": "0.5.2-beta.11",
     "@pedaki/prettier-config": "0.5.2-beta.11",
-    "@types/react": "^18.2.71",
+    "@types/react": "^18.2.77",
     "@types/sanitize-html": "^2.11.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38"
