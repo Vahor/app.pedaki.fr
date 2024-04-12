@@ -44,7 +44,7 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/db/dist ./node_modules/@pedaki/db
 COPY --from=builder /app/packages/logger/dist ./node_modules/@pedaki/logger
-COPY --from=builder /app/packages/logger/package.json ./node_modules/@pedaki/logger
+COPY --from=builder /app/packages/logger/package.json ./node_modules/@pedaki/package.json
 COPY --from=builder /app/cron/clear-old-data/dist ./dist
 
 ## Load public env vars
