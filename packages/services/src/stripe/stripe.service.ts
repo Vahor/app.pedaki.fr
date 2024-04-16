@@ -14,7 +14,7 @@ class StripeService {
 
   constructor() {
     this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
+      apiVersion: '2024-04-10',
       typescript: true,
     });
   }
@@ -71,9 +71,9 @@ class StripeService {
       invoice_creation: isSubscription
         ? undefined
         : {
-            // Invoices are automatically created for subscription
-            enabled: true,
-          },
+          // Invoices are automatically created for subscription
+          enabled: true,
+        },
 
       success_url: `${env.STORE_URL}/new/pending?token=${this.generatePendingJWT(
         {
@@ -87,11 +87,11 @@ class StripeService {
       payment_intent_data: isSubscription
         ? undefined
         : {
-            // TODO: parametrize
-            description: `Workspace creation for ${metadata.workspaceName}`,
-            receipt_email: customer.email,
-            statement_descriptor: `pedaki`,
-          },
+          // TODO: parametrize
+          description: `Workspace creation for ${metadata.workspaceName}`,
+          receipt_email: customer.email,
+          statement_descriptor: `pedaki`,
+        },
 
       metadata: metadata,
       custom_text: {
