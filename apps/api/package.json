@@ -44,11 +44,11 @@
 		"next-auth": "^4.24.7",
 		"superjson": "^2.2.1",
 		"trpc-openapi": "^1.2.0",
-		"zod": "^3.22.4"
+		"zod": "^3.22.5"
 	},
 	"devDependencies": {
 		"@total-typescript/ts-reset": "^0.5.1",
-		"@types/node": "^18.19.26",
+		"@types/node": "^18.19.31",
 		"esbuild-plugin-tsconfig-paths": "^1.0.1",
 		"preview-email": "^3.0.19",
 		"tsx": "^4.7.2"

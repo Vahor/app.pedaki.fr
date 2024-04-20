@@ -31,7 +31,7 @@
     "@biomejs/biome": "^1.7.0",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^18.19.26",
+    "@types/node": "^18.19.31",
     "@vitest/coverage-v8": "^1.5.0",
     "cpy": "^11.0.1",
     "cross-env": "^7.0.3",
