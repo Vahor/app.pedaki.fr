@@ -70,11 +70,11 @@ let provider: BasicTracerProvider;
 const main = async () => {
 	const profiler = logger.startTimer();
 
-	logger.info(
-		"Starting cron 'cron-demo-community'",
-		`This will use the ${DOCKER_IMAGE} docker image`,
-	);
+	logger.info("Starting cron 'cron-demo-community'");
+	logger.info(`This will use the ${DOCKER_IMAGE} docker image`);
+	logger.info("Connecting to database");
 	await prisma.$connect();
+	logger.info("Connected to database");
 
 	provider = initTelemetry([new PrismaInstrumentation()]);
 

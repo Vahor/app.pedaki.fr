@@ -31,7 +31,7 @@
     "@biomejs/biome": "^1.7.0",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^18.19.31",
+    "@types/node": "^20.12.7",
     "@vitest/coverage-v8": "^1.5.0",
     "cpy": "^11.0.1",
     "cross-env": "^7.0.3",
@@ -46,13 +46,14 @@
     "tsconfig-replace-paths": "^0.0.14",
     "tsup": "^8.0.2",
     "turbo": "^1.13.2",
-    "typescript": "~5.3.3",
+    "typescript": "~5.4.5",
     "vitest": "^1.5.0"
   },
   "engines": {
-    "node": ">=18.17.0 <19.0.0",
-    "pnpm": ">=8.0.0",
+    "node": "20.x",
+    "pnpm": ">=9.0.0",
     "yarn": "use-pnpm",
     "npm": "use-pnpm"
-  }
+  },
+  "packageManager": "pnpm@9.0.4"
 }

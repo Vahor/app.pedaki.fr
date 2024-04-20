@@ -14,7 +14,7 @@ import {
 	SEMRESATTRS_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
 import { env } from "~/env.ts";
-import { INSTANCE_ID } from "~/index.ts";
+import { INSTANCE_ID, logger } from "~/index.ts";
 import { VERSION } from "~/version.ts";
 
 export const initTelemetry = (
@@ -52,5 +52,8 @@ export const initTelemetry = (
 	registerInstrumentations({
 		instrumentations: instrumentations,
 	});
+
+	logger.info("Telemetry initialized");
+
 	return provider;
 };

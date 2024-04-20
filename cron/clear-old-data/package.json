@@ -26,12 +26,12 @@
 		"zod": "^3.22.5"
 	},
 	"devDependencies": {
-		"@types/node": "^18.19.31",
+		"@types/node": "^20.12.7",
 		"tsx": "^4.7.2"
 	},
 	"engines": {
-		"node": ">=18.0.0 <19.0.0",
-		"pnpm": ">=8.0.0",
+		"node": "20.x",
+		"pnpm": ">=9.0.0",
 		"yarn": "use-pnpm",
 		"npm": "use-pnpm"
 	}
