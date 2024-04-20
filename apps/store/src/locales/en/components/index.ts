@@ -1,7 +1,7 @@
-import footer from './footer';
-import notFound from './not-found';
+import footer from "./footer";
+import notFound from "./not-found";
 
 export default {
-  footer,
-  notFound,
+	footer,
+	notFound,
 } as const;

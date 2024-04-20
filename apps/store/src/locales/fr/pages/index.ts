@@ -1,5 +1,5 @@
-import tNew from './new';
+import tNew from "./new";
 
 export default {
-  new: tNew,
+	new: tNew,
 } as const;

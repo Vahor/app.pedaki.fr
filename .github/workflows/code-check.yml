@@ -50,11 +50,11 @@ jobs:
 #      - name: Build www
 #        run: pnpm build --filter www
 
-      - name: Run eslint (packages)
+      - name: Run lint (packages)
         if: always()
         run: pnpm lint --filter="./packages/*"
 
-      - name: Run prettier
+      - name: Run format check
         if: always()
         run: pnpm format:check
 

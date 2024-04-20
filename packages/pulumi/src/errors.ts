@@ -1,1 +1,1 @@
-export const ConcurrentUpdateError = 'ConcurrentUpdateError';
+export const ConcurrentUpdateError = "ConcurrentUpdateError";

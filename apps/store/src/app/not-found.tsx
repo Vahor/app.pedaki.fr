@@ -1,5 +1,5 @@
-import NotFoundRedirectComponent from '~/components/NotFoundRedirect';
+import NotFoundRedirectComponent from "~/components/NotFoundRedirect";
 
 export default function NotFound() {
-  return <NotFoundRedirectComponent />;
+	return <NotFoundRedirectComponent />;
 }

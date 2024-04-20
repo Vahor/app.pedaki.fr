@@ -1,5 +1,5 @@
 export default {
-  language: {
-    change: 'Change language',
-  },
+	language: {
+		change: "Change language",
+	},
 } as const;

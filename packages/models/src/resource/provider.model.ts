@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const ServerProviders = ['aws', 'test'] as const;
-export const DnsProviders = ['cloudflare'] as const;
+export const ServerProviders = ["aws", "test"] as const;
+export const DnsProviders = ["cloudflare"] as const;
 export const ServerProviderModel = z.enum(ServerProviders);
 export const DnsProviderModel = z.enum(DnsProviders);
 export const ProviderModel = z.union([ServerProviderModel, DnsProviderModel]);

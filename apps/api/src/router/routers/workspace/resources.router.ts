@@ -1,3 +1,3 @@
-import { router } from '../../trpc.ts';
+import { router } from "../../trpc.ts";
 
 export const workspaceResourcesRouter = router({});

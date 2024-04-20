@@ -1,1 +1,1 @@
-export const pageBaseStyle = 'pb-8';
+export const pageBaseStyle = "pb-8";

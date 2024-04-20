@@ -1,40 +1,38 @@
 {
-  "name": "@pedaki/cron-clear-old-data",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "dev": "tsx watch src/index",
-    "build": "tsup --clean",
-    "start": "node dist/index.js",
-    "lint": "eslint .",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "format": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "typecheck": "tsc --noEmit --declaration"
-  },
-  "publishConfig": {
-    "directory": "dist"
-  },
-  "keywords": [],
-  "author": "Nathan David <me@vahor.fr>",
-  "license": "MIT",
-  "dependencies": {
-    "@pedaki/db": "workspace:*",
-    "@pedaki/logger": "workspace:*",
-    "@t3-oss/env-core": "^0.9.2",
-    "zod": "^3.22.4"
-  },
-  "devDependencies": {
-    "@types/node": "^18.19.26",
-    "tsx": "^4.7.2"
-  },
-  "engines": {
-    "node": ">=18.0.0 <19.0.0",
-    "pnpm": ">=8.0.0",
-    "yarn": "use-pnpm",
-    "npm": "use-pnpm"
-  },
-  "packageManager": "pnpm@8.7.6",
-  "prettier": "@pedaki/prettier-config"
+	"name": "@pedaki/cron-clear-old-data",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"dev": "tsx watch src/index",
+		"build": "tsup --clean",
+		"start": "node dist/index.js",
+		"format": "pnpx @biomejs/biome format ./ --write",
+		"lint": "pnpx @biomejs/biome lint ./ --apply",
+		"format:check": "pnpx @biomejs/biome format ./",
+		"typecheck": "tsc --noEmit --declaration"
+	},
+	"publishConfig": {
+		"directory": "dist"
+	},
+	"keywords": [],
+	"author": "Nathan David <me@vahor.fr>",
+	"license": "MIT",
+	"dependencies": {
+		"@pedaki/db": "workspace:*",
+		"@pedaki/logger": "workspace:*",
+		"@t3-oss/env-core": "^0.9.2",
+		"zod": "^3.22.4"
+	},
+	"devDependencies": {
+		"@types/node": "^18.19.26",
+		"tsx": "^4.7.2"
+	},
+	"engines": {
+		"node": ">=18.0.0 <19.0.0",
+		"pnpm": ">=8.0.0",
+		"yarn": "use-pnpm",
+		"npm": "use-pnpm"
+	}
 }

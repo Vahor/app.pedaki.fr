@@ -1,7 +1,7 @@
-import components from './components';
-import pages from './pages';
+import components from "./components";
+import pages from "./pages";
 
 export default {
-  components,
-  pages,
+	components,
+	pages,
 } as const;

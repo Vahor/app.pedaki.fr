@@ -1,9 +1,9 @@
-import home from './home';
-import invitations from './invitations';
-import subscriptions from './subscriptions';
+import home from "./home";
+import invitations from "./invitations";
+import subscriptions from "./subscriptions";
 
 export default {
-  home,
-  subscriptions,
-  invitations,
+	home,
+	subscriptions,
+	invitations,
 } as const;

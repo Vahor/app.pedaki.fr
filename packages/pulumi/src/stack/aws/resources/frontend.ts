@@ -1,78 +1,86 @@
-import { VERSION } from '@pedaki/logger/version.js';
-import * as aws from '@pulumi/aws';
-import * as pulumi from '@pulumi/pulumi';
-import { env } from '~/env.ts';
-import type { Secrets } from '~/stack/aws/resources/secrets.ts';
-import type { StackParameters } from '~/type.ts';
-import { CADDY_DOCKER_IMAGE, CLI_DOCKER_IMAGE, DOCKER_IMAGE } from '~/utils/docker.ts';
+import { VERSION } from "@pedaki/logger/version.js";
+import * as aws from "@pulumi/aws";
+import * as pulumi from "@pulumi/pulumi";
+import { env } from "~/env.ts";
+import type { Secrets } from "~/stack/aws/resources/secrets.ts";
+import type { StackParameters } from "~/type.ts";
+import {
+	CADDY_DOCKER_IMAGE,
+	CLI_DOCKER_IMAGE,
+	DOCKER_IMAGE,
+} from "~/utils/docker.ts";
 
 export interface WebServiceArgs {
-  instanceProfileArn: pulumi.Output<string>;
-  secrets: Secrets;
-  vpc: {
-    subnetIds: pulumi.Output<string>[];
-    securityGroupIds: pulumi.Output<string>[];
-  };
-  tags: Record<string, string>;
-  stackParameters: StackParameters<'aws'>;
+	instanceProfileArn: pulumi.Output<string>;
+	secrets: Secrets;
+	vpc: {
+		subnetIds: pulumi.Output<string>[];
+		securityGroupIds: pulumi.Output<string>[];
+	};
+	tags: Record<string, string>;
+	stackParameters: StackParameters<"aws">;
 }
 
 export class WebService extends pulumi.ComponentResource {
-  public readonly publicIp: pulumi.Output<string>;
-  public readonly arn: pulumi.Output<string>;
+	public readonly publicIp: pulumi.Output<string>;
+	public readonly arn: pulumi.Output<string>;
 
-  constructor(name: string, args: WebServiceArgs, opts?: pulumi.ComponentResourceOptions) {
-    super('custom:resource:WebService', name, args, opts);
+	constructor(
+		name: string,
+		args: WebServiceArgs,
+		opts?: pulumi.ComponentResourceOptions,
+	) {
+		super("custom:resource:WebService", name, args, opts);
 
-    // Get the ID for the latest Amazon Linux AMI
-    const amiId = aws.ec2
-      .getAmi({
-        owners: ['amazon'],
-        mostRecent: true,
-        filters: [
-          { name: 'state', values: ['available'] },
-          { name: 'name', values: ['al2023-ami-minimal*-x86_64'] },
-          { name: 'owner-id', values: ['137112412989'] },
-        ],
-      })
-      .then(ami => ami.id);
+		// Get the ID for the latest Amazon Linux AMI
+		const amiId = aws.ec2
+			.getAmi({
+				owners: ["amazon"],
+				mostRecent: true,
+				filters: [
+					{ name: "state", values: ["available"] },
+					{ name: "name", values: ["al2023-ami-minimal*-x86_64"] },
+					{ name: "owner-id", values: ["137112412989"] },
+				],
+			})
+			.then((ami) => ami.id);
 
-    const ec2Name = `${name}-ec2`;
-    const ec2 = new aws.ec2.Instance(
-      ec2Name,
-      {
-        instanceType: this.instanceType(args.stackParameters.server.size),
-        vpcSecurityGroupIds: args.vpc.securityGroupIds,
-        subnetId: args.vpc.subnetIds[0],
-        ami: amiId,
-        iamInstanceProfile: args.instanceProfileArn,
-        userData: this.startScript(args),
-        userDataReplaceOnChange: true, // Force to recreate the ec2 instance when the script changes
-        ipv6AddressCount: 0, // Disable ipv6
-        rootBlockDevice: {
-          volumeSize: 16,
-          volumeType: 'gp3',
-          deleteOnTermination: true,
-        },
-        metadataOptions: {
-          httpTokens: 'required',
-        },
-        tags: {
-          ...args.tags,
-          Name: ec2Name,
-        },
-      },
-      { parent: this },
-    );
+		const ec2Name = `${name}-ec2`;
+		const ec2 = new aws.ec2.Instance(
+			ec2Name,
+			{
+				instanceType: this.instanceType(args.stackParameters.server.size),
+				vpcSecurityGroupIds: args.vpc.securityGroupIds,
+				subnetId: args.vpc.subnetIds[0],
+				ami: amiId,
+				iamInstanceProfile: args.instanceProfileArn,
+				userData: this.startScript(args),
+				userDataReplaceOnChange: true, // Force to recreate the ec2 instance when the script changes
+				ipv6AddressCount: 0, // Disable ipv6
+				rootBlockDevice: {
+					volumeSize: 16,
+					volumeType: "gp3",
+					deleteOnTermination: true,
+				},
+				metadataOptions: {
+					httpTokens: "required",
+				},
+				tags: {
+					...args.tags,
+					Name: ec2Name,
+				},
+			},
+			{ parent: this },
+		);
 
-    this.publicIp = ec2.publicIp;
-    this.arn = ec2.arn;
+		this.publicIp = ec2.publicIp;
+		this.arn = ec2.arn;
 
-    this.registerOutputs({});
-  }
+		this.registerOutputs({});
+	}
 
-  private startScript = (args: WebServiceArgs) => {
-    const dockerComposeContent = pulumi.interpolate`
+	private startScript = (args: WebServiceArgs) => {
+		const dockerComposeContent = pulumi.interpolate`
 version: '3.8'
 name: pedaki
 services:
@@ -135,7 +143,7 @@ services:
       - FLUENTD_CONF=fluent.conf
 `;
 
-    const fluentdConfig = pulumi.interpolate`
+		const fluentdConfig = pulumi.interpolate`
 <filter>
   @type record_transformer
   <record>
@@ -158,9 +166,9 @@ services:
 </match>
 `;
 
-    const domain = args.stackParameters.workspace.subdomain + '.pedaki.fr';
+		const domain = `${args.stackParameters.workspace.subdomain}.pedaki.fr`;
 
-    const caddyFileContent = pulumi.interpolate`
+		const caddyFileContent = pulumi.interpolate`
 {
     email developers@pedaki.fr
 }
@@ -186,9 +194,9 @@ https://${domain} {
 }
 `;
 
-    const date = Date.now(); // Used to force the script to be reloaded
+		const date = Date.now(); // Used to force the script to be reloaded
 
-    return pulumi.interpolate`#!/bin/bash
+		return pulumi.interpolate`#!/bin/bash
 # ${date}
 set -e -x
 export DEBIAN_FRONTEND=noninteractive
@@ -251,12 +259,12 @@ sudo /usr/local/bin/docker-compose up -d web
 sudo /usr/local/bin/docker-compose run --rm cli ACTIVE
 
 `;
-  };
+	};
 
-  private instanceType = (size: StackParameters<'aws'>['server']['size']) => {
-    switch (size) {
-      case 'small':
-        return 't2.micro'; // free tier
-    }
-  };
+	private instanceType = (size: StackParameters<"aws">["server"]["size"]) => {
+		switch (size) {
+			case "small":
+				return "t2.micro"; // free tier
+		}
+	};
 }
