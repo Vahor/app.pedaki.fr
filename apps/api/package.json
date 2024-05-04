@@ -28,8 +28,8 @@
 		"@fastify/cookie": "^9.3.1",
 		"@fastify/cors": "^9.0.1",
 		"@opentelemetry/api": "1.8.0",
-		"@opentelemetry/instrumentation-fastify": "^0.35.0",
-		"@opentelemetry/sdk-trace-node": "^1.23.0",
+		"@opentelemetry/instrumentation-fastify": "^0.36.1",
+		"@opentelemetry/sdk-trace-node": "^1.24.0",
 		"@pedaki/common": "0.5.3",
 		"@pedaki/db": "workspace:*",
 		"@pedaki/logger": "workspace:*",
@@ -37,21 +37,21 @@
 		"@pedaki/models": "workspace:*",
 		"@pedaki/pulumi": "workspace:*",
 		"@pedaki/services": "workspace:*",
-		"@t3-oss/env-core": "^0.9.2",
+		"@t3-oss/env-core": "^0.10.1",
 		"@trpc/server": "10.45.2",
 		"fastify": "^4.26.2",
 		"fastify-raw-body": "^4.3.0",
 		"next-auth": "^4.24.7",
 		"superjson": "^2.2.1",
 		"trpc-openapi": "^1.2.0",
-		"zod": "^3.22.5"
+		"zod": "^3.23.6"
 	},
 	"devDependencies": {
 		"@total-typescript/ts-reset": "^0.5.1",
-		"@types/node": "^20.12.7",
+		"@types/node": "^20.12.8",
 		"esbuild-plugin-tsconfig-paths": "^1.0.1",
 		"preview-email": "^3.0.19",
-		"tsx": "^4.7.2"
+		"tsx": "^4.9.0"
 	},
 	"engines": {
 		"node": "20.x",
