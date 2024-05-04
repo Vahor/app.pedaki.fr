@@ -20,10 +20,10 @@
 	"author": "Nathan David <me@vahor.fr>",
 	"license": "MIT",
 	"dependencies": {
-		"zod": "^3.22.5"
+		"zod": "^3.23.6"
 	},
 	"devDependencies": {
-		"@prisma/client": "^5.12.1"
+		"@prisma/client": "^5.13.0"
 	},
 	"engines": {
 		"node": "20.x",
