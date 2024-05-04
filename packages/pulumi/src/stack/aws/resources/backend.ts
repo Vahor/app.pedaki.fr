@@ -51,8 +51,8 @@ export class Db extends pulumi.ComponentResource {
 				password: args.dbPassword,
 				vpcSecurityGroupIds: args.securityGroupIds,
 				dbSubnetGroupName: rdsSubnetGroup.name,
-				allocatedStorage: 20, // TODO: make this configurable
-				maxAllocatedStorage: 200, // TODO: make this configurable
+				allocatedStorage: 10, // TODO: make this configurable
+				maxAllocatedStorage: 100, // TODO: make this configurable
 				// monitoringInterval: 60, // TODO: make this configurable
 				// monitoringRoleArn: args.userArn,
 				engine: "postgres",
