@@ -44,8 +44,8 @@ const Schema = z.object({
 export type SubscriptionFormValues = z.infer<typeof Schema>;
 
 const priceMap = {
-	monthly: 20,
-	yearly: 16 * 12,
+	monthly: 30,
+	yearly: (30 * 0.8) * 12,
 };
 
 export const SubscriptionForm = ({ locale }: { locale: string }) => {
